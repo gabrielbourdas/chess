@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
@@ -168,7 +168,10 @@
           <h3>Commencez l'aventure</h3>
           <a
             href="#"
-            onclick="switchForm('register'); window.scrollTo(0,0);"
+            onclick="
+              switchForm('register');
+              window.scrollTo(0, 0);
+            "
             class="btn-register"
             >S'inscrire Gratuitement</a
           >
@@ -193,15 +196,14 @@
     </footer>
 
     <script type="module">
-      // 1. IMPORT DU CERVEAU (Configuration centrale)
-      // On récupère 'auth' et 'db' qui sont déjà initialisés avec tes clés dans auth.js
+      // 1. IMPORT DU CERVEAU
       import { auth, db } from "../js/auth.js";
 
-      // 2. IMPORT DES OUTILS SPÉCIFIQUES À CETTE PAGE
-      // On a toujours besoin des fonctions pour "Créer un compte" et "Se connecter"
+      // 2. IMPORT DES OUTILS (On ajoute sendPasswordResetEmail)
       import {
         createUserWithEmailAndPassword,
         signInWithEmailAndPassword,
+        sendPasswordResetEmail, // <--- NOUVEAU : L'outil pour le reset
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
       import {
@@ -209,10 +211,7 @@
         setDoc,
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-      // --- PLUS BESOIN DE firebaseConfig NI DE initializeApp ICI ! ---
-      // Tout est géré par la ligne 1.
-
-      // --- LOGIQUE D'INSCRIPTION ---
+      // --- LOGIQUE D'INSCRIPTION (Rien ne change ici) ---
       const registerForm = document.querySelector("#register-box form");
       if (registerForm) {
         registerForm.addEventListener("submit", (e) => {
@@ -229,16 +228,11 @@
 
           createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-              // Compte créé ! On crée sa fiche dans la base de données
               const user = userCredential.user;
-              // On utilise 'db' importé de auth.js
               setDoc(doc(db, "users", user.uid), {
                 pseudo: pseudo,
                 email: email,
-                progress: {
-                  opening: 0,
-                  puzzles: 0,
-                },
+                progress: { opening: 0, puzzles: 0 },
               });
               alert("Bienvenue au club, " + pseudo + " !");
               window.location.href = "../index.html";
@@ -254,7 +248,7 @@
         });
       }
 
-      // --- LOGIQUE DE CONNEXION ---
+      // --- LOGIQUE DE CONNEXION (Rien ne change ici) ---
       const loginForm = document.querySelector("#login-box form");
       if (loginForm) {
         loginForm.addEventListener("submit", (e) => {
@@ -274,8 +268,46 @@
         });
       }
 
-      // --- FONCTIONS VISUELLES (Sidebar, Switch, Date) ---
-      // On les attache à 'window' pour qu'elles marchent avec les onclick="..." du HTML
+      // --- NOUVEAU : LOGIQUE MOT DE PASSE OUBLIÉ ---
+      const forgotBtn = document.querySelector(".forgot-pass");
+      if (forgotBtn) {
+        forgotBtn.addEventListener("click", (e) => {
+          e.preventDefault(); // Empêche le lien de remonter la page
+
+          // 1. On essaie de prendre l'email déjà écrit dans le champ
+          let email = document.getElementById("login-user").value;
+
+          // 2. Si le champ est vide, on demande l'email à l'utilisateur
+          if (!email) {
+            email = prompt(
+              "Entre ton adresse email pour recevoir le lien de réinitialisation :",
+            );
+          }
+
+          // 3. Si l'utilisateur a annulé ou rien mis, on s'arrête
+          if (!email) return;
+
+          // 4. On envoie la demande à Firebase
+          sendPasswordResetEmail(auth, email)
+            .then(() => {
+              alert(
+                "📧 Email envoyé ! Vérifie ta boîte de réception (et tes spams) pour changer ton mot de passe.",
+              );
+            })
+            .catch((error) => {
+              console.error(error);
+              if (error.code === "auth/user-not-found") {
+                alert("Aucun compte ne correspond à cet email.");
+              } else if (error.code === "auth/invalid-email") {
+                alert("L'adresse email n'est pas valide.");
+              } else {
+                alert("Erreur : " + error.message);
+              }
+            });
+        });
+      }
+
+      // --- FONCTIONS VISUELLES ---
       window.showsidebar = function () {
         document.querySelector(".sidebar").style.display = "flex";
         setTimeout(() => {
