@@ -50,75 +50,36 @@
       </nav>
     </header>
 
-    <main>
-      <section class="puzzle-hero">
-        <h2>Forge ta <span class="highlight">Vision Tactique</span></h2>
-        <p>
-          Les échecs sont à 99% de la tactique. Résous des problèmes quotidiens
-          pour ne plus jamais rater une fourchette.
-        </p>
-      </section>
+    <main class="puzzle-main">
+      <div class="intro-text">
+        <h2>Entraînement Tactique</h2>
+        <p>Choisis ta méthode de progression.</p>
+      </div>
 
-      <section class="daily-puzzle-section">
-        <div class="daily-card">
-          <div class="daily-content">
-            <span class="badge-daily">🔥 Puzzle du Jour</span>
-            <h3>Mat en 2 coups</h3>
+      <section class="split-container">
+        <a href="tactics/index.html" class="split-card interactive">
+          <div class="card-content">
+            <div class="icon-wrapper">⚡</div>
+            <h3>Tactique Rapide</h3>
             <p>
-              Les Blancs jouent et gagnent. Un sacrifice classique pour ouvrir
-              le roi.
+              Déplace les pièces, trouve le mat ou le gain matériel. Idéal pour
+              travailler les réflexes.
             </p>
-            <div class="daily-meta">
-              <span>⚡ Difficulté : Moyen</span>
-              <span>📈 +15 Elo</span>
-            </div>
-            <a href="#" class="btn-solve">Résoudre maintenant</a>
+            <span class="mode-tag">Interactif</span>
           </div>
-          <div class="daily-image">
-            <img
-              src="https://lichess1.org/export/fen.gif?fen=r1b3k1/pp3ppp/2n5/3qr3/8/2Q5/PP3PPP/3R1RK1 w - - 0 1&color=white&theme=brown"
-              alt="Puzzle du jour"
-            />
+        </a>
+
+        <a href="visualization/index.html" class="split-card visualization">
+          <div class="card-content">
+            <div class="icon-wrapper">🧠</div>
+            <h3>Visualisation Pure</h3>
+            <p>
+              Interdit de toucher ! Calcule toute la variante dans ta tête et
+              écris la solution.
+            </p>
+            <span class="mode-tag">Saisie de coups</span>
           </div>
-        </div>
-      </section>
-
-      <section class="puzzle-modes">
-        <h3>Choisis ton entraînement</h3>
-
-        <div class="modes-grid">
-          <a href="#" class="mode-card ranked">
-            <div class="mode-icon">🏆</div>
-            <div class="mode-info">
-              <h4>Mode Classé</h4>
-              <p>Monte ton Elo puzzle. La difficulté s'adapte à ton niveau.</p>
-            </div>
-          </a>
-
-          <a href="#" class="mode-card sprint">
-            <div class="mode-icon">⏱️</div>
-            <div class="mode-info">
-              <h4>Puzzle Sprint</h4>
-              <p>3 ou 5 minutes. Combien peux-tu en résoudre avant la fin ?</p>
-            </div>
-          </a>
-
-          <a href="#" class="mode-card theme">
-            <div class="mode-icon">📚</div>
-            <div class="mode-info">
-              <h4>Par Thème</h4>
-              <p>Cible tes faiblesses : Clouages, Finales, Mats...</p>
-            </div>
-          </a>
-
-          <a href="#" class="mode-card survival">
-            <div class="mode-icon">❤️</div>
-            <div class="mode-info">
-              <h4>Mode Survie</h4>
-              <p>Pas de limite de temps. 3 erreurs et c'est fini.</p>
-            </div>
-          </a>
-        </div>
+        </a>
       </section>
     </main>
 

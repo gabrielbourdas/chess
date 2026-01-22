@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Tactique</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../../css/nav.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/media.css" />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li class="sidebar-logo"><span>MENU</span></li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Analyze/index.html">Analyze</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+        </ul>
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Puzzles/index.html">Puzzles <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Analyze/index.html">Analyze <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="game-main">
+      <div class="game-area">
+        <div class="board-wrapper">
+          <div id="board" class="board-placeholder">
+            <span>ÉCHIQUIER EN COURS DE CHARGEMENT...</span>
+          </div>
+
+          <div class="player-info">
+            <div id="user-avatar" class="avatar"></div>
+
+            <div class="details">
+              <span id="user-name" class="name">Chargement...</span>
+              <span class="rating">1200 Elo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-sidebar">
+          <div class="puzzle-header">
+            <h2>Puzzle #<span id="puzzle-id">492</span></h2>
+            <div class="rating-badge">Difficulté: Moyen</div>
+          </div>
+
+          <div class="turn-indicator white-turn">
+            <div class="turn-icon"></div>
+            <h3 id="status-text">Trait aux Blancs</h3>
+            <p>Trouve le meilleur coup !</p>
+          </div>
+
+          <div id="feedback-area" class="feedback hidden">
+            <span class="icon">✅</span> Excellent !
+          </div>
+
+          <div class="controls">
+            <button
+              class="btn-game secondary"
+              onclick="alert('Indice : Regarde le Roi !')"
+            >
+              💡 Indice
+            </button>
+            <button
+              class="btn-game secondary"
+              onclick="window.location.reload()"
+            >
+              🔄 Réessayer
+            </button>
+            <button class="btn-game primary">Suivant ➡</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess</h3>
+          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Commencez l'aventure</h3>
+          <a href="/login/index.html" class="btn-register"
+            >S'inscrire Gratuitement</a
+          >
+        </div>
+        <div class="footer-section">
+          <h3>Liens Partenaires</h3>
+          <ul>
+            <li>
+              <a href="https://www.chess.com" target="_blank">Chess.com</a>
+            </li>
+            <li><a href="#">Chaîne YouTube</a></li>
+            <li><a href="/support/index.html">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; <span id="year">2026</span> <span>Open Chess</span>. Tous
+          droits réservés.
+        </p>
+      </div>
+    </footer>
+
+    <script type="module">
+      // 1. IMPORTS (Toujours tout en haut)
+      import { auth, db } from "../../js/auth.js";
+      import {
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      // 2. LOGIQUE FIREBASE
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          console.log("Utilisateur connecté :", user.uid); // Pour le debug
+
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            // CAS 1 : TOUT VA BIEN, LE PROFIL EXISTE
+            const data = docSnap.data();
+            const pseudo = data.pseudo || "Sans Nom";
+
+            const nameElement = document.getElementById("user-name");
+            if (nameElement) nameElement.textContent = pseudo;
+
+            const avatarUrl = `https://api.dicebear.com/9.x/adventurer/svg?seed=${pseudo}`;
+            const avatarElement = document.getElementById("user-avatar");
+            if (avatarElement) {
+              avatarElement.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+            }
+          } else {
+            // CAS 2 : LE COMPTE EXISTE MAIS PAS LES DONNÉES (Ton cas actuel)
+            console.log("Aucun document trouvé dans Firestore !");
+            document.getElementById("user-name").textContent = "Profil Vide";
+
+            // On met un avatar par défaut
+            document.getElementById("user-avatar").innerHTML = `❓`;
+          }
+        } else {
+          window.location.href = "/login/index.html";
+        }
+      });
+
+      // 3. LOGIQUE DU MENU (La Sidebar)
+      // On l'attache à 'window' pour que les boutons HTML (onclick) puissent les voir
+      window.showsidebar = function () {
+        const sidebar = document.querySelector(".sidebar");
+        sidebar.style.display = "flex";
+        setTimeout(() => {
+          sidebar.classList.add("active");
+        }, 10);
+      };
+
+      window.hidesidebar = function () {
+        const sidebar = document.querySelector(".sidebar");
+        sidebar.classList.remove("active");
+        setTimeout(() => {
+          sidebar.style.display = "none";
+        }, 300);
+      };
+
+      // 4. DATE DU FOOTER
+      const yearSpan = document.getElementById("year");
+      if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

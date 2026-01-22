@@ -1,0 +1,252 @@
+/* --- CONFIGURATION DU MAIN --- */
+/* On écrase le CSS global pour centrer le jeu */
+body > main.game-main {
+  width: 100% !important;
+  max-width: 1200px !important;
+  min-height: 90vh; /* Prend tout l'écran */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 40px 20px;
+  margin: 0 auto;
+}
+
+/* --- ZONE DE JEU (Grille) --- */
+.game-area {
+  display: grid;
+  grid-template-columns: 1fr 350px; /* Le plateau prend la place, la sidebar fait 350px */
+  gap: 2rem;
+  width: 100%;
+  background: #1e2024;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid #383c44;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* --- 1. LE PLATEAU --- */
+.board-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Le faux échiquier (En attendant le JS) */
+.board-placeholder {
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1 / 1; /* Reste toujours carré */
+  background: #2b2d33;
+  /* Petit motif damier css pour faire illusion */
+  background-image:
+    linear-gradient(45deg, #383c44 25%, transparent 25%),
+    linear-gradient(-45deg, #383c44 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #383c44 75%),
+    linear-gradient(-45deg, transparent 75%, #383c44 75%);
+  background-size: 40px 40px;
+  background-position:
+    0 0,
+    0 20px,
+    20px -20px,
+    -20px 0px;
+
+  border: 5px solid #18191c;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #72767d;
+  font-weight: bold;
+}
+
+/* Info sous le plateau */
+.player-info {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #2b2d33;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+
+.avatar {
+  font-size: 1.5rem;
+}
+.avatar {
+  width: 50px; /* Taille fixe */
+  height: 50px;
+  border-radius: 50%; /* Rond parfait */
+  overflow: hidden; /* Coupe ce qui dépasse */
+  background: #383c44; /* Fond gris en attendant l'image */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* On s'assure que l'image générée prend toute la place */
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  color: #fff;
+  font-weight: bold;
+}
+.rating {
+  color: #b9bbbe;
+  font-size: 0.8rem;
+}
+
+/* --- 2. LA SIDEBAR (Infos droites) --- */
+.game-sidebar {
+  background: #18191c;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --- EN-TÊTE DU PUZZLE --- */
+.puzzle-header {
+  border-bottom: 1px solid #383c44;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.puzzle-header h2 {
+  color: #fff;
+  /* On utilise Flexbox pour aligner le texte "Puzzle #" et le numéro */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espace entre le texte et le numéro */
+
+  font-size: 1.4rem; /* Taille raisonnable pour le tout */
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Le style du numéro (la boîte) */
+#puzzle-id {
+  font-size: 1.4rem; /* IMPORTANT : On force la même taille que le texte */
+  font-weight: 800; /* On le met un peu plus gras pour qu'il ressorte */
+  color: #fff;
+
+  /* On garde un style "Badge" mais beaucoup plus discret */
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 10px; /* Marges internes réduites */
+  border-radius: 6px;
+  border-left: 3px solid #00d9f6; /* La petite touche bleue Open Chess */
+}
+
+.rating-badge {
+  background: rgba(255, 159, 0, 0.15);
+  color: #ff9f00;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+/* Indicateur "C'est à qui de jouer" */
+.turn-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #26292f;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #fff; /* Blanc par défaut */
+}
+
+/* Si c'est aux blancs */
+.turn-indicator.white-turn .turn-icon {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+.turn-indicator h3 {
+  color: #fff;
+  margin-bottom: 5px;
+}
+.turn-indicator p {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* Feedback (Succès / Echec) */
+.feedback {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(88, 204, 2, 0.1);
+  color: #58cc02;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.hidden {
+  display: none;
+}
+
+/* Boutons */
+.controls {
+  margin-top: auto; /* Pousse les boutons vers le bas */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-game {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.btn-game.primary {
+  background: #00d9f6;
+  color: #000;
+}
+.btn-game.primary:hover {
+  background: #66e8ff;
+  transform: translateY(-2px);
+}
+
+.btn-game.secondary {
+  background: #2b2d33;
+  color: #ccc;
+}
+.btn-game.secondary:hover {
+  background: #363940;
+  color: #fff;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .game-area {
+    grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+  }
+  .board-wrapper {
+    order: 1; /* Plateau en premier */
+  }
+  .game-sidebar {
+    order: 2; /* Infos en dessous */
+  }
+}

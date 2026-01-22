@@ -1,256 +1,192 @@
-/* --- HERO SECTION --- */
-.puzzle-hero {
-  text-align: center;
-  padding: 3rem 1rem;
-  max-width: 800px;
-  margin: 0 auto;
+/* --- 1. RESET COMPLET DU MAIN --- */
+/* On cible précisément pour écraser toutes les règles globales */
+body > main.puzzle-main {
+  /* POSITIONNEMENT : On transforme le main en une boîte flexible centrée */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important; /* Centre horizontalement (Gauche/Droite) */
+  justify-content: center !important; /* Centre verticalement (Haut/Bas) */
+
+  /* TAILLE : On force le plein écran */
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 100vh !important; /* Toute la hauteur de l'écran */
+
+  /* NETTOYAGE : On vire les marges parasites */
+  margin: 0 !important;
+  padding: 80px 20px !important; /* Juste de l'espace pour le header en haut */
+  box-sizing: border-box !important; /* Empêche le padding d'agrandir la boîte */
 }
 
-.puzzle-hero h2 {
+/* --- 2. LE TITRE --- */
+.intro-text {
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+  width: 100%; /* S'assure que le texte prend toute la largeur pour se centrer */
+}
+
+.intro-text h2 {
+  color: #fff;
   font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: #fff;
-}
-
-.highlight {
-  color: #00d9f6; /* Cyan Open Chess */
-  position: relative;
-  display: inline-block;
-}
-/* Petit effet de soulignement stylé */
-.highlight::after {
-  content: "";
-  position: absolute;
-  bottom: 5px;
-  left: 0;
-  width: 100%;
-  height: 8px;
-  background: rgba(0, 217, 246, 0.2);
-  z-index: -1;
-  border-radius: 4px;
-}
-
-.puzzle-hero p {
-  color: #b9bbbe;
-  font-size: 1.1rem;
-  line-height: 1.6;
-}
-
-/* --- DAILY PUZZLE (LA CARTE VEDETTE) --- */
-.daily-puzzle-section {
-  max-width: 1000px;
-  margin: 0 auto 4rem auto;
-  padding: 0 1rem;
-}
-
-.daily-card {
-  background: linear-gradient(145deg, #24262b 0%, #1e2024 100%);
-  border: 1px solid #383c44;
-  border-radius: 16px;
-  display: flex;
-  overflow: hidden; /* Pour que l'image ne dépasse pas */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  transition:
-    transform 0.3s ease,
-    border-color 0.3s ease;
-}
-
-.daily-card:hover {
-  transform: translateY(-5px);
-  border-color: #ff9f00; /* Orange au survol */
-}
-
-.daily-content {
-  padding: 2.5rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.badge-daily {
-  background: rgba(255, 159, 0, 0.15);
-  color: #ff9f00;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 1rem;
-}
-
-.daily-content h3 {
-  font-size: 2rem;
-  color: #fff;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-.daily-content p {
-  color: #b9bbbe;
-  margin-bottom: 1.5rem;
-}
+/* --- 3. LA GROSSE BOÎTE (SPLIT CONTAINER) --- */
+.split-container {
+  /* TAILLE */
+  width: 100% !important;
+  max-width: 1400px !important; /* Largeur max imposante */
+  height: 60vh !important; /* Hauteur relative à l'écran (60%) */
+  min-height: 500px !important; /* Sécurité pour petits écrans */
 
-.daily-meta {
+  /* STYLE */
   display: flex;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-  color: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+
+  /* On s'assure qu'elle ne déborde pas */
+  margin: 0 !important;
 }
 
-.btn-solve {
-  background: #ff9f00;
-  color: #18191c;
-  padding: 12px 30px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: all 0.2s;
-}
+/* ... La suite (à partir de .split-card) ne change pas ... */
 
-.btn-solve:hover {
-  background: #ffb74d;
-  box-shadow: 0 0 15px rgba(255, 159, 0, 0.4);
-}
+/* ... La suite (à partir de .split-card) ne change pas ... */
 
-.daily-image {
-  width: 40%;
-  background: #2b2d33;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-left: 1px solid #383c44;
-}
+/* ... Le reste du CSS (à partir de .split-card) reste identique ... */
 
-.daily-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Remplit bien la zone */
-  opacity: 0.9;
-}
-
-/* --- MODES GRID (LES CARTES SECONDAIRES) --- */
-.puzzle-modes {
-  max-width: 1000px;
-  margin: 0 auto 5rem auto;
-  padding: 0 1rem;
-}
-
-.puzzle-modes h3 {
-  color: #fff;
-  margin-bottom: 2rem;
-  font-size: 1.5rem;
-  border-left: 4px solid #00d9f6;
-  padding-left: 15px;
-}
-
-.modes-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(220px, 1fr)
-  ); /* Responsive auto */
-  gap: 1.5rem;
-}
-
-.mode-card {
-  background: #24262b;
-  border: 1px solid #383c44;
-  border-radius: 12px;
-  padding: 2rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
+/* --- LES DEUX BLOCS --- */
+.split-card {
+  position: relative;
+  flex: 1; /* 50% chacun au départ */
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  text-decoration: none;
+  transition:
+    flex 0.4s ease,
+    background 0.4s ease; /* Animation fluide */
+  padding: 2rem;
   text-align: center;
 }
 
-.mode-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  width: 70px;
-  height: 70px;
+/* --- BLOC GAUCHE : INTERACTIF --- */
+.split-card.interactive {
+  background: linear-gradient(180deg, #1e2024 0%, #18191c 100%);
+
+  /* C'est CETTE ligne qu'on change : */
+  /* On passe du gris (#383c44) au bleu cyan du thème (#00d9f6) */
+  /* J'ai mis 2px pour que la séparation soit bien nette */
+  border-right: 2px solid #00d9f6;
+}
+
+.split-card.interactive:hover {
+  flex: 1.3; /* S'agrandit un peu */
+  background: linear-gradient(180deg, #24272e 0%, #1e2024 100%);
+}
+
+.split-card.interactive .icon-wrapper {
+  background: rgba(0, 217, 246, 0.1);
+  color: #00d9f6;
+  box-shadow: 0 0 15px rgba(0, 217, 246, 0.1);
+}
+
+.split-card.interactive:hover .icon-wrapper {
+  transform: scale(1.1) rotate(-5deg);
+  background: rgba(0, 217, 246, 0.2);
+}
+
+/* --- BLOC DROITE : VISUALISATION --- */
+.split-card.visualization {
+  background: linear-gradient(180deg, #1e2024 0%, #18191c 100%);
+}
+
+.split-card.visualization:hover {
+  flex: 1.3; /* S'agrandit un peu */
+  background: linear-gradient(180deg, #24272e 0%, #1e2024 100%);
+}
+
+/* Pour le bloc de droite, on utilise une couleur différente (ex: Orange ou Violet) */
+.split-card.visualization .icon-wrapper {
+  background: rgba(255, 159, 0, 0.1);
+  color: #ff9f00; /* Orange du thème */
+  box-shadow: 0 0 15px rgba(255, 159, 0, 0.1);
+}
+
+.split-card.visualization:hover .icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+  background: rgba(255, 159, 0, 0.2);
+}
+
+/* --- ÉLÉMENTS INTERNES --- */
+.icon-wrapper {
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.split-card h3 {
+  color: #fff;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.split-card p {
+  color: #b9bbbe;
+  max-width: 350px;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.mode-tag {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: 0.3s;
 }
 
-.mode-info h4 {
-  color: #fff;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+.split-card:hover .mode-tag {
+  background: #fff;
+  color: #000;
 }
 
-.mode-info p {
-  color: #72767d; /* Gris plus foncé pour le texte secondaire */
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-/* COULEURS SPÉCIFIQUES PAR MODE AU SURVOL */
-/* Ranked: Cyan */
-.mode-card.ranked:hover {
-  border-color: #00d9f6;
-  transform: translateY(-5px);
-}
-.mode-card.ranked:hover .mode-icon {
-  background: rgba(0, 217, 246, 0.2);
-  color: #00d9f6;
-}
-
-/* Sprint: Orange */
-.mode-card.sprint:hover {
-  border-color: #ff9f00;
-  transform: translateY(-5px);
-}
-.mode-card.sprint:hover .mode-icon {
-  background: rgba(255, 159, 0, 0.2);
-  color: #ff9f00;
-}
-
-/* Theme: Vert */
-.mode-card.theme:hover {
-  border-color: #58cc02;
-  transform: translateY(-5px);
-}
-.mode-card.theme:hover .mode-icon {
-  background: rgba(88, 204, 2, 0.2);
-  color: #58cc02;
-}
-
-/* Survival: Rouge */
-.mode-card.survival:hover {
-  border-color: #ff4d4d;
-  transform: translateY(-5px);
-}
-.mode-card.survival:hover .mode-icon {
-  background: rgba(255, 77, 77, 0.2);
-  color: #ff4d4d;
-}
-
-/* RESPONSIVE */
+/* --- RESPONSIVE MOBILE --- */
 @media (max-width: 768px) {
-  .daily-card {
-    flex-direction: column-reverse; /* L'image passe au dessus ou en dessous */
+  .split-container {
+    flex-direction: column;
+    height: auto;
   }
-  .daily-image {
-    width: 100%;
-    height: 250px;
-    border-left: none;
+
+  .split-card {
+    padding: 3rem 1rem;
+    border-right: none;
     border-bottom: 1px solid #383c44;
   }
-  .daily-content {
-    align-items: center;
-    text-align: center;
+
+  .split-card:last-child {
+    border-bottom: none;
   }
-  .puzzle-hero h2 {
-    font-size: 2rem;
+
+  /* On désactive l'effet d'agrandissement sur mobile */
+  .split-card:hover {
+    flex: 1;
   }
 }
