@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Vidéos</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li class="sidebar-logo"><span>MENU</span></li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Analyze/index.html">Analyze</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+        </ul>
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Puzzles/index.html">Puzzles <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Analyze/index.html">Analyze <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="title">
+        <h2><span>La Bibliothèque Vidéo</span></h2>
+        <p style="color: var(--text-muted); margin-top: 1rem">
+          Les meilleurs créateurs pour progresser en s'amusant.
+        </p>
+      </div>
+
+      <div class="creators-grid">
+        <div class="creator-card">
+          <div class="card-banner cyan"></div>
+          <div class="card-avatar">
+            <img
+              src="/img/song.jpg"
+              alt="Julien Song"
+              onerror="this.src='https://ui-avatars.com/api/?name=Julien+Song&background=00D9F6&color=fff'"
+            />
+          </div>
+          <div class="card-body">
+            <h3>Julien Song</h3>
+            <span class="badge-level">Débutant & Intermédiaire</span>
+            <p class="description">
+              Le pédagogue français n°1. Il explique chaque coup avec une clarté
+              limpide et beaucoup d'humour.
+            </p>
+
+            <ul class="pros-list">
+              <li>🎓 Pédagogie exceptionnelle</li>
+              <li>🇫🇷 Contenu 100% Français</li>
+              <li>😂 Format très divertissant</li>
+            </ul>
+
+            <a
+              href="https://www.youtube.com/@JulienSong"
+              target="_blank"
+              class="btn-yt cyan"
+            >
+              Voir la chaîne
+            </a>
+          </div>
+        </div>
+
+        <div class="creator-card">
+          <div class="card-banner orange"></div>
+          <div class="card-avatar">
+            <img
+              src="/img/gotham.jpg"
+              alt="GothamChess"
+              onerror="this.src='https://ui-avatars.com/api/?name=Gotham+Chess&background=FF9F00&color=fff'"
+            />
+          </div>
+          <div class="card-body">
+            <h3>GothamChess</h3>
+            <span class="badge-level">Tous Niveaux</span>
+            <p class="description">
+              Levy Rozman est le showman des échecs. Idéal pour comprendre les
+              ouvertures et suivre l'actualité.
+            </p>
+
+            <ul class="pros-list">
+              <li>🔥 Énergie incroyable</li>
+              <li>📖 Le roi des "Openings"</li>
+              <li>🇺🇸 Anglais accessible</li>
+            </ul>
+
+            <a
+              href="https://www.youtube.com/@GothamChess"
+              target="_blank"
+              class="btn-yt orange"
+            >
+              Voir la chaîne
+            </a>
+          </div>
+        </div>
+
+        <div class="creator-card">
+          <div class="card-banner green"></div>
+          <div class="card-avatar">
+            <img
+              src="/img/hikaru.jpg"
+              alt="Hikaru"
+              onerror="this.src='https://ui-avatars.com/api/?name=Hikaru+N&background=58CC02&color=fff'"
+            />
+          </div>
+          <div class="card-body">
+            <h3>GM Hikaru</h3>
+            <span class="badge-level">Avancé & Expert</span>
+            <p class="description">
+              L'un des meilleurs joueurs du monde. Regardez-le pour voir à
+              quelle vitesse un Grand Maître calcule.
+            </p>
+
+            <ul class="pros-list">
+              <li>⚡ Calcul surhumain</li>
+              <li>🏆 Niveau Grand Maître</li>
+              <li>🧠 Intuition pure</li>
+            </ul>
+
+            <a
+              href="https://www.youtube.com/@GMHikaru"
+              target="_blank"
+              class="btn-yt green"
+            >
+              Voir la chaîne
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess</h3>
+          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Commencez l'aventure</h3>
+          <a href="/login/index.html" class="btn-register"
+            >S'inscrire Gratuitement</a
+          >
+        </div>
+        <div class="footer-section">
+          <h3>Liens Partenaires</h3>
+          <ul>
+            <li>
+              <a href="https://www.chess.com" target="_blank">Chess.com</a>
+            </li>
+            <li><a href="#">Chaîne YouTube</a></li>
+            <li><a href="/support/index.html">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; <span id="year">2026</span> <span>Open Chess</span>. Tous
+          droits réservés.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+      }
+      function hidesidebar() {
+        document.querySelector(".sidebar").style.display = "none";
+      }
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,151 @@
+/* --- openings.css : Style pour les pages détaillées d'ouvertures --- */
+
+/* Boîte de séquence de coups (ex: 1. e4 e5...) */
+.pgn-sequence {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 4px solid #00d9f6;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-family: "Courier New", monospace;
+  font-size: 1.1rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pgn-sequence .move-number {
+  color: #b9bbbe;
+}
+.pgn-sequence .move-white {
+  color: #fff;
+  font-weight: bold;
+}
+.pgn-sequence .move-black {
+  color: #00d9f6;
+  font-weight: bold;
+}
+
+/* Grille pour les Avantages / Inconvénients */
+.pros-cons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.pros-box,
+.cons-box {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #383c44;
+}
+
+.pros-box h4 {
+  color: #58cc02;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cons-box h4 {
+  color: #ff5500;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pros-box ul,
+.cons-box ul {
+  list-style: none;
+  padding: 0;
+}
+.pros-box li,
+.cons-box li {
+  margin-bottom: 0.8rem;
+  color: #b9bbbe;
+  font-size: 0.95rem;
+  position: relative;
+  padding-left: 20px;
+}
+
+.pros-box li::before {
+  content: "✔";
+  color: #58cc02;
+  position: absolute;
+  left: 0;
+}
+.cons-box li::before {
+  content: "✖";
+  color: #ff5500;
+  position: absolute;
+  left: 0;
+}
+
+/* Section des variantes */
+.variant-card {
+  background: linear-gradient(145deg, #2a2d33 0%, #24262b 100%);
+  border: 1px solid #383c44;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s;
+}
+.variant-card:hover {
+  border-color: #00d9f6;
+  transform: translateX(5px);
+}
+
+.variant-title {
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+.variant-moves {
+  color: #00d9f6;
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+.variant-desc {
+  color: #b9bbbe;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+/* --- openings.css --- */
+/* (Garde le reste du code existant...) */
+
+/* Style pour les images de position FEN */
+.position-image-container {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.position-image {
+  max-width: 100%;
+  width: 400px; /* Taille idéale pour bien voir */
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  border: 3px solid #383c44;
+}
+.principle-section .position-image-container {
+  margin: 0;
+}
+/* Petit ajustement pour le responsive */
+@media (max-width: 500px) {
+  .position-image {
+    width: 100%;
+  }
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .pros-cons-grid {
+    grid-template-columns: 1fr;
+  }
+}

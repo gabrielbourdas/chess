@@ -1,0 +1,151 @@
+/* =========================================
+   PAGE VIDEO (CREATOR CARDS)
+   ========================================= */
+
+.creators-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3rem;
+  padding: 0 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.creator-card {
+  flex: 1 1 300px;
+  max-width: 380px;
+  background-color: #24262b;
+  border: 1px solid #383c44;
+  border-radius: 16px;
+  overflow: hidden; /* Important pour que la bannière ne dépasse pas */
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.creator-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Bannière de couleur en haut de la carte */
+.card-banner {
+  height: 100px;
+  width: 100%;
+}
+.card-banner.cyan {
+  background: linear-gradient(45deg, #00d9f6, #008ba3);
+}
+.card-banner.orange {
+  background: linear-gradient(45deg, #ff9f00, #b36e00);
+}
+.card-banner.green {
+  background: linear-gradient(45deg, #58cc02, #3a8501);
+}
+
+/* Avatar Rond */
+.card-avatar {
+  width: 100px;
+  height: 100px;
+  margin: -50px auto 0 auto; /* Remonte l'image pour chevaucher la bannière */
+  border-radius: 50%;
+  border: 4px solid #24262b; /* Bordure couleur du fond pour effet de découpe */
+  overflow: hidden;
+  background: #18191c;
+  z-index: 2;
+  position: relative;
+}
+
+.card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Corps de la carte */
+.card-body {
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-body h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.badge-level {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: #b9bbbe;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+}
+
+.description {
+  font-size: 0.95rem;
+  color: #b9bbbe;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Liste des points forts */
+.pros-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 25px 0;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.pros-list li {
+  margin-bottom: 8px;
+  color: #ebebeb;
+  font-size: 0.9rem;
+}
+.pros-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Bouton YouTube */
+.btn-yt {
+  margin-top: auto;
+  display: block;
+  padding: 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #18191c;
+  transition: 0.3s;
+}
+
+.btn-yt.cyan {
+  background: #00d9f6;
+  box-shadow: 0 0 15px rgba(0, 217, 246, 0.3);
+}
+.btn-yt.orange {
+  background: #ff9f00;
+  box-shadow: 0 0 15px rgba(255, 159, 0, 0.3);
+}
+.btn-yt.green {
+  background: #58cc02;
+  box-shadow: 0 0 15px rgba(88, 204, 2, 0.3);
+}
+
+.btn-yt:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}

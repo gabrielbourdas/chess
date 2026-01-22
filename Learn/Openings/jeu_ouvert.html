@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Jeux Ouverts (1. e4 e5)</title>
+    <link rel="icon" href="../../img/logo.webp" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../../css/nav.css" />
+    <link rel="stylesheet" href="../css/learn.css" />
+    <link rel="stylesheet" href="../css/openings.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="../../img/close.svg" alt="close" /></a>
+          </li>
+          <li><a href="../../Play/index.html">Play</a></li>
+          <li><a href="../../Puzzles/index.html">Puzzles</a></li>
+          <li><a href="../../Learn/index.html">Learn</a></li>
+        </ul>
+
+        <ul>
+          <li class="logo-container">
+            <a href="../../index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a href="../index.html">Menu</a>
+          </li>
+          <li class="hideOnMobile">
+            <a
+              href="../Opening.html"
+              style="
+                color: #00d9f6;
+                font-weight: bold;
+                border-bottom: 2px solid #00d9f6;
+              "
+              >Ouvertures</a
+            >
+          </li>
+          <li class="hideOnMobile"><a href="../Midgame.html">Milieu</a></li>
+          <li class="hideOnMobile"><a href="../Endgame.html">Finales</a></li>
+
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="../../img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="course-wrapper">
+        <aside class="course-sidebar">
+          <h3 class="sidebar-title">Jeux Ouverts (1. e4 e5)</h3>
+          <ul class="course-menu">
+            <li>
+              <a
+                href="#"
+                id="link-espagnole"
+                class="active"
+                onclick="switchTab('espagnole')"
+                >🇪🇸 L'Espagnole</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-italienne" onclick="switchTab('italienne')"
+                >🇮🇹 L'Italienne</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-ecossaise" onclick="switchTab('ecossaise')"
+                >🏴󠁧󠁢󠁳󠁣󠁴󠁿 L'Écossaise</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-russe" onclick="switchTab('russe')"
+                >🇷🇺 La Russe (Petroff)</a
+              >
+            </li>
+          </ul>
+
+          <h3 class="sidebar-title" style="margin-top: 1.5rem">
+            Autres Familles
+          </h3>
+          <ul class="course-menu">
+            <li><a href="./jeu_semi_ouvert.html">🌓 Jeux Semi-Ouverts</a></li>
+            <li><a href="./jeu_ferme.html">🔒 Jeux Fermés (d4)</a></li>
+            <li><a href="./ouverture_de_flanc.html">🛡️ De Flanc</a></li>
+          </ul>
+        </aside>
+
+        <div class="course-content">
+          <div class="hub-card">
+            <div id="tab-espagnole">
+              <div class="hub-header">
+                <h2>L'Espagnole (Ruy Lopez)</h2>
+                <p>
+                  La reine des ouvertures. Jouée par tous les champions du monde
+                  depuis 150 ans.
+                </p>
+              </div>
+
+              <div class="pgn-sequence">
+                <span class="move-number">1.</span>
+                <span class="move-white">e4</span>
+                <span class="move-black">e5</span>
+                <span class="move-number">2.</span>
+                <span class="move-white">Cf3</span>
+                <span class="move-black">Cc6</span>
+                <span class="move-number">3.</span>
+                <span class="move-white">Fb5</span>
+              </div>
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3&color=white&theme=brown"
+                  alt="Position de l'Espagnole après 3. Fb5"
+                />
+              </div>
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>🎯 Le Plan Stratégique</h3>
+                  <p>
+                    Contrairement à l'Italienne qui attaque f7, le Fou en
+                    <strong>b5</strong> met une pression indirecte sur le pion
+                    e5 en menaçant son défenseur (le Cavalier c6).
+                  </p>
+                  <p style="margin-top: 10px">
+                    Le but est de forcer les Noirs à affaiblir leur structure de
+                    pions pour chasser ce Fou, ou de subir une pression durable
+                    au centre. C'est une ouverture de patience.
+                  </p>
+                </div>
+                <div class="principle-visual">
+                  <div class="board-mini">🇪🇸</div>
+                </div>
+              </article>
+
+              <div class="pros-cons-grid">
+                <div class="pros-box">
+                  <h4>Avantages</h4>
+                  <ul>
+                    <li>Développement très logique et sain.</li>
+                    <li>Prépare le petit roque immédiatement.</li>
+                    <li>Donne souvent un avantage d'espace durable.</li>
+                    <li>Excellente pour apprendre le jeu positionnel.</li>
+                  </ul>
+                </div>
+                <div class="cons-box">
+                  <h4>Inconvénients</h4>
+                  <ul>
+                    <li>Beaucoup de théorie à apprendre (très populaire).</li>
+                    <li>Nécessite de la patience (pas de mat rapide).</li>
+                    <li>
+                      Les Noirs ont beaucoup de défenses solides (Berlin,
+                      Marshall).
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <h3
+                style="
+                  color: #fff;
+                  margin-bottom: 1rem;
+                  border-bottom: 1px solid #383c44;
+                  padding-bottom: 10px;
+                "
+              >
+                Variantes Clés
+              </h3>
+
+              <div class="variant-card">
+                <div class="variant-title">La Défense Morphy (Principale)</div>
+                <div class="variant-moves">3... a6 4. Fa4 Cf6 5. 0-0</div>
+                <div class="variant-desc">
+                  Les Noirs demandent au Fou de se décider. C'est la ligne la
+                  plus jouée.
+                </div>
+              </div>
+
+              <div class="variant-card">
+                <div class="variant-title">La Défense Berlin ("Le Mur")</div>
+                <div class="variant-moves">3... Cf6 4. 0-0 Cxe4</div>
+                <div class="variant-desc">
+                  Célèbre pour être quasi impossible à percer. Mène souvent à
+                  des finales nulles.
+                </div>
+              </div>
+            </div>
+
+            <div id="tab-italienne" style="display: none">
+              <div class="hub-header">
+                <h2>L'Italienne (Giuoco Piano)</h2>
+                <p>
+                  L'ouverture idéale pour comprendre l'attaque et la tactique.
+                </p>
+              </div>
+
+              <div class="pgn-sequence">
+                <span class="move-number">1.</span>
+                <span class="move-white">e4</span>
+                <span class="move-black">e5</span>
+                <span class="move-number">2.</span>
+                <span class="move-white">Cf3</span>
+                <span class="move-black">Cc6</span>
+                <span class="move-number">3.</span>
+                <span class="move-white">Fc4</span>
+              </div>
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=r1bqkbnr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3&color=white&theme=brown"
+                  alt="Position de l'Italienne après 3. Fc4"
+                />
+              </div>
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>🎯 Le Plan Stratégique</h3>
+                  <p>
+                    Le Fou se place sur la case la plus active possible :
+                    <strong>c4</strong>. Il vise directement le point faible
+                    <strong>f7</strong> des Noirs (seule case protégée
+                    uniquement par le Roi).
+                  </p>
+                  <p style="margin-top: 10px">
+                    C'est plus direct que l'Espagnole. Les Blancs contrôlent le
+                    centre et préparent souvent une attaque rapide.
+                  </p>
+                </div>
+                <div class="principle-visual">
+                  <div class="board-mini">🇮🇹</div>
+                </div>
+              </article>
+
+              <div class="pros-cons-grid">
+                <div class="pros-box">
+                  <h4>Avantages</h4>
+                  <ul>
+                    <li>Attaque naturelle sur le Roi noir.</li>
+                    <li>Facile à comprendre pour les débutants.</li>
+                    <li>
+                      Flexible : peut être calme (d3) ou violente (Evans).
+                    </li>
+                  </ul>
+                </div>
+                <div class="cons-box">
+                  <h4>Inconvénients</h4>
+                  <ul>
+                    <li>
+                      Les Noirs peuvent égaliser facilement s'ils connaissent la
+                      théorie.
+                    </li>
+                    <li>
+                      Le Fou en c4 peut devenir une cible (attaqué par ...d5).
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <h3
+                style="
+                  color: #fff;
+                  margin-bottom: 1rem;
+                  border-bottom: 1px solid #383c44;
+                  padding-bottom: 10px;
+                "
+              >
+                Variantes Clés
+              </h3>
+
+              <div class="variant-card">
+                <div class="variant-title">
+                  Giuoco Pianissimo ("Jeu très calme")
+                </div>
+                <div class="variant-moves">4. d3 Cf6 5. c3</div>
+                <div class="variant-desc">
+                  Les Blancs construisent un centre solide lentement. Très
+                  positionnel.
+                </div>
+              </div>
+
+              <div class="variant-card">
+                <div class="variant-title">Le Gambit Evans</div>
+                <div class="variant-moves">4. b4 !? Fxb4 5. c3</div>
+                <div class="variant-desc">
+                  Les Blancs sacrifient un pion pour gagner du temps et dominer
+                  le centre. Explosif !
+                </div>
+              </div>
+            </div>
+
+            <div id="tab-ecossaise" style="display: none">
+              <div class="hub-header">
+                <h2>L'Ouverture Écossaise</h2>
+                <p>
+                  Pour ceux qui n'aiment pas attendre. On ouvre le centre tout
+                  de suite !
+                </p>
+              </div>
+
+              <div class="pgn-sequence">
+                <span class="move-number">1.</span>
+                <span class="move-white">e4</span>
+                <span class="move-black">e5</span>
+                <span class="move-number">2.</span>
+                <span class="move-white">Cf3</span>
+                <span class="move-black">Cc6</span>
+                <span class="move-number">3.</span>
+                <span class="move-white">d4</span>
+              </div>
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=r1bqkbnr/pppp1ppp/2n5/3pp3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3&color=white&theme=brown"
+                  alt="Position de l'Écossaise après 3. d4"
+                />
+              </div>
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>🎯 Le Plan Stratégique</h3>
+                  <p>
+                    Au lieu de développer une pièce, les Blancs forcent
+                    l'échange des pions centraux immédiatement. Cela ouvre la
+                    colonne D pour la Dame et la colonne E.
+                  </p>
+                  <p style="margin-top: 10px">
+                    L'objectif est d'obtenir de l'espace et un développement
+                    libre, en empêchant les Noirs de fermer la position.
+                  </p>
+                </div>
+                <div class="principle-visual">
+                  <div class="board-mini">🏴󠁧󠁢󠁳󠁣󠁴󠁿</div>
+                </div>
+              </article>
+
+              <div class="pros-cons-grid">
+                <div class="pros-box">
+                  <h4>Avantages</h4>
+                  <ul>
+                    <li>Surprend souvent les joueurs d'Espagnole/Italienne.</li>
+                    <li>Force une partie tactique et ouverte.</li>
+                    <li>Les Noirs ne peuvent pas jouer passivement.</li>
+                  </ul>
+                </div>
+                <div class="cons-box">
+                  <h4>Inconvénients</h4>
+                  <ul>
+                    <li>
+                      Libère aussi le jeu des Noirs (leur Fou de cases noires).
+                    </li>
+                    <li>
+                      Si les Noirs jouent précis, la position devient vite
+                      nulle.
+                    </li>
+                    <li>Moins de pression durable que l'Espagnole.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="tab-russe" style="display: none">
+              <div class="hub-header">
+                <h2>La Défense Russe (Petroff)</h2>
+                <p>La forteresse imprenable des Noirs.</p>
+              </div>
+
+              <div class="pgn-sequence">
+                <span class="move-number">1.</span>
+                <span class="move-white">e4</span>
+                <span class="move-black">e5</span>
+                <span class="move-number">2.</span>
+                <span class="move-white">Cf3</span>
+                <span class="move-black">Cf6 !</span>
+              </div>
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3&color=white&theme=brown"
+                  alt="Position de la Russe après 2... Cf6"
+                />
+              </div>
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>🎯 Le Plan Stratégique</h3>
+                  <p>
+                    Au lieu de défendre leur pion e5, les Noirs contre-attaquent
+                    le pion e4 blanc. C'est une symétrie qui frustre souvent les
+                    attaquants.
+                  </p>
+                  <p style="margin-top: 10px">
+                    C'est l'arme idéale si vous voulez faire match nul ou gagner
+                    contre un joueur trop agressif qui prend des risques.
+                  </p>
+                </div>
+                <div class="principle-visual">
+                  <div class="board-mini">🇷🇺</div>
+                </div>
+              </article>
+
+              <div class="pros-cons-grid">
+                <div class="pros-box">
+                  <h4>Avantages (pour les Noirs)</h4>
+                  <ul>
+                    <li>Extrêmement solide, difficile à percer.</li>
+                    <li>Évite toute la théorie complexe de l'Espagnole.</li>
+                    <li>Très fiable à haut niveau.</li>
+                  </ul>
+                </div>
+                <div class="cons-box">
+                  <h4>Inconvénients</h4>
+                  <ul>
+                    <li>
+                      Difficile de gagner si les Blancs veulent faire nul.
+                    </li>
+                    <li>Positions souvent sèches et symétriques.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="../../js/auth.js"></script>
+    <script>
+      // Sidebar Mobile
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+        setTimeout(() => {
+          document.querySelector(".sidebar").classList.add("active");
+        }, 10);
+      }
+      function hidesidebar() {
+        const sb = document.querySelector(".sidebar");
+        sb.classList.remove("active");
+        setTimeout(() => {
+          sb.style.display = "none";
+        }, 300);
+      }
+
+      // Gestion des Onglets
+      function switchTab(tabName) {
+        // 1. On liste tous les onglets possibles
+        const tabs = ["espagnole", "italienne", "ecossaise", "russe"];
+
+        // 2. On cache tout
+        tabs.forEach((t) => {
+          const el = document.getElementById("tab-" + t);
+          if (el) el.style.display = "none";
+
+          const link = document.getElementById("link-" + t);
+          if (link) link.classList.remove("active");
+        });
+
+        // 3. On affiche celui demandé
+        const target = document.getElementById("tab-" + tabName);
+        if (target) target.style.display = "block";
+
+        // 4. On active le lien dans le menu
+        const activeLink = document.getElementById("link-" + tabName);
+        if (activeLink) activeLink.classList.add("active");
+      }
+
+      // --- C'EST ICI QUE CA SE JOUE ---
+      // Au chargement de la page, on vérifie s'il y a un # dans l'URL
+      window.onload = function () {
+        const hash = window.location.hash.replace("#", "");
+
+        if (
+          hash &&
+          (hash === "italienne" || hash === "ecossaise" || hash === "russe")
+        ) {
+          // Si une ancre est présente, on ouvre l'onglet correspondant
+          switchTab(hash);
+        } else {
+          // Sinon, on ouvre l'Espagnole par défaut
+          switchTab("espagnole");
+        }
+      };
+    </script>
+  </body>
+</html>

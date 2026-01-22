@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Centre d'Aide</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/media.css" />
+
+    <link rel="stylesheet" href="./css/style.css" />
+
+    <style>
+      .faq-container {
+        max-width: 600px !important; /* Force le bloc à être plus petit */
+        margin: 0 auto 5rem auto;
+        position: relative;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li class="sidebar-logo"><span>MENU</span></li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Analyze/index.html">Analyze</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+        </ul>
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Puzzles/index.html">Puzzles <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Analyze/index.html">Analyze <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="title">
+        <h2><span>Centre d'Aide</span></h2>
+        <p style="color: var(--text-muted); margin-top: 1rem">
+          Une question ? Un problème ? Nous sommes là pour vous.
+        </p>
+      </div>
+
+      <div class="cards support-cards">
+        <section class="support-card">
+          <div class="icon-box cyan">🎮</div>
+          <h3>Le Club Privé</h3>
+          <p>
+            Rejoins le serveur vocal pour analyser tes parties en direct ou
+            signaler un bug rapidement.
+          </p>
+          <a
+            href="https://discord.gg/votre-code-invitation"
+            target="_blank"
+            class="btn-support btn-tech"
+            >Rejoindre le Discord</a
+          >
+        </section>
+
+        <section class="support-card">
+          <div class="icon-box orange">📩</div>
+          <h3>M'écrire en direct</h3>
+          <p>
+            Tu préfères les mails ou tu as repéré une erreur dans un cours ?
+            Envoie-moi un message.
+          </p>
+          <a
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=gabrielbourdas@gmail.com"
+            target="_blank"
+            class="btn-support btn-question"
+            >Ouvrir Gmail</a
+          >
+        </section>
+
+        <section class="support-card">
+          <div class="icon-box green">🚀</div>
+          <h3>On ajoute quoi ?</h3>
+          <p>
+            C'est votre site ! Dis-moi quelle fonctionnalité tu aimerais voir
+            pour la prochaine mise à jour.
+          </p>
+          <a
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=gabrielbourdas@gmail.com&su=Idée pour Open Chess"
+            target="_blank"
+            class="btn-support btn-idea"
+            >Proposer une idée</a
+          >
+        </section>
+      </div>
+
+      <div class="faq-container">
+        <h3>Questions Fréquentes</h3>
+
+        <div class="faq-wrapper">
+          <details>
+            <summary>Au secours, un pion a disparu ! (C'est un bug ?)</summary>
+            <div class="faq-content">
+              <p>
+                Il y a 99% de chances que ce soit la
+                <strong>Prise en Passant</strong> ! C'est une règle spéciale :
+                si un pion adverse avance de deux cases et atterrit juste à côté
+                du vôtre, vous pouvez le manger comme s'il n'avait avancé que
+                d'une seule case. Ce n'est pas un bug, c'est les échecs ! ♟️
+              </p>
+            </div>
+          </details>
+
+          <details>
+            <summary>Ma progression est-elle sauvegardée ?</summary>
+            <div class="faq-content">
+              <p>
+                Oui, à condition d'être <strong>connecté</strong>. Tout est
+                synchronisé en temps réel. Tu peux commencer un cours sur ton PC
+                et finir les puzzles sur ton téléphone. Si tu joues en "Invité",
+                tout sera perdu à la fermeture.
+              </p>
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Mon classement Elo est-il le même que sur Chess.com ?
+            </summary>
+            <div class="faq-content">
+              <p>
+                Pas exactement. Chaque site utilise sa propre formule
+                mathématique. Utilise ton classement Open Chess pour mesurer ta
+                propre progression ici, pas pour te comparer aux Grands Maîtres
+                !
+              </p>
+            </div>
+          </details>
+
+          <details>
+            <summary>J'ai fini les cours, et maintenant ?</summary>
+            <div class="faq-content">
+              <p>
+                Bravo ! 🎉 La section "Milieu de Jeu" est la prochaine étape. De
+                nouveaux modules (Ouvertures avancées, Finales complexes) sont
+                ajoutés régulièrement. N'hésite pas à utiliser le bouton
+                <strong>"On ajoute quoi ?"</strong> pour voter.
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess</h3>
+          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Commencez l'aventure</h3>
+          <a href="/login/index.html" class="btn-register"
+            >S'inscrire Gratuitement</a
+          >
+        </div>
+        <div class="footer-section">
+          <h3>Liens Partenaires</h3>
+          <ul>
+            <li>
+              <a href="https://www.chess.com" target="_blank">Chess.com</a>
+            </li>
+            <li><a href="#">Chaîne YouTube</a></li>
+            <li><a href="/support/index.html">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; <span id="year">2026</span> <span>Open Chess</span>. Tous
+          droits réservés.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+        setTimeout(() => {
+          document.querySelector(".sidebar").classList.add("active");
+        }, 10);
+      }
+      function hidesidebar() {
+        document.querySelector(".sidebar").classList.remove("active");
+        setTimeout(() => {
+          document.querySelector(".sidebar").style.display = "none";
+        }, 300);
+      }
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

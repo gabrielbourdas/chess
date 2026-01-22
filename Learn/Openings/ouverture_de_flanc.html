@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Ouvertures de Flanc</title>
+    <link rel="icon" href="../../img/logo.webp" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../../css/nav.css" />
+    <link rel="stylesheet" href="../css/learn.css" />
+    <link rel="stylesheet" href="../css/openings.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="../../img/close.svg" alt="close" /></a>
+          </li>
+          <li><a href="../../Play/index.html">Play</a></li>
+          <li><a href="../../Puzzles/index.html">Puzzles</a></li>
+          <li><a href="../../Learn/index.html">Learn</a></li>
+        </ul>
+        <ul>
+          <li class="logo-container">
+            <a href="../../index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="../index.html">Menu</a>
+          </li>
+          <li class="hideOnMobile">
+            <a
+              href="../Opening.html"
+              style="
+                color: #00d9f6;
+                font-weight: bold;
+                border-bottom: 2px solid #00d9f6;
+              "
+              >Ouvertures</a
+            >
+          </li>
+          <li class="hideOnMobile"><a href="../Midgame.html">Milieu</a></li>
+          <li class="hideOnMobile"><a href="../Endgame.html">Finales</a></li>
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="../../img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="course-wrapper">
+        <aside class="course-sidebar">
+          <h3 class="sidebar-title">Ouvertures de Flanc</h3>
+          <ul class="course-menu">
+            <li>
+              <a
+                href="#"
+                id="link-anglaise"
+                class="active"
+                onclick="switchTab('anglaise')"
+                >🇬🇧 L'Anglaise (1. c4)</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-reti" onclick="switchTab('reti')"
+                >🐴 La Réti (1. Cf3)</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-kia" onclick="switchTab('kia')"
+                >⚔️ Attaque Est-Indienne</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-autres" onclick="switchTab('autres')"
+                >🦅 Autres (Bird, Larsen)</a
+              >
+            </li>
+          </ul>
+
+          <h3 class="sidebar-title" style="margin-top: 1.5rem">
+            Autres Familles
+          </h3>
+          <ul class="course-menu">
+            <li><a href="./jeu_ouvert.html">⚔️ Jeux Ouverts (e4 e5)</a></li>
+            <li><a href="./jeu_semi_ouvert.html">🌓 Jeux Semi-Ouverts</a></li>
+            <li><a href="./jeu_ferme.html">🔒 Jeux Fermés (d4)</a></li>
+          </ul>
+        </aside>
+
+        <div class="course-content">
+          <div class="hub-card">
+            <div id="tab-anglaise">
+              <div class="hub-header">
+                <h2>L'Ouverture Anglaise</h2>
+                <p>Contrôler le centre sans l'occuper immédiatement.</p>
+              </div>
+
+              <div class="pgn-sequence">
+                <span class="move-number">1.</span>
+                <span class="move-white">c4</span>
+              </div>
+
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq - 0 1&color=white&theme=brown"
+                  alt="Ouverture Anglaise"
+                />
+              </div>
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>🎯 Le Plan Stratégique</h3>
+                  <p>
+                    Les Blancs contrôlent la case <strong>d5</strong> depuis
+                    l'aile (c4). Cela permet souvent de transposer dans des
+                    positions de type d4 (Gambit Dame) ou de rester dans des
+                    structures uniques (Sicilienne inversée).
+                  </p>
+                  <p style="margin-top: 10px">
+                    C'est une ouverture de "manœuvre". On ne cherche pas le
+                    contact immédiat, mais l'avantage d'espace à long terme.
+                  </p>
+                </div>
+                <div class="principle-visual">
+                  <div class="board-mini">🇬🇧</div>
+                </div>
+              </article>
+
+              <div class="pros-cons-grid">
+                <div class="pros-box">
+                  <h4>Avantages</h4>
+                  <ul>
+                    <li>
+                      Extrêmement flexible (peut devenir presque n'importe
+                      quoi).
+                    </li>
+                    <li>Surprend les joueurs de e4.</li>
+                    <li>Très solide positionnellement.</li>
+                  </ul>
+                </div>
+                <div class="cons-box">
+                  <h4>Inconvénients</h4>
+                  <ul>
+                    <li>
+                      Nécessite de connaître beaucoup de structures de pions
+                      différentes.
+                    </li>
+                    <li>Pas d'attaque directe, demande de la patience.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="tab-reti" style="display: none">
+              <div class="hub-header">
+                <h2>L'Ouverture Réti</h2>
+                <p>La flexibilité à son paroxysme. "Attendre et voir".</p>
+              </div>
+
+              <div class="pgn-sequence">
+                <span class="move-number">1.</span>
+                <span class="move-white">Cf3</span>
+              </div>
+
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1&color=white&theme=brown"
+                  alt="Ouverture Réti"
+                />
+              </div>
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>🎯 Le Plan Stratégique</h3>
+                  <p>
+                    En sortant le Cavalier, les Blancs contrôlent e5 et d4 sans
+                    s'engager avec un pion. Ils attendent de voir la disposition
+                    des Noirs avant de décider de jouer d4, c4, ou e4.
+                  </p>
+                  <div class="move-box">
+                    <strong>💡 L'idée :</strong>
+                    <span
+                      >Ne pas créer de cibles (pions avancés) que l'adversaire
+                      pourrait attaquer.</span
+                    >
+                  </div>
+                </div>
+                <div class="principle-visual">
+                  <div class="board-mini">🐴</div>
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-kia" style="display: none">
+              <div class="hub-header">
+                <h2>L'Attaque Est-Indienne (KIA)</h2>
+                <p>Un système universel, miroir de la défense Est-Indienne.</p>
+              </div>
+
+              <div class="pgn-sequence">
+                <span class="move-number">1.</span>
+                <span class="move-white">Cf3</span>
+                <span class="move-black">d5</span>
+                <span class="move-number">2.</span>
+                <span class="move-white">g3</span>
+                <span style="color: #888; margin-left: 10px"
+                  >(Suivi de Fg2, d3, 0-0, e4)</span
+                >
+              </div>
+
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=rnbqkb1r/pppppppp/8/3p4/8/5NP1/PPPPPP1P/RNBQKB1R b KQkq - 0 2&color=white&theme=brown"
+                  alt="KIA Setup"
+                />
+              </div>
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>🎯 Le Plan Stratégique</h3>
+                  <p>
+                    Les Blancs construisent une forteresse sur l'aile Roi puis
+                    lancent une attaque massive sur ce même côté, souvent en
+                    poussant le pion e4-e5.
+                  </p>
+                  <p style="margin-top: 10px">
+                    C'est l'ouverture favorite de Bobby Fischer pour gagner avec
+                    les Blancs sans apprendre des tonnes de théorie.
+                  </p>
+                </div>
+                <div class="principle-visual">
+                  <div class="board-mini">⚔️</div>
+                </div>
+              </article>
+
+              <div class="pros-cons-grid">
+                <div class="pros-box">
+                  <h4>Avantages</h4>
+                  <ul>
+                    <li>Système : on joue les mêmes coups contre tout.</li>
+                    <li>Attaques de mat spectaculaires possibles.</li>
+                  </ul>
+                </div>
+                <div class="cons-box">
+                  <h4>Inconvénients</h4>
+                  <ul>
+                    <li>
+                      Les Blancs n'obtiennent pas d'avantage au centre au début.
+                    </li>
+                    <li>Si l'attaque rate, la position est difficile.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="tab-autres" style="display: none">
+              <div class="hub-header">
+                <h2>Les Alternatives Rares</h2>
+                <p>
+                  Pour sortir l'adversaire de sa zone de confort dès le 1er
+                  coup.
+                </p>
+              </div>
+
+              <div class="variant-card" style="border-left: 4px solid #58cc02">
+                <div class="variant-title">🦅 L'Ouverture Bird</div>
+                <div
+                  class="pgn-sequence"
+                  style="margin: 0.5rem 0; font-size: 0.9rem"
+                >
+                  1. f4
+                </div>
+                <div class="position-image-container" style="margin: 1rem 0">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/pppppppp/8/8/5P2/8/PPPPP1PP/RNBQKBNR b KQkq - 0 1&color=white&theme=brown"
+                    alt="Bird"
+                  />
+                </div>
+                <div class="variant-desc">
+                  Miroir de la défense Hollandaise. Les Blancs contrôlent e5
+                  mais affaiblissent légèrement leur Roi. Très dangereux pour
+                  les deux camps.
+                </div>
+              </div>
+
+              <div class="variant-card" style="border-left: 4px solid #ff5500">
+                <div class="variant-title">🚀 L'Ouverture Larsen</div>
+                <div
+                  class="pgn-sequence"
+                  style="margin: 0.5rem 0; font-size: 0.9rem"
+                >
+                  1. b3
+                </div>
+                <div class="position-image-container" style="margin: 1rem 0">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/pppppppp/8/8/8/1P6/P1PPPPPP/RNBQKBNR b KQkq - 0 1&color=white&theme=brown"
+                    alt="Larsen"
+                  />
+                </div>
+                <div class="variant-desc">
+                  Les Blancs fianchettent leur Fou Dame immédiatement pour
+                  contrôler la grande diagonale noire.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="../../js/auth.js"></script>
+    <script>
+      // Sidebar Mobile
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+        setTimeout(() => {
+          document.querySelector(".sidebar").classList.add("active");
+        }, 10);
+      }
+      function hidesidebar() {
+        const sb = document.querySelector(".sidebar");
+        sb.classList.remove("active");
+        setTimeout(() => {
+          sb.style.display = "none";
+        }, 300);
+      }
+
+      // Gestion des Onglets
+      function switchTab(tabName) {
+        const tabs = ["anglaise", "reti", "kia", "autres"];
+
+        tabs.forEach((t) => {
+          const el = document.getElementById("tab-" + t);
+          if (el) el.style.display = "none";
+          const link = document.getElementById("link-" + t);
+          if (link) link.classList.remove("active");
+        });
+
+        const target = document.getElementById("tab-" + tabName);
+        if (target) target.style.display = "block";
+
+        const activeLink = document.getElementById("link-" + tabName);
+        if (activeLink) activeLink.classList.add("active");
+      }
+
+      // Gestion de l'URL (Hash)
+      window.onload = function () {
+        const hash = window.location.hash.replace("#", "");
+        const validTabs = ["anglaise", "reti", "kia", "autres"];
+
+        if (hash && validTabs.includes(hash)) {
+          switchTab(hash);
+        } else {
+          switchTab("anglaise"); // Par défaut
+        }
+      };
+    </script>
+  </body>
+</html>

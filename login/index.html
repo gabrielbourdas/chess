@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Accès Membre</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="../css/media.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li class="sidebar-logo"><span>MENU</span></li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Analyze/index.html">Analyze</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+        </ul>
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Puzzles/index.html">Puzzles <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Analyze/index.html">Analyze <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="auth-main">
+      <div class="auth-wrapper">
+        <div id="login-box" class="auth-card fade-in">
+          <div class="auth-header">
+            <div class="auth-icon">🔐</div>
+            <h2>Accès au QG</h2>
+            <p>Identifie-toi pour lancer une partie.</p>
+          </div>
+
+          <form action="#" class="auth-form">
+            <div class="input-group">
+              <label for="login-user">Email</label>
+              <input
+                type="text"
+                id="login-user"
+                placeholder="Rentrez votre email"
+                required
+              />
+            </div>
+            <div class="input-group">
+              <label for="login-pass">Mot de passe</label>
+              <input
+                type="password"
+                id="login-pass"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <div class="form-options">
+              <label class="checkbox-container">
+                <input type="checkbox" checked />
+                <span class="checkmark"></span> Se souvenir
+              </label>
+              <a href="#" class="forgot-pass">Oublié ?</a>
+            </div>
+
+            <button type="submit" class="btn-login">Login</button>
+          </form>
+
+          <div class="auth-footer">
+            <p>
+              Nouveau challenger ?
+              <a href="#" onclick="switchForm('register')">Créer un compte</a>
+            </p>
+          </div>
+        </div>
+
+        <div id="register-box" class="auth-card hidden fade-in">
+          <div class="auth-header">
+            <div class="auth-icon">⚔️</div>
+            <h2>Rejoindre le Club</h2>
+            <p>Crée ton profil pour suivre ta progression.</p>
+          </div>
+
+          <form action="#" class="auth-form">
+            <div class="input-group">
+              <label for="reg-user">Pseudo</label>
+              <input
+                type="text"
+                id="reg-user"
+                placeholder="Ton nom de guerre"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="reg-email">Email (Optionnel)</label>
+              <input
+                type="email"
+                id="reg-email"
+                placeholder="Pour récupérer le mot de passe"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="reg-pass">Mot de passe</label>
+              <input
+                type="password"
+                id="reg-pass"
+                placeholder="Choisis bien..."
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="reg-pass-conf">Confirmer</label>
+              <input
+                type="password"
+                id="reg-pass-conf"
+                placeholder="Répète le mot de passe"
+                required
+              />
+            </div>
+
+            <button type="submit" class="btn-login">
+              Valider l'inscription
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            <p>
+              Déjà membre ?
+              <a href="#" onclick="switchForm('login')">Se connecter</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess</h3>
+          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Commencez l'aventure</h3>
+          <a
+            href="#"
+            onclick="switchForm('register'); window.scrollTo(0,0);"
+            class="btn-register"
+            >S'inscrire Gratuitement</a
+          >
+        </div>
+        <div class="footer-section">
+          <h3>Liens Partenaires</h3>
+          <ul>
+            <li>
+              <a href="https://www.chess.com" target="_blank">Chess.com</a>
+            </li>
+            <li><a href="/video/index.html">Chaîne YouTube</a></li>
+            <li><a href="/support/index.html">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; <span id="year">2026</span> <span>Open Chess</span>. Tous
+          droits réservés.
+        </p>
+      </div>
+    </footer>
+
+    <script type="module">
+      // 1. IMPORT DU CERVEAU (Configuration centrale)
+      // On récupère 'auth' et 'db' qui sont déjà initialisés avec tes clés dans auth.js
+      import { auth, db } from "../js/auth.js";
+
+      // 2. IMPORT DES OUTILS SPÉCIFIQUES À CETTE PAGE
+      // On a toujours besoin des fonctions pour "Créer un compte" et "Se connecter"
+      import {
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      import {
+        doc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+      // --- PLUS BESOIN DE firebaseConfig NI DE initializeApp ICI ! ---
+      // Tout est géré par la ligne 1.
+
+      // --- LOGIQUE D'INSCRIPTION ---
+      const registerForm = document.querySelector("#register-box form");
+      if (registerForm) {
+        registerForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const email = document.getElementById("reg-email").value;
+          const password = document.getElementById("reg-pass").value;
+          const pseudo = document.getElementById("reg-user").value;
+          const passConf = document.getElementById("reg-pass-conf").value;
+
+          if (password !== passConf) {
+            alert("Les mots de passe ne correspondent pas !");
+            return;
+          }
+
+          createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+              // Compte créé ! On crée sa fiche dans la base de données
+              const user = userCredential.user;
+              // On utilise 'db' importé de auth.js
+              setDoc(doc(db, "users", user.uid), {
+                pseudo: pseudo,
+                email: email,
+                progress: {
+                  opening: 0,
+                  puzzles: 0,
+                },
+              });
+              alert("Bienvenue au club, " + pseudo + " !");
+              window.location.href = "../index.html";
+            })
+            .catch((error) => {
+              let msg = "Erreur : " + error.message;
+              if (error.code === "auth/email-already-in-use")
+                msg = "Cet email est déjà utilisé.";
+              if (error.code === "auth/weak-password")
+                msg = "Mot de passe trop faible (6 caractères min).";
+              alert(msg);
+            });
+        });
+      }
+
+      // --- LOGIQUE DE CONNEXION ---
+      const loginForm = document.querySelector("#login-box form");
+      if (loginForm) {
+        loginForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const email = document.getElementById("login-user").value;
+          const password = document.getElementById("login-pass").value;
+
+          signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+              console.log("Connecté !");
+              window.location.href = "../index.html";
+            })
+            .catch((error) => {
+              console.error(error);
+              alert("Email ou mot de passe incorrect.");
+            });
+        });
+      }
+
+      // --- FONCTIONS VISUELLES (Sidebar, Switch, Date) ---
+      // On les attache à 'window' pour qu'elles marchent avec les onclick="..." du HTML
+      window.showsidebar = function () {
+        document.querySelector(".sidebar").style.display = "flex";
+        setTimeout(() => {
+          document.querySelector(".sidebar").classList.add("active");
+        }, 10);
+      };
+      window.hidesidebar = function () {
+        document.querySelector(".sidebar").classList.remove("active");
+        setTimeout(() => {
+          document.querySelector(".sidebar").style.display = "none";
+        }, 300);
+      };
+
+      window.switchForm = function (target) {
+        const loginBox = document.getElementById("login-box");
+        const registerBox = document.getElementById("register-box");
+        if (target === "register") {
+          loginBox.classList.add("hidden");
+          registerBox.classList.remove("hidden");
+        } else {
+          registerBox.classList.add("hidden");
+          loginBox.classList.remove("hidden");
+        }
+      };
+
+      const yearSpan = document.getElementById("year");
+      if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

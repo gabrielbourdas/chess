@@ -1,0 +1,256 @@
+/* --- HERO SECTION --- */
+.puzzle-hero {
+  text-align: center;
+  padding: 3rem 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.puzzle-hero h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.highlight {
+  color: #00d9f6; /* Cyan Open Chess */
+  position: relative;
+  display: inline-block;
+}
+/* Petit effet de soulignement stylé */
+.highlight::after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 217, 246, 0.2);
+  z-index: -1;
+  border-radius: 4px;
+}
+
+.puzzle-hero p {
+  color: #b9bbbe;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* --- DAILY PUZZLE (LA CARTE VEDETTE) --- */
+.daily-puzzle-section {
+  max-width: 1000px;
+  margin: 0 auto 4rem auto;
+  padding: 0 1rem;
+}
+
+.daily-card {
+  background: linear-gradient(145deg, #24262b 0%, #1e2024 100%);
+  border: 1px solid #383c44;
+  border-radius: 16px;
+  display: flex;
+  overflow: hidden; /* Pour que l'image ne dépasse pas */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.daily-card:hover {
+  transform: translateY(-5px);
+  border-color: #ff9f00; /* Orange au survol */
+}
+
+.daily-content {
+  padding: 2.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.badge-daily {
+  background: rgba(255, 159, 0, 0.15);
+  color: #ff9f00;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.daily-content h3 {
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.daily-content p {
+  color: #b9bbbe;
+  margin-bottom: 1.5rem;
+}
+
+.daily-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.btn-solve {
+  background: #ff9f00;
+  color: #18191c;
+  padding: 12px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.btn-solve:hover {
+  background: #ffb74d;
+  box-shadow: 0 0 15px rgba(255, 159, 0, 0.4);
+}
+
+.daily-image {
+  width: 40%;
+  background: #2b2d33;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid #383c44;
+}
+
+.daily-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Remplit bien la zone */
+  opacity: 0.9;
+}
+
+/* --- MODES GRID (LES CARTES SECONDAIRES) --- */
+.puzzle-modes {
+  max-width: 1000px;
+  margin: 0 auto 5rem auto;
+  padding: 0 1rem;
+}
+
+.puzzle-modes h3 {
+  color: #fff;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  border-left: 4px solid #00d9f6;
+  padding-left: 15px;
+}
+
+.modes-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(220px, 1fr)
+  ); /* Responsive auto */
+  gap: 1.5rem;
+}
+
+.mode-card {
+  background: #24262b;
+  border: 1px solid #383c44;
+  border-radius: 12px;
+  padding: 2rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.mode-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.mode-info h4 {
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.mode-info p {
+  color: #72767d; /* Gris plus foncé pour le texte secondaire */
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* COULEURS SPÉCIFIQUES PAR MODE AU SURVOL */
+/* Ranked: Cyan */
+.mode-card.ranked:hover {
+  border-color: #00d9f6;
+  transform: translateY(-5px);
+}
+.mode-card.ranked:hover .mode-icon {
+  background: rgba(0, 217, 246, 0.2);
+  color: #00d9f6;
+}
+
+/* Sprint: Orange */
+.mode-card.sprint:hover {
+  border-color: #ff9f00;
+  transform: translateY(-5px);
+}
+.mode-card.sprint:hover .mode-icon {
+  background: rgba(255, 159, 0, 0.2);
+  color: #ff9f00;
+}
+
+/* Theme: Vert */
+.mode-card.theme:hover {
+  border-color: #58cc02;
+  transform: translateY(-5px);
+}
+.mode-card.theme:hover .mode-icon {
+  background: rgba(88, 204, 2, 0.2);
+  color: #58cc02;
+}
+
+/* Survival: Rouge */
+.mode-card.survival:hover {
+  border-color: #ff4d4d;
+  transform: translateY(-5px);
+}
+.mode-card.survival:hover .mode-icon {
+  background: rgba(255, 77, 77, 0.2);
+  color: #ff4d4d;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .daily-card {
+    flex-direction: column-reverse; /* L'image passe au dessus ou en dessous */
+  }
+  .daily-image {
+    width: 100%;
+    height: 250px;
+    border-left: none;
+    border-bottom: 1px solid #383c44;
+  }
+  .daily-content {
+    align-items: center;
+    text-align: center;
+  }
+  .puzzle-hero h2 {
+    font-size: 2rem;
+  }
+}

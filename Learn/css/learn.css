@@ -1,0 +1,169 @@
+/* --- learn.css : Style structurel pour la section Apprendre --- */
+
+/* Conteneur principal (Sidebar + Contenu) */
+.course-wrapper {
+  display: flex;
+  max-width: 1300px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* Le bloc de contenu principal */
+/* IMPORTANT : On utilise une classe spécifique, pas de balise générique */
+.course-content {
+  flex-grow: 1;
+  width: 100%;
+  /* On annule explicitement les styles de "section" du global au cas où */
+  max-width: none;
+  box-shadow: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* --- SIDEBAR --- */
+.course-sidebar {
+  width: 280px;
+  background: #1e2024;
+  border: 1px solid #383c44;
+  border-radius: 12px;
+  padding: 1.5rem;
+  flex-shrink: 0;
+  position: sticky;
+  top: 90px; /* Sous le header */
+}
+
+.sidebar-title {
+  color: #fff;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #383c44;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.course-menu {
+  list-style: none;
+  padding: 0;
+}
+.course-menu li {
+  margin-bottom: 0.5rem;
+}
+.course-menu a {
+  display: block;
+  color: #b9bbbe;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+.course-menu a:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  transform: translateX(5px);
+}
+.course-menu a.active {
+  background: rgba(0, 217, 246, 0.1);
+  color: #00d9f6;
+  border-left: 3px solid #00d9f6;
+  font-weight: bold;
+}
+
+/* --- STYLE DU HUB (Les cartes larges dans Opening.html) --- */
+.hub-card {
+  background: #24262b;
+  border: 1px solid #383c44;
+  border-radius: 12px;
+  padding: 3rem;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.hub-header h2 {
+  color: #00d9f6;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  display: block;
+}
+/* Annulation du hover global sur les h2 */
+.hub-header h2:hover {
+  transform: none;
+  box-shadow: none;
+  border: none;
+}
+
+.principle-section {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.principle-text {
+  flex: 1;
+}
+.principle-text h3 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border: none;
+  text-align: left;
+}
+
+/* Blocs visuels */
+.board-mini {
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  border: 2px solid #383c44;
+}
+
+.move-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #00d9f6;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0 6px 6px 0;
+}
+.move-box strong {
+  color: #fff;
+  display: block;
+  margin-bottom: 5px;
+}
+.move-box span {
+  color: #00d9f6;
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .course-wrapper {
+    flex-direction: column;
+  }
+  .course-sidebar {
+    width: 100%;
+    position: relative;
+    top: 0;
+    margin-bottom: 1rem;
+  }
+  .principle-section {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+  .principle-text h3 {
+    text-align: center;
+  }
+}

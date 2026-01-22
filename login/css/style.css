@@ -1,0 +1,204 @@
+/* =========================================
+   PAGE LOGIN / AUTH
+   ========================================= */
+
+/* On force le main à prendre toute la hauteur pour centrer verticalement */
+.auth-main {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 217, 246, 0.05) 0%,
+    transparent 70%
+  );
+}
+
+.auth-wrapper {
+  width: 100%;
+  max-width: 420px;
+  padding: 1rem;
+}
+
+.auth-card {
+  background: rgba(30, 32, 36, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid #383c44;
+  border-top: 4px solid #00d9f6; /* Ligne Cyan au dessus */
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.auth-header {
+  margin-bottom: 2rem;
+}
+
+.auth-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.auth-header h2 {
+  color: #fff;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.auth-header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Formulaire */
+.input-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  color: #ebebeb;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.input-group input {
+  width: 100%;
+  background: #18191c;
+  border: 1px solid #383c44;
+  padding: 12px 15px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s;
+  box-sizing: border-box; /* Important pour ne pas dépasser */
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #00d9f6;
+  box-shadow: 0 0 10px rgba(0, 217, 246, 0.2);
+}
+
+/* Options (Checkbox + Lien oubli) */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.forgot-pass {
+  color: #00d9f6;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.forgot-pass:hover {
+  text-decoration: underline;
+}
+
+/* Gros Bouton */
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(90deg, #00d9f6, #00b8d4);
+  color: #18191c;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(0, 217, 246, 0.4);
+}
+
+/* Bas de carte */
+.auth-footer {
+  margin-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.auth-footer a:hover {
+  color: #00d9f6;
+}
+/* ... Tout le CSS précédent de la page login reste bon ... */
+
+/* CLASSE UTILITAIRE POUR CACHER */
+.hidden {
+  display: none !important;
+}
+
+/* PETITE ANIMATION D'APPARITION */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ajustement spécifique pour le formulaire d'inscription qui est plus long */
+#register-box .auth-icon {
+  font-size: 2.5rem; /* Un peu plus petit pour gagner de la place */
+  margin-bottom: 0.5rem;
+}
+
+#register-box .input-group {
+  margin-bottom: 1rem; /* Espacement un peu réduit */
+}
+/* Responsive */
+@media (max-width: 500px) {
+  .auth-card {
+    padding: 1.5rem;
+  }
+}

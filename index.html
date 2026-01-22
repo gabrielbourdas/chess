@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="img/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/nav.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/media.css" />
+    <title>Open Chess - Accueil</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li class="sidebar-logo"><span>MENU</span></li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Analyze/index.html">Analyze</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+        </ul>
+
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Puzzles/index.html">Puzzles <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Analyze/index.html">Analyze <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="title">
+        <h2><span>Open Chess</span></h2>
+      </div>
+
+      <div class="featured-wrapper">
+        <section class="featured-lesson">
+          <div class="featured-content">
+            <span class="badge-new">Bienvenue sur Open Chess</span>
+            <div class="text-group">
+              <h3>Le Jeu des Rois</h3>
+              <p>La plateforme moderne pour apprendre, analyser et jouer.</p>
+            </div>
+          </div>
+          <div class="featured-actions">
+            <a href="/Play/index.html" class="btn-play">▶ Jouer Maintenant</a>
+          </div>
+        </section>
+      </div>
+
+      <div class="cards">
+        <section>
+          <h3 style="color: #00d9f6">Intellect</h3>
+          <div class="card-content">
+            <p>Un exercice mental complet :</p>
+            <ul class="quick-links">
+              <li>
+                <span style="color: #fff; font-weight: bold"
+                  >🧠 Concentration :</span
+                ><br />
+                <span style="font-size: 0.85rem; color: #b9bbbe"
+                  >Apprenez à rester focalisé sur l'objectif.</span
+                >
+              </li>
+              <li>
+                <span style="color: #fff; font-weight: bold">💡 Logique :</span
+                ><br />
+                <span style="font-size: 0.85rem; color: #b9bbbe"
+                  >Développez votre pensée stratégique.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <h4 class="card-footer cyan">Musclez votre cerveau</h4>
+        </section>
+
+        <section>
+          <h3 style="color: #ff9f00">Pour Tous</h3>
+          <div class="card-content">
+            <p>Un jeu universel et intemporel :</p>
+            <ul class="quick-links">
+              <li>
+                <span style="color: #fff; font-weight: bold"
+                  >🌍 Sans Frontières :</span
+                ><br />
+                <span style="font-size: 0.85rem; color: #b9bbbe"
+                  >Un langage commun à travers le monde.</span
+                >
+              </li>
+              <li>
+                <span style="color: #fff; font-weight: bold"
+                  >👶 De 7 à 77 ans :</span
+                ><br />
+                <span style="font-size: 0.85rem; color: #b9bbbe"
+                  >Il n'est jamais trop tard pour apprendre.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <h4 class="card-footer orange">Rejoignez l'aventure</h4>
+        </section>
+
+        <section>
+          <h3 style="color: #58cc02">Le Défi</h3>
+          <div class="card-content">
+            <p>Vivez des émotions uniques :</p>
+            <ul class="quick-links">
+              <li>
+                <span style="color: #fff; font-weight: bold"
+                  >🏆 Compétition :</span
+                ><br />
+                <span style="font-size: 0.85rem; color: #b9bbbe"
+                  >Mesurez-vous à d'autres passionnés.</span
+                >
+              </li>
+              <li>
+                <span style="color: #fff; font-weight: bold"
+                  >📈 Progression :</span
+                ><br />
+                <span style="font-size: 0.85rem; color: #b9bbbe"
+                  >Gravissez les échelons du classement.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <h4 class="card-footer green">Relevez le challenge</h4>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess</h3>
+          <p>
+            La plateforme ultime pour maîtriser le jeu des rois. Rejoignez une
+            communauté passionnée et progressez dans un environnement moderne.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Commencez l'aventure</h3>
+          <p>
+            Créez votre compte pour accéder aux cours et suivre votre
+            progression.
+          </p>
+          <a href="/login/index.html" class="btn-register"
+            >S'inscrire Gratuitement</a
+          >
+        </div>
+
+        <div class="footer-section">
+          <h3>Liens Partenaires</h3>
+          <ul>
+            <li>
+              <a href="https://www.chess.com" target="_blank">Chess.com</a>
+            </li>
+            <li><a href="./video/index.html">Chaîne YouTube</a></li>
+            <li><a href="/support/index.html">Support / Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          &copy; <span id="year">2026</span> <span>Open Chess</span>. Tous
+          droits réservés.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      function showsidebar() {
+        const sidebar = document.querySelector(".sidebar");
+        sidebar.style.display = "flex";
+        setTimeout(() => {
+          sidebar.classList.add("active");
+        }, 10);
+      }
+      function hidesidebar() {
+        const sidebar = document.querySelector(".sidebar");
+        sidebar.classList.remove("active");
+        setTimeout(() => {
+          sidebar.style.display = "none";
+        }, 300);
+      }
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

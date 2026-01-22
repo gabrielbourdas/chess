@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Les Finales</title>
+    <link rel="icon" href="/img/logo.webp" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="./css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="./css/learn.css" />
+    <link rel="stylesheet" href="./css/openings.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+        </ul>
+
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a href="./index.html">Menu</a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a href="./Opening.html">Ouvertures</a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a href="./Midgame.html" class="nav-orange">Milieu</a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a
+              href="#"
+              class="nav-green"
+              style="
+                color: #58cc02;
+                font-weight: bold;
+                border-bottom: 2px solid #58cc02;
+              "
+              >Finales</a
+            >
+          </li>
+
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="course-wrapper">
+        <aside class="course-sidebar">
+          <h3 class="sidebar-title">Technique Pure</h3>
+          <ul class="course-menu">
+            <li>
+              <a
+                href="#"
+                id="link-mats"
+                class="active"
+                onclick="switchTab('mats')"
+                >🏁 Mats Élémentaires</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-pions" onclick="switchTab('pions')"
+                >♟️ Finales de Pions</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-tours" onclick="switchTab('tours')"
+                >🏰 Finales de Tours</a
+              >
+            </li>
+          </ul>
+
+          <h3 class="sidebar-title" style="margin-top: 1.5rem">
+            Principes Clés
+          </h3>
+          <ul class="course-menu">
+            <li>
+              <a href="#" id="link-roi" onclick="switchTab('roi')"
+                >🤴 L'Activité du Roi</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-zugzwang" onclick="switchTab('zugzwang')"
+                >⛔ Le Zugzwang</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-pont" onclick="switchTab('pont')"
+                >🪜 La construction de Pont</a
+              >
+            </li>
+          </ul>
+        </aside>
+
+        <div class="course-content">
+          <div class="hub-card">
+            <div id="tab-mats">
+              <div class="hub-header">
+                <h2 style="color: #58cc02">Finir la Partie</h2>
+                <p>
+                  Avoir l'avantage ne suffit pas. Il faut savoir porter
+                  l'estocade finale sans laisser de chance de "Pat".
+                </p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>1. Roi + Dame vs Roi</h3>
+                  <p>
+                    La méthode de la "Boîte". Forcez le Roi adverse vers le bord
+                    en réduisant l'espace petit à petit avec votre Dame.
+                  </p>
+                  <div class="move-box" style="border-left-color: #58cc02">
+                    <strong>⚠️ Attention au Pat :</strong>
+                    <span style="color: #58cc02"
+                      >Laissez toujours une case de fuite au Roi adverse
+                      jusqu'au moment du Mat.</span
+                    >
+                  </div>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=8/8/4k3/8/3Q4/8/3K4/8 w - - 0 1&color=white&theme=brown"
+                    alt="Dame coupe le Roi"
+                  />
+                </div>
+              </article>
+
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>2. Roi + Tour vs Roi</h3>
+                  <p>
+                    Plus difficile. La Tour seule ne suffit pas, vous devez
+                    utiliser votre Roi pour couper la retraite de l'ennemi.
+                  </p>
+                  <p style="color: #b9bbbe; font-size: 0.9rem">
+                    Le motif final est le "Mat du Couloir" sur la bande.
+                  </p>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=1k6/6R1/1K6/8/8/8/8/8 w - - 0 1&color=white&theme=brown"
+                    alt="Mat avec la Tour"
+                  />
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-pions" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #58cc02">La Guerre des Pions</h2>
+                <p>
+                  C'est ici que le calcul pur est roi. Une erreur d'une case et
+                  la victoire se transforme en défaite.
+                </p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>1. La Règle du Carré</h3>
+                  <p>
+                    Pouvez-vous promouvoir votre pion avant que le Roi adverse
+                    ne le rattrape ?
+                  </p>
+                  <div class="move-box" style="border-left-color: #58cc02">
+                    <strong>📏 La Règle :</strong>
+                    <span style="color: #58cc02"
+                      >Tracez un carré imaginaire depuis le pion jusqu'à la case
+                      de promotion. Si le Roi adverse est dedans, il rattrape le
+                      pion (ici le Roi noir est en position de défendre).</span
+                    >
+                  </div>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=8/8/3k4/1P5p/6pP/4K1P1/8/8%20w%20-%20-%200%201&color=white&theme=brown"
+                    alt="Règle du Carré"
+                  />
+                </div>
+              </article>
+
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>2. L'Opposition</h3>
+                  <p>
+                    Quand les deux Rois sont face à face avec une case d'écart.
+                    Celui qui <strong>ne doit pas</strong> jouer a l'avantage
+                    (il a "l'opposition").
+                  </p>
+                  <p style="color: #b9bbbe; font-size: 0.9rem">
+                    Cela force le Roi adverse à s'écarter et à vous laisser le
+                    passage.
+                  </p>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=8/8/4k2p/p6P/Pp2K3/1P6/8/8%20w%20-%20-%200%201&color=white&theme=brown"
+                    alt="L'Opposition"
+                  />
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-tours" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #58cc02">Finales de Tours</h2>
+                <p>
+                  "Toutes les finales de Tours sont nulles." — Tartakower (C'est
+                  faux, mais cela montre leur difficulté).
+                </p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>1. La Règle de Tarrasch</h3>
+                  <p>Que vous attaquiez ou défendiez, la règle est la même :</p>
+                  <div class="move-box" style="border-left-color: #58cc02">
+                    <strong>✅ La Règle d'Or :</strong>
+                    <span style="color: #58cc02"
+                      >La Tour doit être DERRIÈRE le pion passé.</span
+                    >
+                  </div>
+                  <p style="font-size: 0.9rem; color: #b9bbbe">
+                    Ici, la Tour blanche en d1 soutient la poussée du pion d5.
+                    Elle est idéalement placée.
+                  </p>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=8/2k5/7p/3P3P/8/8/4K3/3R4%20w%20-%20-%200%201&color=white&theme=brown"
+                    alt="Tour derrière le pion"
+                  />
+                </div>
+              </article>
+
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>2. La Position de Philidor</h3>
+                  <p>
+                    La technique indispensable pour
+                    <strong>sauver la partie (Nulle)</strong> quand vous avez un
+                    pion de moins.
+                  </p>
+                  <ul
+                    style="
+                      color: #b9bbbe;
+                      line-height: 1.8;
+                      margin-left: 1rem;
+                      margin-top: 10px;
+                    "
+                  >
+                    <li>
+                      🛡️ <strong>La Défense :</strong> Gardez votre Tour sur la
+                      6ème rangée pour couper le Roi adverse. Dès que le pion
+                      avance, descendez la Tour pour faire des échecs par
+                      derrière !
+                    </li>
+                  </ul>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=4k3/8/r7/3KP3/8/8/8/8%20b%20-%20-%200%201&color=white&theme=brown"
+                    alt="Position de Philidor"
+                  />
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-roi" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #58cc02">L'Activité du Roi</h2>
+                <p>
+                  En finale, le Roi devient une pièce d'attaque redoutable !
+                </p>
+              </div>
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=8/5ppp/4k3/8/8/4K3/5PPP/8 w - - 0 1&color=white&theme=brown"
+                  alt="Activité du Roi"
+                />
+              </div>
+              <article class="principle-section">
+                <div class="principle-text">
+                  <p>
+                    Dès que les Dames sont échangées,
+                    <strong>montez votre Roi au centre</strong>. Un Roi
+                    centralisé contrôle l'échiquier et soutient ses pions.
+                  </p>
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-zugzwang" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #58cc02">Le Zugzwang</h2>
+                <p>L'obligation de jouer un coup perdant.</p>
+              </div>
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=8/8/8/4k3/4P3/4K3/8/8 b - - 0 1&color=white&theme=brown"
+                  alt="Position de Zugzwang"
+                />
+              </div>
+              <article class="principle-section">
+                <div class="principle-text">
+                  <p>
+                    Dans cette position, c'est aux Noirs de jouer. Le Roi noir
+                    <strong>doit</strong> bouger et abandonner la case de
+                    protection du pion. Si les Noirs pouvaient "passer" leur
+                    tour, ils ne perdraient pas.
+                  </p>
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-pont" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #58cc02">La Construction de Pont</h2>
+                <p>La manœuvre clé de la position de Lucena.</p>
+              </div>
+              <div class="position-image-container">
+                <img
+                  class="position-image"
+                  src="https://lichess1.org/export/fen.gif?fen=5K2/5P2/4R3/8/7k/8/8/5r2 w - - 0 1&color=white&theme=brown"
+                  alt="Construction du pont"
+                />
+              </div>
+              <article class="principle-section">
+                <div class="principle-text">
+                  <p>
+                    La Tour noire menace de faire nulle par échecs perpétuels
+                    dès que le Roi sort. Le Roi blanc doit sortir pour laisser
+                    le pion promouvoir. Pour ce faire, il doit se
+                    <strong>réfugier derrière sa Tour en e6</strong> (Le Pont).
+                  </p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="../js/auth.js"></script>
+    <script>
+      // Gestion Menu Mobile
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+        setTimeout(() => {
+          document.querySelector(".sidebar").classList.add("active");
+        }, 10);
+      }
+      function hidesidebar() {
+        const sb = document.querySelector(".sidebar");
+        sb.classList.remove("active");
+        setTimeout(() => {
+          sb.style.display = "none";
+        }, 300);
+      }
+
+      // Gestion des Onglets
+      function switchTab(tabName) {
+        // Liste complète des onglets
+        const tabs = [
+          "mats",
+          "pions",
+          "tours", // Onglets principaux
+          "roi",
+          "zugzwang",
+          "pont", // Nouveaux onglets
+        ];
+
+        // 1. Masquer tout
+        tabs.forEach((t) => {
+          const el = document.getElementById("tab-" + t);
+          if (el) el.style.display = "none";
+
+          const link = document.getElementById("link-" + t);
+          if (link) link.classList.remove("active");
+        });
+
+        // 2. Afficher le bon
+        const target = document.getElementById("tab-" + tabName);
+        if (target) target.style.display = "block";
+
+        // 3. Activer le lien
+        const activeLink = document.getElementById("link-" + tabName);
+        if (activeLink) activeLink.classList.add("active");
+      }
+    </script>
+  </body>
+</html>

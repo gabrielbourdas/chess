@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/img/logo.webp" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <title>Open Chess - Histoire</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li>
+            <a href="/History/index.html" class="active"
+              >History <span></span
+            ></a>
+          </li>
+          <li>
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li>
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li>
+            <a href="/Info/index.html">Info <span></span></a>
+          </li>
+        </ul>
+
+        <ul class="navbar-content">
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <div id="site-name">Open Chess</div>
+            </a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a href="/History/index.html" class="active"
+              >History <span></span
+            ></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Info/index.html">Info <span></span></a>
+          </li>
+
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="title">
+        <h2><span>L'histoire des Échecs</span></h2>
+      </div>
+
+      <div class="cards">
+        <section>
+          <h3>L'origine du jeu</h3>
+          <blockquote>
+            Les échecs trouvent leurs racines il y a plus de 1500 ans, dans un
+            ancien jeu indien appelé <strong>Chaturanga</strong>. Ce jeu
+            simulait des batailles militaires entre quatre unités :
+            l'infanterie, la cavalerie, les éléphants et les chars.
+          </blockquote>
+        </section>
+
+        <section>
+          <h3>L'expansion Arabe</h3>
+          <blockquote>
+            Lorsque la Perse tomba sous domination arabe au VIIᵉ siècle, les
+            échecs se répandirent dans le monde islamique. Les savants
+            rédigèrent les premiers ouvrages sur les ouvertures et les
+            stratégies, transformant le jeu en un véritable art intellectuel.
+          </blockquote>
+        </section>
+
+        <section>
+          <h3>L'arrivée en Europe</h3>
+          <blockquote>
+            Vers le IXᵉ siècle, le jeu atteint l'Europe. Au XVᵉ siècle, une
+            transformation décisive a lieu : la <strong>Reine</strong> et le
+            <strong>Fou</strong> deviennent plus puissants. C'est la naissance
+            des échecs modernes, symbole de stratégie et de noblesse.
+          </blockquote>
+        </section>
+
+        <section>
+          <h3>L'ère des Tournois</h3>
+          <blockquote>
+            Au XIXᵉ siècle, le jeu se professionnalise. Le premier tournoi
+            international a lieu à Londres en 1851. Le XXᵉ siècle voit naître
+            des duels légendaires comme <strong>Fischer vs Spassky</strong>,
+            marquant l'apogée de la guerre froide sur l'échiquier.
+          </blockquote>
+        </section>
+
+        <section>
+          <h3>L'ère Numérique</h3>
+          <blockquote>
+            En 1997, <strong>Deep Blue</strong> bat Garry Kasparov. Aujourd'hui,
+            des moteurs comme Stockfish surpassent l'humain. Internet a
+            démocratisé le jeu, permettant à des millions de passionnés de
+            s'affronter instantanément.
+          </blockquote>
+        </section>
+
+        <section>
+          <h3>Un jeu intemporel</h3>
+          <blockquote>
+            Entre tradition millénaire et innovation technologique, les échecs
+            demeurent l'un des jeux les plus profonds et universels jamais
+            créés, continuant d'évoluer chaque jour.
+          </blockquote>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <ul class="Linkbar">
+        <li onclick="hideLinkBar()">
+          <a href="#"><img src="/img/close.svg" alt="close" /></a>
+        </li>
+        <li><a href="/video/index.html">Vidéo</a></li>
+        <li><a href="/site/index.html">Site</a></li>
+        <li><a href="/support/index.html">Support</a></li>
+      </ul>
+
+      <div class="link" onclick="showLinkBar()">
+        <span><img src="/img/link.svg" alt="link" /></span>
+      </div>
+    </footer>
+
+    <script>
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+      }
+      function hidesidebar() {
+        document.querySelector(".sidebar").style.display = "none";
+      }
+      function showLinkBar() {
+        document.querySelector(".Linkbar").style.display = "flex";
+      }
+      function hideLinkBar() {
+        document.querySelector(".Linkbar").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

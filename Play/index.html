@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="img/logo.webp" type="image/x-icon" />
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/media.css" />
+    <title>Open Chess</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li class="animation">
+            <a href="/History/index.html">History <span></span></a>
+          </li>
+          <li class="animation">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="animation">
+            <a href="/Play/index.html" class="active">Play <span></span></a>
+          </li>
+          <li class="animation">
+            <a href="/Info/index.html">Info <span></span></a>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <a href="/index.html"
+              ><h1 id="site-name">
+                <span>Open Chess</span>
+              </h1></a
+            >
+          </li>
+          <li class="animation" class="hideOnMobile">
+            <a href="/History/index.html">History <span></span></a>
+          </li>
+          <li class="animation" class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="animation" class="hideOnMobile">
+            <a href="/Play/index.html" class="active">Play <span></span></a>
+          </li>
+          <li class="animation" class="hideOnMobile">
+            <a href="/Info/index.html">Info <span></span></a>
+          </li>
+          <li onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+      <script>
+        function showsidebar() {
+          const sidebar = document.querySelector(".sidebar");
+          sidebar.style.display = "flex";
+        }
+        function hidesidebar() {
+          const sidebar = document.querySelector(".sidebar");
+          sidebar.style.display = "none";
+        }
+      </script>
+    </header>
+  </body>
+</html>

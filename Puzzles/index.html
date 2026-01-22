@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Puzzles</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/media.css" />
+
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li class="sidebar-logo"><span>MENU</span></li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Analyze/index.html">Analyze</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+        </ul>
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Puzzles/index.html">Puzzles <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Analyze/index.html">Analyze <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="puzzle-hero">
+        <h2>Forge ta <span class="highlight">Vision Tactique</span></h2>
+        <p>
+          Les échecs sont à 99% de la tactique. Résous des problèmes quotidiens
+          pour ne plus jamais rater une fourchette.
+        </p>
+      </section>
+
+      <section class="daily-puzzle-section">
+        <div class="daily-card">
+          <div class="daily-content">
+            <span class="badge-daily">🔥 Puzzle du Jour</span>
+            <h3>Mat en 2 coups</h3>
+            <p>
+              Les Blancs jouent et gagnent. Un sacrifice classique pour ouvrir
+              le roi.
+            </p>
+            <div class="daily-meta">
+              <span>⚡ Difficulté : Moyen</span>
+              <span>📈 +15 Elo</span>
+            </div>
+            <a href="#" class="btn-solve">Résoudre maintenant</a>
+          </div>
+          <div class="daily-image">
+            <img
+              src="https://lichess1.org/export/fen.gif?fen=r1b3k1/pp3ppp/2n5/3qr3/8/2Q5/PP3PPP/3R1RK1 w - - 0 1&color=white&theme=brown"
+              alt="Puzzle du jour"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="puzzle-modes">
+        <h3>Choisis ton entraînement</h3>
+
+        <div class="modes-grid">
+          <a href="#" class="mode-card ranked">
+            <div class="mode-icon">🏆</div>
+            <div class="mode-info">
+              <h4>Mode Classé</h4>
+              <p>Monte ton Elo puzzle. La difficulté s'adapte à ton niveau.</p>
+            </div>
+          </a>
+
+          <a href="#" class="mode-card sprint">
+            <div class="mode-icon">⏱️</div>
+            <div class="mode-info">
+              <h4>Puzzle Sprint</h4>
+              <p>3 ou 5 minutes. Combien peux-tu en résoudre avant la fin ?</p>
+            </div>
+          </a>
+
+          <a href="#" class="mode-card theme">
+            <div class="mode-icon">📚</div>
+            <div class="mode-info">
+              <h4>Par Thème</h4>
+              <p>Cible tes faiblesses : Clouages, Finales, Mats...</p>
+            </div>
+          </a>
+
+          <a href="#" class="mode-card survival">
+            <div class="mode-icon">❤️</div>
+            <div class="mode-info">
+              <h4>Mode Survie</h4>
+              <p>Pas de limite de temps. 3 erreurs et c'est fini.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess</h3>
+          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Commencez l'aventure</h3>
+          <a href="/login/index.html" class="btn-register"
+            >S'inscrire Gratuitement</a
+          >
+        </div>
+        <div class="footer-section">
+          <h3>Liens Partenaires</h3>
+          <ul>
+            <li>
+              <a href="https://www.chess.com" target="_blank">Chess.com</a>
+            </li>
+            <li><a href="#">Chaîne YouTube</a></li>
+            <li><a href="/support/index.html">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; <span id="year">2026</span> <span>Open Chess</span>. Tous
+          droits réservés.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+        setTimeout(() => {
+          document.querySelector(".sidebar").classList.add("active");
+        }, 10);
+      }
+      function hidesidebar() {
+        document.querySelector(".sidebar").classList.remove("active");
+        setTimeout(() => {
+          document.querySelector(".sidebar").style.display = "none";
+        }, 300);
+      }
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

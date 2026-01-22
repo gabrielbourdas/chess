@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Le Milieu de Jeu</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="./css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+
+    <link rel="stylesheet" href="./css/learn.css" />
+    <link rel="stylesheet" href="./css/openings.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+        </ul>
+
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a href="./index.html">Menu</a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a href="./Opening.html">Ouvertures</a>
+          </li>
+
+          <li class="hideOnMobile">
+            <a
+              href="#"
+              class="nav-orange"
+              style="
+                color: #ff9f00;
+                font-weight: bold;
+                border-bottom: 2px solid #ff9f00;
+              "
+              >Milieu</a
+            >
+          </li>
+
+          <li class="hideOnMobile">
+            <a href="./Endgame.html" class="nav-green">Finales</a>
+          </li>
+
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="course-wrapper">
+        <aside class="course-sidebar">
+          <h3 class="sidebar-title">Maîtrise du Jeu</h3>
+          <ul class="course-menu">
+            <li>
+              <a
+                href="#"
+                id="link-tactique"
+                class="active"
+                onclick="switchTab('tactique')"
+                >⚔️ Motifs Tactiques</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-strategie" onclick="switchTab('strategie')"
+                >🧠 Stratégie & Plans</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-attaque" onclick="switchTab('attaque')"
+                >🔥 Attaque & Calcul</a
+              >
+            </li>
+          </ul>
+
+          <h3 class="sidebar-title" style="margin-top: 1.5rem">
+            Thèmes Avancés
+          </h3>
+          <ul class="course-menu">
+            <li>
+              <a
+                href="#"
+                id="link-prophylaxie"
+                onclick="switchTab('prophylaxie')"
+                >🛡️ La Prophylaxie</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-chaine" onclick="switchTab('chaine')"
+                >⛓️ La Chaîne de Pions</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-sacrifice" onclick="switchTab('sacrifice')"
+                >⚡ Le Sacrifice de Qualité</a
+              >
+            </li>
+            <li>
+              <a href="#" id="link-roque" onclick="switchTab('roque')"
+                >🏰 Attaques de Roque opposé</a
+              >
+            </li>
+          </ul>
+        </aside>
+
+        <div class="course-content">
+          <div class="hub-card">
+            <div id="tab-tactique">
+              <div class="hub-header">
+                <h2 style="color: #ff9f00">L'Arsenal Tactique</h2>
+                <p>
+                  "La stratégie consiste à savoir quoi faire quand il n'y a rien
+                  à faire. La tactique consiste à savoir quoi faire quand il y a
+                  quelque chose à faire." — Tartakower
+                </p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>1. La Fourchette (The Fork)</h3>
+                  <p>
+                    Une seule pièce attaque deux cibles ennemies en même temps.
+                    Le Cavalier est le roi de la fourchette.
+                  </p>
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong>🎯 Dans cette position :</strong>
+                    <span style="color: #ff9f00"
+                      >Le Cavalier blanc en g6 fait une "fourchette royale",
+                      attaquant simultanément le Roi (f8) et la Dame (e7).</span
+                    >
+                  </div>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=r2r1k2/1pp1q1p1/3p1pNp/p3p3/P3P3/2P1Q2P/1P3PP1/3RR1K1 b - - 0 1 1&color=white&theme=brown"
+                    alt="Fourchette Royale"
+                  />
+                </div>
+              </article>
+
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>2. Le Clouage (The Pin)</h3>
+                  <p>
+                    Une pièce ennemie ne peut pas bouger car elle exposerait une
+                    pièce plus précieuse (souvent le Roi ou la Dame) située
+                    derrière elle.
+                  </p>
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong>⚠️ Dans cette position :</strong>
+                    <span style="color: #ff9f00"
+                      >Le Fou blanc en a4 "cloue" le Cavalier c6 sur la Dame
+                      noir. Le Cavalier ne peut pas bouger.</span
+                    >
+                  </div>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=1kr1q2r/1pp1npbp/p1n1p1p1/3pB3/B2P4/P1N1PN1P/1PP1QPP1/1K1R3R b - - 0 1 3&color=white&theme=brown"
+                    alt="Clouage sur le Roi"
+                  />
+                </div>
+              </article>
+
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>3. L'Attaque à la Découverte</h3>
+                  <p>
+                    Vous bougez une pièce, et ce mouvement révèle une attaque
+                    provenant d'une autre pièce située derrière (Tour, Fou ou
+                    Dame).
+                  </p>
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong>👀 Le coup à jouer :</strong>
+                    <span style="color: #ff9f00"
+                      >Les Blancs jouent fxb7!. La Dame attaque le Roi e8 tout
+                      en attaquant la Tour a8 avec le fou.</span
+                    >
+                  </div>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=rn2k2r/pppq1ppp/3p1n2/2b5/4B3/P1N2P1N/1PPBQ1PP/1KR4R w kq - 0 1 6&color=white&theme=brown"
+                    alt="Attaque à la découverte"
+                  />
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-strategie" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #ff9f00">La Stratégie Positionnelle</h2>
+                <p>
+                  Si la tactique est un combat de rue, la stratégie est la
+                  guerre des généraux. C'est l'art d'améliorer sa position petit
+                  à petit.
+                </p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>1. Bons et Mauvais "Officiers"</h3>
+                  <ul
+                    style="
+                      color: #b9bbbe;
+                      line-height: 1.8;
+                      margin-left: 1rem;
+                      margin-top: 10px;
+                    "
+                  >
+                    <li>
+                      🏰 <strong>L'Avant-Poste (Bon) :</strong> Regardez le
+                      Cavalier blanc en <strong>f3</strong>. Indélogeable par
+                      des pions et contrôlant tout le centre.
+                    </li>
+                    <li>
+                      👹 <strong>Le Mauvais Fou (Mauvais) :</strong> Regardez le
+                      Fou noir en <strong>c8</strong>. Il est bloqué par ses
+                      propres pions (e6, b7) et n'a aucun avenir.
+                    </li>
+                  </ul>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=r1b1k2r/pp3ppp/2n1pq2/3p4/3P4/2P2NP1/P3PP1P/R2QKB1R b KQkq - 1  11&color=white&theme=brown"
+                    alt="Avant-poste et Mauvais Fou"
+                  />
+                </div>
+              </article>
+
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>2. Faiblesses de Pions</h3>
+                  <p>
+                    Les pions sont le squelette de la position. Une fois
+                    avancés, ils ne peuvent plus reculer et laissent des cases
+                    faibles derrière eux.
+                  </p>
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong>❌ Le Pion Isolé :</strong>
+                    <span style="color: #ff9f00"
+                      >Le pion blanc en <strong>d4</strong> n'a plus de voisin
+                      pour le protéger. C'est une cible éternelle pour les
+                      pièces noires.</span
+                    >
+                  </div>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=r1bqk2r/pp3ppp/2n1pn2/8/1bBP4/2N2N2/PP3PPP/R1BQK2R w KQkq - 0 9&color=white&theme=brown"
+                    alt="Pion d4 isolé"
+                  />
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-attaque" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #ff9f00">Attaque et Calcul</h2>
+                <p>
+                  Comment porter le coup fatal ? Tout réside dans la méthode de
+                  réflexion.
+                </p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>1. La Méthode C.P.M. (Le Calcul)</h3>
+                  <p>
+                    Forcez votre cerveau à vérifier dans l'ordre :
+                    <strong>C</strong>oups Echecs, <strong>P</strong>rises,
+                    <strong>M</strong>enaces.
+                  </p>
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong>⚠️ Calculez ici :</strong>
+                    <span style="color: #ff9f00"
+                      >Les Noirs ont un coup gagnant basé sur un échec forcé.
+                      Voyez-vous ...Fxc3+ ?</span
+                    >
+                  </div>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=r1b2rk1/pp1p1ppp/2n1p3/q3N3/1b1P4/P1N1P3/1P2BPPP/R2QK2R b - - 0 1 11&color=white&theme=brown"
+                    alt="Position tactique pour calcul"
+                  />
+                </div>
+              </article>
+
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>2. Préparer l'Assaut</h3>
+                  <p>
+                    N'attaquez pas le Roi si vous n'êtes pas prêt ! Une attaque
+                    prématurée mène à la défaite.
+                  </p>
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong>✅ Conditions réunies :</strong>
+                    <span style="color: #ff9f00"
+                      >Ici, les Blancs ont de l'espace sur l'aile Roi, un centre
+                      stable, et leurs pièces (Fou g2, Cavalier f3, pion f2)
+                      sont prêtes à bondir vers le Roi noir.</span
+                    >
+                  </div>
+                </div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=r4rk1/ppqn1pbp/2ppb1p1/2n1p3/2P1P3/1P1P1NP1/PB2NPBP/R2Q1RK1 w - - 6 1 12&color=white&theme=brown"
+                    alt="Position prête pour l'attaque"
+                  />
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-prophylaxie" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #ff9f00">La Prophylaxie</h2>
+                <p>
+                  L'art d'empêcher les plans de l'adversaire avant même qu'ils
+                  ne commencent.
+                </p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong>🛡️ L'Explication :</strong>
+                    <span style="color: #ff9f00">
+                      Ici, les Blancs jouent <strong>h3</strong>. Ce petit coup
+                      est profond : il empêche le Fou noir de venir en
+                      <strong>g4</strong> pour clouer le Cavalier f3, sécurisant
+                      ainsi le contrôle du centre.
+                    </span>
+                  </div>
+                </div>
+
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=r1bq1rk1/ppp2pbp/2n2np1/3pp3/2PP4/2N1PN1P/PP2BPP1/R1BQ1RK1 b - - 0 1 8&color=white&theme=brown"
+                    alt="Prophylaxie h3"
+                  />
+                </div>
+              </article>
+              <h3>Anticiper la menace</h3>
+              <p>
+                Ne vous demandez pas seulement "Que veux-je faire ?", mais
+                toujours <strong>"Que veut faire mon adversaire ?"</strong>.
+              </p>
+            </div>
+            <div id="tab-chaine" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #ff9f00">La Chaîne de Pions</h2>
+                <p>Comprendre la structure pour savoir où attaquer.</p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>Viser le maillon faible</h3>
+                  <p>
+                    Si vous détruisez la base, toute la structure s'effondre
+                    comme un château de cartes.
+                  </p>
+
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong>⛓️ Analyse de la position :</strong>
+                    <span style="color: #ff9f00"
+                      >Les pions blancs
+                      <strong style="display: inline">d4 </strong>et
+                      <strong style="display: inline">e5</strong> forment une
+                      chaîne diagonale. Le pion
+                      <strong style="display: inline">d4</strong> est la "base"
+                      qui tient tout. Comme les Noirs s'acharnent dessus avec
+                      <strong style="display: inline">c5</strong> et
+                      <strong style="display: inline">Cc6</strong> !</span
+                    >
+                  </div>
+                </div>
+
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=r1bqkb1r/pp3ppp/2n1pn2/2ppP3/3P4/2N2N2/PPP2PPP/R1BQKB1R w KQkq - 1 6&color=white&theme=brown"
+                    alt="Attaque de la chaîne de pions"
+                  />
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-sacrifice" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #ff9f00">Le Sacrifice de Qualité</h2>
+                <p>Donner une Tour contre un Cavalier ou un Fou.</p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>Casser la forteresse</h3>
+                  <p>
+                    Parfois, un simple Cavalier défensif gêne plus qu'une Tour.
+                    Le supprimer, même en perdant de la valeur matérielle, ouvre
+                    les lignes vers le Roi.
+                  </p>
+
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong style="display: inline; margin-right: 5px"
+                      >⚡ Le classique :</strong
+                    >
+                    <span style="color: #ff9f00">
+                      Ici (Sicilienne Dragon), les Noirs sacrifient leur Tour en
+                      <strong style="display: inline">c3</strong>. Cela détruit
+                      le bouclier de pions blancs et expose le Roi à une attaque
+                      mortelle de la Dame et du Fou g7.
+                    </span>
+                  </div>
+                </div>
+
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=2r2rk1/pp1bppbp/3p1np1/q7/3NPP2/2N1B3/PPPQ2PP/2KR3R b - - 1 12&color=white&theme=brown"
+                    alt="Sacrifice en c3"
+                  />
+                </div>
+              </article>
+            </div>
+
+            <div id="tab-roque" style="display: none">
+              <div class="hub-header">
+                <h2 style="color: #ff9f00">Attaques de Roque Opposé</h2>
+                <p>Quand un joueur roque court et l'autre roque long.</p>
+              </div>
+              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <article class="principle-section">
+                <div class="principle-text">
+                  <h3>Une course de vitesse pure !</h3>
+                  <p>
+                    Lancez vos pions contre le Roi adverse sans compter. Ici, la
+                    sécurité passe au second plan : celui qui ouvre les lignes
+                    le premier gagne (souvent par Mat).
+                  </p>
+
+                  <div class="move-box" style="border-left-color: #ff9f00">
+                    <strong style="display: inline; margin-right: 5px"
+                      >🏁 La stratégie :</strong
+                    >
+                    <span style="color: #ff9f00">
+                      Regardez les flèches invisibles ! Les Blancs vont pousser
+                      <strong style="display: inline">a3-b3-c4</strong> pour
+                      démolir l'abri du Roi noir (c8). En réponse, les Noirs
+                      vont lancer
+                      <strong style="display: inline">h7-g6</strong> contre le
+                      Roi blanc. Ne défendez pas, attaquez !
+                    </span>
+                  </div>
+                </div>
+
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=2kr3r/pppqbp1p/2np1np1/4p3/2P1P3/PPN2NP1/3P1PKP/R1BQ1R2 w - - 0 1 10&color=white&theme=brown"
+                    alt="Roques opposés"
+                  />
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="../js/auth.js"></script>
+    <script>
+      // Gestion Menu Mobile
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+        setTimeout(() => {
+          document.querySelector(".sidebar").classList.add("active");
+        }, 10);
+      }
+      function hidesidebar() {
+        const sb = document.querySelector(".sidebar");
+        sb.classList.remove("active");
+        setTimeout(() => {
+          sb.style.display = "none";
+        }, 300);
+      }
+      // Gestion des Onglets (Tabs)
+      function switchTab(tabName) {
+        // 1. Liste de TOUS les onglets possibles
+        const allTabs = [
+          "tactique",
+          "strategie",
+          "attaque", // Les principaux
+          "prophylaxie",
+          "chaine",
+          "sacrifice",
+          "roque", // Les nouveaux
+        ];
+
+        // 2. On cache tout et on désactive les liens
+        allTabs.forEach((t) => {
+          const el = document.getElementById("tab-" + t);
+          if (el) el.style.display = "none";
+
+          const link = document.getElementById("link-" + t);
+          if (link) link.classList.remove("active");
+        });
+
+        // 3. Afficher le bon
+        const target = document.getElementById("tab-" + tabName);
+        if (target) target.style.display = "block";
+
+        // 4. Mettre à jour le menu actif
+        const activeLink = document.getElementById("link-" + tabName);
+        if (activeLink) activeLink.classList.add("active");
+      }
+    </script>
+  </body>
+</html>
