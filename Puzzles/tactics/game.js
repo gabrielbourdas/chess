@@ -1,13 +1,69 @@
-// game.js
+// Importation des fonctions Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+  limit,
+  doc,
+  getDoc,
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// --- 1. CONFIGURATION FIREBASE ---
+const firebaseConfig = {
+  apiKey: "AIzaSyBNBUO3JupohDCYAMs7Xf6kKgxnnFgPpVM",
+  authDomain: "open-chess-2f3cf.firebaseapp.com",
+  projectId: "open-chess-2f3cf",
+  storageBucket: "open-chess-2f3cf.firebasestorage.app",
+  messagingSenderId: "447945730536",
+  appId: "1:447945730536:web:a1e3347bc13e94040bdc5d",
+  measurementId: "G-71F05DTLHG",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// --- 2. DICTIONNAIRE DES THÈMES ---
+const THEMES_FR = {
+  mate: "Échec et Mat ! 🏁",
+  mateIn1: "Mat en 1 coup ! ⚡",
+  mateIn2: "Mat en 2 coups ! 🧠",
+  mateIn3: "Mat en 3 coups ! 🔥",
+  fork: "Belle fourchette ! 🍴",
+  pin: "Joli clouage ! 📌",
+  skewer: "Enfilade réussie ! 🍡",
+  discoveredAttack: "Attaque à la découverte ! 👁️",
+  doubleCheck: "Échec double dévastateur ! ⚔️",
+  sacrifice: "Magnifique sacrifice ! 🎁",
+  xRayAttack: "Attaque rayons X ! ☠️",
+  promotion: "Promotion ! ♛",
+  zugzwang: "Zugzwang ! L'adversaire est bloqué.",
+  deflection: "Déviation réussie !",
+  attraction: "Sacrifice d'attraction !",
+  interference: "Interférence tactique !",
+  clearance: "Dégagement de case !",
+  endgame: "Bien joué pour cette finale.",
+};
+
+// Variables Globales
 var board = null;
 var game = new Chess();
 var currentPuzzle = null;
 var moveIndex = 0;
-var currentCategory = "all";
 var isPuzzleLocked = false;
+var isWrongMoveState = false;
+var currentStreak = 0; // <--- NOUVELLE VARIABLE SÉRIE
+
+// Variables UI
 var selectedSquare = null;
-var draggedSource = null; // NOUVEAU : Pour se souvenir quelle pièce on tient
+var draggedSource = null;
 
 var config = {
   draggable: true,
@@ -15,119 +71,346 @@ var config = {
   onDragStart: onDragStart,
   onDrop: onDrop,
   onSnapEnd: onSnapEnd,
-
-  // NOUVEAU : On gère le survol nous-mêmes
   onMouseoverSquare: onMouseoverSquare,
   onMouseoutSquare: onMouseoutSquare,
-
-  moveSpeed: 200,
-  snapbackSpeed: 20,
-  snapSpeed: 100,
   pieceTheme: "../../img/wiki/{piece}.png",
+  moveSpeed: 200,
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- GESTION DE L'INDICE (Tooltip) ---
-  const btnHint = document.getElementById("btn-hint");
-  const hintBubble = document.getElementById("hint-bubble");
+  board = Chessboard("board", config);
+  setTimeout(() => board.resize(), 200);
+  window.addEventListener("resize", board.resize);
 
-  if (btnHint && hintBubble) {
-    btnHint.addEventListener("click", () => {
-      // 1. On change le texte selon le puzzle (Optionnel, ici un texte générique)
-      // Tu pourrais mettre : hintBubble.textContent = "Coup clé : " + currentPuzzle.moves[0];
-
-      // 2. On affiche la bulle
-      hintBubble.classList.add("visible");
-
-      // 3. On la cache automatiquement après 3 secondes
-      setTimeout(() => {
-        hintBubble.classList.remove("visible");
-      }, 3000);
-    });
-  }
-  setTimeout(() => {
-    board = Chessboard("board", config);
-    loadRandomPuzzle();
-    window.addEventListener("resize", board.resize);
-
-    $("#board").on("click", ".square-55d63", function () {
-      var square = $(this).attr("data-square");
-      handleSquareInteraction(square);
-    });
-  }, 100);
+  $("#board").on("click", ".square-55d63", function () {
+    var square = $(this).attr("data-square");
+    handleSquareInteraction(square);
+  });
 
   document
     .getElementById("btn-next")
     .addEventListener("click", loadRandomPuzzle);
+  document.getElementById("btn-retry").addEventListener("click", retryLastMove);
+  document.getElementById("btn-hint").addEventListener("click", showHint);
+
+  loadRandomPuzzle();
 });
 
-// --- GESTION INTELLIGENTE DU SURVOL (HIGHLIGHT) ---
+// --- FIREBASE USER ---
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const pseudo = data.pseudo || "Joueur";
+      document.getElementById("user-name").textContent = pseudo;
+      document.getElementById("user-avatar").innerHTML =
+        `<img src="https://api.dicebear.com/9.x/adventurer/svg?seed=${pseudo}" alt="Avatar" style="width:100%; height:100%;">`;
+    }
+  }
+});
 
-function onMouseoverSquare(square, piece) {
-  // Si on ne traîne aucune pièce, on ne fait rien
-  if (!draggedSource) return;
+// --- LOGIQUE JEU ---
 
-  // 1. On récupère tous les coups possibles depuis la case de départ
-  var moves = game.moves({
-    square: draggedSource,
-    verbose: true,
-  });
+async function loadRandomPuzzle() {
+  updateStatus("Recherche...", false);
+  deselectSquare();
 
-  // 2. On vérifie si la case survolée (square) est une destination valide
-  // On cherche dans la liste 'moves' si un coup va vers 'square'
-  var isLegal = moves.find(function (move) {
-    return move.to === square;
-  });
+  isPuzzleLocked = false;
+  isWrongMoveState = false;
+  moveIndex = 0;
+  toggleRetryButton(false);
+  document.getElementById("feedback-area").classList.remove("visible");
 
-  // 3. Si c'est légal, on allume la case !
-  if (isLegal) {
-    $("#board .square-" + square).addClass("legal-hover");
+  // Reset de l'historique visuel
+  document.getElementById("move-history").innerHTML =
+    '<span class="empty-history">Chargement...</span>';
+
+  const randomId = generateRandomId();
+  try {
+    const puzzlesRef = collection(db, "puzzles");
+    const q = query(puzzlesRef, where("__name__", ">=", randomId), limit(1));
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      setupPuzzle(doc.data());
+    } else {
+      loadRandomPuzzle();
+    }
+  } catch (error) {
+    console.error("Erreur", error);
   }
 }
 
-function onMouseoutSquare(square, piece) {
-  // Quand on quitte la case, on éteint la lumière
-  $("#board .square-" + square).removeClass("legal-hover");
+function setupPuzzle(data) {
+  currentPuzzle = data;
+
+  // --- MISE À JOUR SÉRIE & ELO ---
+  document.getElementById("streak-display").innerText = currentStreak; // Affiche la série
+  document.getElementById("puzzle-rating").innerText = data.rating;
+  document.getElementById("move-history").innerHTML =
+    '<span class="empty-history">À vous de jouer...</span>';
+  const elo = data.rating;
+  const badge = document.getElementById("difficulty-badge");
+  let text = "Moyen";
+  let cssClass = "medium";
+
+  if (elo < 700) {
+    text = "Débutant";
+    cssClass = "easy";
+  } else if (elo < 1000) {
+    text = "Facile";
+    cssClass = "easy";
+  } else if (elo < 1300) {
+    text = "Moyen";
+    cssClass = "medium";
+  } else if (elo < 1500) {
+    text = "Difficile";
+    cssClass = "hard";
+  } else {
+    text = "Expert";
+    cssClass = "expert";
+  }
+
+  badge.innerText = text;
+  badge.className = `difficulty-badge ${cssClass}`; // Applique la couleur
+
+  // 3. Remplir les autres infos
+  document.getElementById("puzzle-rating").innerText = data.rating;
+  document.getElementById("move-history").innerHTML =
+    '<span class="empty-history">À vous de jouer...</span>';
+  // ----------------------------------
+
+  game.load(data.fen);
+  board.position(data.fen, false);
+
+  let movesList = Array.isArray(data.moves)
+    ? data.moves
+    : data.moves.split(" ");
+  currentPuzzle.movesList = movesList;
+
+  // Jouer le coup adverse
+  setTimeout(() => {
+    makeMoveOnBoard(movesList[0]);
+    moveIndex = 1;
+    updateStatusWithTurn();
+  }, 500);
 }
 
-// --- INTERACTION ---
+// --- LOGIQUE DE VALIDATION & ERREUR ---
+
+function attemptMove(source, target) {
+  if (isWrongMoveState) return null;
+
+  var move = game.move({ from: source, to: target, promotion: "q" });
+  if (move === null) return null;
+
+  board.position(game.fen());
+  updateMoveHistory();
+  checkPuzzleProgress(source, target);
+  return move;
+}
+
+function checkPuzzleProgress(source, target) {
+  const userMoveString = source + target;
+  const expectedMoveString = currentPuzzle.movesList[moveIndex];
+
+  let isCorrect = false;
+  if (expectedMoveString.length > 4) {
+    isCorrect = userMoveString + "q" === expectedMoveString;
+  } else {
+    isCorrect = userMoveString === expectedMoveString;
+  }
+
+  if (isCorrect) {
+    // --- BON COUP ---
+    moveIndex++;
+    if (moveIndex >= currentPuzzle.movesList.length) {
+      // VICTOIRE
+      currentStreak++; // On augmente la série
+      document.getElementById("streak-display").innerText = currentStreak;
+
+      let successMessage = "Puzzle Réussi ! 🎉";
+      if (currentPuzzle.themes) {
+        const themes = currentPuzzle.themes.split(" ");
+        for (let theme of themes) {
+          if (THEMES_FR[theme]) {
+            successMessage = THEMES_FR[theme];
+            break;
+          }
+        }
+      }
+
+      showFeedback(true, successMessage);
+      isPuzzleLocked = true;
+      toggleRetryButton(false);
+    } else {
+      setTimeout(playComputerReply, 500);
+    }
+  } else {
+    // --- MAUVAIS COUP ---
+    currentStreak = 0; // On remet à zéro
+    document.getElementById("streak-display").innerText = currentStreak;
+
+    showFeedback(false, "Mauvais coup !");
+    isWrongMoveState = true;
+    toggleRetryButton(true);
+  }
+}
+
+function retryLastMove() {
+  if (!isWrongMoveState) return;
+  game.undo();
+  board.position(game.fen());
+
+  updateMoveHistory();
+
+  isWrongMoveState = false;
+  toggleRetryButton(false);
+  document.getElementById("feedback-area").classList.remove("visible");
+  updateStatusWithTurn();
+}
+
+function showHint() {
+  if (isPuzzleLocked || isWrongMoveState) return;
+
+  const nextMove = currentPuzzle.movesList[moveIndex];
+  const fromSquare = nextMove.substring(0, 2);
+
+  const bubble = document.getElementById("hint-bubble");
+  bubble.innerText = `💡 Indice : Regarde la pièce en ${fromSquare} !`;
+  bubble.classList.add("visible");
+
+  $("#board .square-" + fromSquare).addClass("highlight1-32417");
+  setTimeout(() => {
+    bubble.classList.remove("visible");
+    $("#board .square-" + fromSquare).removeClass("highlight1-32417");
+  }, 3000);
+}
+
+// --- VISUEL & INTERACTION ---
 
 function handleSquareInteraction(square) {
-  if (isPuzzleLocked || game.game_over()) return;
+  if (isPuzzleLocked || game.game_over() || isWrongMoveState) return;
 
   if (selectedSquare !== null) {
     if (square === selectedSquare) {
       deselectSquare();
       return;
     }
-
-    var move = game.move({
-      from: selectedSquare,
-      to: square,
-      promotion: "q",
-    });
-
-    if (move !== null) {
-      board.position(game.fen());
-      checkPuzzleMove(move);
-      deselectSquare();
-    } else {
+    var move = attemptMove(selectedSquare, square);
+    if (move === null) {
       var piece = game.get(square);
-      if (piece && piece.color === currentPuzzle.color) {
-        selectSquare(square);
-      } else {
-        deselectSquare();
-      }
+      if (piece && piece.color === game.turn()) selectSquare(square);
+      else deselectSquare();
+    } else {
+      deselectSquare();
     }
   } else {
     var piece = game.get(square);
-    if (piece && piece.color === currentPuzzle.color) {
-      selectSquare(square);
-    }
+    if (piece && piece.color === game.turn()) selectSquare(square);
   }
 }
 
-// --- VISUEL ---
+function onDragStart(source, piece) {
+  if (isPuzzleLocked || game.game_over() || isWrongMoveState) return false;
+  if (
+    (game.turn() === "w" && piece.search(/^b/) !== -1) ||
+    (game.turn() === "b" && piece.search(/^w/) !== -1)
+  )
+    return false;
+
+  draggedSource = source;
+  if (selectedSquare && selectedSquare !== source) deselectSquare();
+  highlightLegalMoves(source);
+}
+
+function onDrop(source, target) {
+  draggedSource = null;
+  removeHighlights();
+  if (source === target) {
+    handleSquareInteraction(source);
+    return "snapback";
+  }
+
+  var move = attemptMove(source, target);
+  if (move === null) return "snapback";
+}
+
+function onSnapEnd() {
+  board.position(game.fen());
+}
+
+// --- UTILITAIRES ---
+
+function toggleRetryButton(show) {
+  const btn = document.getElementById("btn-retry");
+  btn.style.display = show ? "block" : "none";
+  document.getElementById("btn-hint").style.display = show ? "none" : "block";
+}
+
+function playComputerReply() {
+  const nextMoveStr = currentPuzzle.movesList[moveIndex];
+  makeMoveOnBoard(nextMoveStr);
+  moveIndex++;
+  updateStatusWithTurn();
+}
+
+function makeMoveOnBoard(moveStr) {
+  const from = moveStr.substring(0, 2);
+  const to = moveStr.substring(2, 4);
+  game.move({ from: from, to: to, promotion: "q" });
+  board.position(game.fen());
+  updateMoveHistory();
+}
+
+function updateMoveHistory() {
+  const history = game.history();
+  const listElement = document.getElementById("move-history");
+
+  if (history.length === 0) {
+    listElement.innerHTML =
+      '<span class="empty-history">Début de la partie</span>';
+    return;
+  }
+
+  let html = "";
+  for (let i = 0; i < history.length; i += 2) {
+    const moveNumber = i / 2 + 1;
+    const whiteMove = history[i];
+    const blackMove = history[i + 1] || "";
+
+    html += `
+          <div class="move-pair">
+              <span class="move-number">${moveNumber}.</span>
+              <span class="move-white">${whiteMove}</span>
+              ${blackMove ? `<span class="move-black">${blackMove}</span>` : ""}
+          </div>
+      `;
+  }
+
+  listElement.innerHTML = html;
+  listElement.scrollTop = listElement.scrollHeight;
+}
+
+function updateStatusWithTurn() {
+  const turn = game.turn() === "w" ? "Aux Blancs" : "Aux Noirs";
+  updateStatus(`Trait ${turn} !`);
+  board.orientation(game.turn() === "w" ? "white" : "black");
+}
+function updateStatus(text) {
+  document.getElementById("status-text").innerText = text;
+}
+
+function showFeedback(success, message) {
+  const el = document.getElementById("feedback-area");
+  el.innerText = message;
+  el.className = success
+    ? "feedback success visible"
+    : "feedback error visible";
+}
 
 function selectSquare(square) {
   deselectSquare();
@@ -135,208 +418,39 @@ function selectSquare(square) {
   $("#board .square-" + square).addClass("selected-square");
   highlightLegalMoves(square);
 }
-
 function deselectSquare() {
   selectedSquare = null;
   $("#board .square-55d63").removeClass("selected-square");
   removeHighlights();
 }
-
 function highlightLegalMoves(square) {
-  var moves = game.moves({
-    square: square,
-    verbose: true,
-  });
-
-  if (moves.length === 0) return;
-
+  var moves = game.moves({ square: square, verbose: true });
   for (var i = 0; i < moves.length; i++) {
-    var targetSquare = moves[i].to;
+    var target = moves[i].to;
     if (moves[i].flags.includes("c") || moves[i].flags.includes("e")) {
-      $("#board .square-" + targetSquare).addClass("legal-capture");
+      $("#board .square-" + target).addClass("legal-capture");
     } else {
-      $("#board .square-" + targetSquare).addClass("legal-move");
+      $("#board .square-" + target).addClass("legal-move");
     }
   }
 }
-
+function onMouseoverSquare(square) {
+  if (!draggedSource) return;
+  var moves = game.moves({ square: draggedSource, verbose: true });
+  if (moves.find((m) => m.to === square))
+    $("#board .square-" + square).addClass("legal-hover");
+}
+function onMouseoutSquare(square) {
+  $("#board .square-" + square).removeClass("legal-hover");
+}
 function removeHighlights() {
-  $("#board .square-55d63").removeClass("legal-move legal-capture");
+  $("#board .square-55d63").removeClass("legal-move legal-capture legal-hover");
 }
-
-// --- DRAG & DROP ---
-
-function onDragStart(source, piece) {
-  if (game.game_over() || isPuzzleLocked) return false;
-  if (currentPuzzle.color === "w" && piece.search(/^b/) !== -1) return false;
-  if (currentPuzzle.color === "b" && piece.search(/^w/) !== -1) return false;
-
-  // MEMOIRE : On retient d'où on part pour le survol intelligent
-  draggedSource = source;
-
-  if (selectedSquare && selectedSquare !== source) {
-    deselectSquare();
-  }
-  highlightLegalMoves(source); // Affiche aussi les points pendant le drag
+function generateRandomId() {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < 5; i++)
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  return result;
 }
-
-function onDrop(source, target) {
-  draggedSource = null; // On lâche la pièce
-  removeHighlights();
-
-  if (source === target) {
-    handleSquareInteraction(source);
-    return "snapback";
-  }
-
-  var move = game.move({
-    from: source,
-    to: target,
-    promotion: "q",
-  });
-
-  if (move === null) return "snapback";
-
-  checkPuzzleMove(move);
-  deselectSquare();
-}
-
-// --- LOGIQUE JEU ---
-
-function checkPuzzleMove(move) {
-  const expectedMove = currentPuzzle.moves[moveIndex];
-
-  if (move.san === expectedMove) {
-    moveIndex++;
-    if (moveIndex >= currentPuzzle.moves.length) {
-      showFeedback(true, "Puzzle Réussi ! 🎉");
-    } else {
-      window.setTimeout(playComputerMove, 500);
-    }
-  } else {
-    showFeedback(false, "Mauvais coup ! Clique sur Réessayer.");
-    isPuzzleLocked = true;
-  }
-}
-
-function loadRandomPuzzle() {
-  const boardEl = document.getElementById("board");
-  boardEl.classList.remove("replay-anim");
-  void boardEl.offsetWidth;
-  boardEl.classList.add("replay-anim");
-
-  let filteredPuzzles = puzzlesData;
-  if (currentCategory !== "all") {
-    filteredPuzzles = puzzlesData.filter((p) => p.category === currentCategory);
-  }
-  if (filteredPuzzles.length === 0) filteredPuzzles = puzzlesData;
-
-  const randomIndex = Math.floor(Math.random() * filteredPuzzles.length);
-  currentPuzzle = filteredPuzzles[randomIndex];
-
-  game.load(currentPuzzle.fen);
-  board.position(currentPuzzle.fen, false);
-
-  moveIndex = 0;
-  isPuzzleLocked = false;
-  selectedSquare = null;
-  draggedSource = null;
-  deselectSquare();
-
-  updateUI();
-}
-
-function updateUI() {
-  const statusText = document.getElementById("status-text");
-  const turnIndicator = document.querySelector(".turn-indicator");
-  const feedback = document.getElementById("feedback-area");
-
-  feedback.classList.remove("visible");
-
-  if (currentPuzzle.color === "w") {
-    statusText.textContent = "Trait aux Blancs";
-    if (turnIndicator) turnIndicator.className = "turn-indicator white-turn";
-    board.orientation("white");
-  } else {
-    statusText.textContent = "Trait aux Noirs";
-    if (turnIndicator) turnIndicator.className = "turn-indicator black-turn";
-    board.orientation("black");
-  }
-}
-
-function onSnapEnd() {
-  board.position(game.fen());
-}
-
-function playComputerMove() {
-  const nextMove = currentPuzzle.moves[moveIndex];
-  if (nextMove) {
-    game.move(nextMove);
-    board.position(game.fen());
-    moveIndex++;
-
-    if (moveIndex >= currentPuzzle.moves.length) {
-      showFeedback(true, "Puzzle Réussi ! 🎉");
-    }
-  }
-}
-
-window.retryLastMove = function () {
-  if (!isPuzzleLocked && moveIndex === 0) {
-    loadRandomPuzzle();
-    return;
-  }
-  if (isPuzzleLocked) {
-    game.undo();
-    board.position(game.fen());
-    isPuzzleLocked = false;
-    deselectSquare();
-
-    // On cache le message en enlevant la classe visible
-    document.getElementById("feedback-area").classList.remove("visible"); // <--- MODIFIE ICI
-  }
-};
-
-function showFeedback(isSuccess, message) {
-  const feedback = document.getElementById("feedback-area");
-  if (!feedback) return;
-
-  feedback.textContent = message;
-
-  // Au lieu d'enlever 'hidden', on ajoute 'visible' pour l'opacité
-  feedback.classList.add("visible"); // <--- MODIFIE ICI
-
-  if (isSuccess) {
-    feedback.style.background = "rgba(88, 204, 2, 0.2)";
-    feedback.style.color = "#58cc02";
-  } else {
-    feedback.style.background = "rgba(220, 38, 38, 0.2)";
-    feedback.style.color = "#ef4444";
-  }
-}
-
-// ... tout le code du jeu au dessus ...
-
-window.setCategory = function (cat) {
-  // 1. Visuel : On change le bouton actif
-  document
-    .querySelectorAll(".filter-btn")
-    .forEach((btn) => btn.classList.remove("active"));
-
-  // Petite sécurité : on vérifie que le clic existe bien
-  if (event && event.target) {
-    event.target.classList.add("active");
-  }
-
-  // 2. Logique : On met à jour la catégorie
-  currentCategory = cat;
-
-  // --- C'EST ICI QU'ON A FAIT LE MÉNAGE ---
-  // On a supprimé les lignes :
-  // const names = { ... }
-  // const titleEl = document.getElementById('category-title');
-  // ... car le titre n'existe plus dans le HTML !
-
-  // 3. On charge le nouveau puzzle
-  loadRandomPuzzle();
-};

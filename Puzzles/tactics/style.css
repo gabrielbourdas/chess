@@ -87,15 +87,16 @@ body > main.game-main {
    3. COULEURS & ANIMATIONS DU PLATEAU
    ========================================= */
 
-/* Couleurs des cases (Thème Bois) */
+/* Cases Blanches : Fond Beige, Texte Marron */
 .white-1e1d7 {
-  background-color: #f0d9b5 !important; /* Beige */
-  color: #f0d9b5 !important;
+  background-color: #f0d9b5 !important;
+  color: #b58863 !important;
 }
 
+/* Cases Noires : Fond Marron, Texte Beige */
 .black-3c85d {
-  background-color: #b58863 !important; /* Marron */
-  color: #b58863 !important;
+  background-color: #b58863 !important;
+  color: #f0d9b5 !important;
 }
 
 /* Indicateur de dernier coup (Jaune subtil) */
@@ -149,7 +150,6 @@ body > main.game-main {
 }
 
 /* D. CORRECTION DES COULEURS DE FOND (Crucial) */
-/* Force la couleur du bois pour éviter la transparence lors de la sélection */
 
 /* Cases Blanches sélectionnées -> Restent Beiges */
 .white-1e1d7.highlight1-32417,
@@ -167,7 +167,6 @@ body > main.game-main {
 
 /* E. Aides Visuelles (Points & Cercles) */
 .legal-move {
-  /* Petit point au centre */
   background-image: radial-gradient(
     rgba(0, 217, 246, 0.5) 18%,
     transparent 19%
@@ -175,51 +174,10 @@ body > main.game-main {
 }
 
 .legal-capture {
-  /* Grand cercle pour la prise */
   box-shadow: inset 0 0 0 4px rgba(0, 217, 246, 0.4);
   border-radius: 50%;
 }
 
-/* --- FILTRES DANS LA SIDEBAR --- */
-.sidebar-filters {
-  display: grid;
-  /* 2 colonnes : ça fait des boutons compacts et propres */
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 1.5rem;
-  width: 100%;
-}
-
-/* Le bouton "Tout" prend toute la largeur (optionnel, pour faire joli) */
-.sidebar-filters .filter-btn:first-child {
-  grid-column: span 2;
-}
-
-.filter-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #b9bbbe;
-  padding: 10px;
-  border-radius: 8px; /* Moins arrondi pour aller avec la grille */
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.filter-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-.filter-btn.active {
-  background: #00d9f6;
-  color: #18191c;
-  border-color: #00d9f6;
-  box-shadow: 0 0 10px rgba(0, 217, 246, 0.2);
-}
 /* Info Joueur (Sous le plateau) */
 .player-info {
   width: 100%;
@@ -273,21 +231,61 @@ body > main.game-main {
   gap: 1.5rem;
 }
 
-/* En-tête Puzzle */
-.puzzle-header {
-  border-bottom: 1px solid #383c44;
+/* --- NOUVEAU : EN-TÊTE SIDEBAR --- */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
   padding-bottom: 1rem;
-  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #383c44;
 }
 
-.rating-badge {
-  background: rgba(255, 159, 0, 0.15);
-  color: #ff9f00;
-  display: inline-block;
+/* SÉRIE (Nouveau style) */
+.streak-container {
+  color: #fff; /* Blanc brillant */
+  font-weight: bold;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* --- NOUVEAU STYLE : BADGE DIFFICULTÉ --- */
+.difficulty-badge {
   padding: 4px 10px;
   border-radius: 4px;
-  font-size: 0.85rem;
   font-weight: bold;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Les couleurs dynamiques */
+.difficulty-badge.easy {
+  background: rgba(88, 204, 2, 0.2);
+  color: #58cc02; /* Vert */
+  border: 1px solid #58cc02;
+}
+
+.difficulty-badge.medium {
+  background: rgba(255, 159, 0, 0.2);
+  color: #ff9f00; /* Orange */
+  border: 1px solid #ff9f00;
+}
+
+.difficulty-badge.hard {
+  background: rgba(255, 70, 70, 0.2);
+  color: #ff4646; /* Rouge */
+  border: 1px solid #ff4646;
+}
+
+.difficulty-badge.expert {
+  background: rgba(150, 50, 255, 0.2);
+  color: #d06aff; /* Violet */
+  border: 1px solid #d06aff;
+  box-shadow: 0 0 10px rgba(150, 50, 255, 0.4);
 }
 
 /* Indicateur de tour */
@@ -327,31 +325,105 @@ body > main.game-main {
   font-size: 0.9rem;
 }
 
-/* --- FEEDBACK STABILISÉ --- */
+/* --- HISTORIQUE DES COUPS --- */
+.history-container {
+  flex-grow: 1; /* Prend tout l'espace disponible ! */
+  display: flex;
+  flex-direction: column;
+  background: #202225;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 1rem 0; /* Espace autour */
+  min-height: 100px; /* Taille minimum */
+}
+
+.history-container h4 {
+  color: #72767d;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #2f3136;
+  padding-bottom: 5px;
+}
+
+.moves-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+  overflow-y: auto; /* Scroll si trop de coups */
+  font-family: "Segoe UI", sans-serif;
+  font-size: 0.95rem;
+  color: #dcddde;
+  max-height: 150px; /* Hauteur max avant scroll */
+}
+
+.move-pair {
+  display: flex;
+  gap: 5px;
+}
+
+.move-number {
+  color: #72767d;
+}
+
+.move-white,
+.move-black {
+  cursor: default;
+}
+
+.move-white:hover,
+.move-black:hover {
+  color: #fff;
+}
+
+.empty-history {
+  color: #4f545c;
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* --- FEEDBACK STYLISÉ (NOUVEAU) --- */
 .feedback {
   text-align: center;
-
-  /* HAUTEUR FIXE : Empêche le jeu de bouger quand le message apparaît */
-  height: 60px;
-  display: flex; /* Pour centrer le texte verticalement */
+  min-height: 50px; /* Hauteur minimale */
+  display: flex;
   align-items: center;
   justify-content: center;
-  margin: 1rem 0; /* Espace en haut et en bas */
-
+  margin: 1rem 0;
+  padding: 10px 15px;
   border-radius: 8px;
   font-weight: bold;
+  font-size: 1.1rem;
 
-  /* GESTION DE L'INVISIBLE */
-  opacity: 0; /* Invisible par défaut (mais prend de la place) */
-  transition: opacity 0.3s; /* Petite animation d'apparition */
+  /* On prépare la transition */
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
 
-  /* Couleur par défaut (sera écrasée par le JS) */
+  /* Par défaut (invisible) */
+  border: 2px solid transparent;
   background: transparent;
 }
 
-/* Quand le message doit s'afficher */
+/* Quand le message apparaît */
 .feedback.visible {
-  opacity: 1; /* Devient visible */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* STYLE SUCCÈS (Vert) */
+.feedback.success {
+  background-color: rgba(88, 204, 2, 0.15); /* Fond vert léger */
+  border-color: #58cc02; /* Bordure verte */
+  color: #58cc02; /* Texte vert */
+  box-shadow: 0 4px 15px rgba(88, 204, 2, 0.2); /* Lueur verte */
+}
+
+/* STYLE ERREUR (Rouge) */
+.feedback.error {
+  background-color: rgba(239, 68, 68, 0.15); /* Fond rouge léger */
+  border-color: #ef4444; /* Bordure rouge */
+  color: #ef4444; /* Texte rouge */
 }
 
 /* Boutons de contrôle */
@@ -360,6 +432,7 @@ body > main.game-main {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .btn-game {
@@ -390,50 +463,50 @@ body > main.game-main {
   background: #363940;
   color: #fff;
 }
-/* --- INFOBULLE D'INDICE (Tooltip) --- */
 
-/* La bulle elle-même */
+/* --- INFOBULLE D'INDICE (Tooltip) --- */
 .hint-tooltip {
   position: absolute;
-  bottom: 125%; /* Juste au-dessus du bouton */
+  bottom: 125%;
   left: 50%;
-  transform: translateX(-50%) translateY(10px); /* Centrée horizontalement + petit décalage bas */
-
-  background-color: #2b2d33; /* Fond sombre */
+  transform: translateX(-50%) translateY(10px);
+  background-color: #2b2d33;
   color: #fff;
-  border: 1px solid #00d9f6; /* Bordure Cyan */
+  border: 1px solid #00d9f6;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: bold;
-  white-space: nowrap; /* Le texte tient sur une ligne */
+  white-space: nowrap;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   z-index: 100;
-
-  /* État caché par défaut */
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Effet "pop" */
-  pointer-events: none; /* Pour cliquer à travers si besoin */
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  pointer-events: none;
 }
 
-/* La petite flèche en bas de la bulle */
 .hint-tooltip::after {
   content: "";
   position: absolute;
-  top: 100%; /* Tout en bas */
+  top: 100%;
   left: 50%;
   margin-left: -6px;
   border-width: 6px;
   border-style: solid;
-  border-color: #00d9f6 transparent transparent transparent; /* Triangle Cyan */
+  border-color: #00d9f6 transparent transparent transparent;
 }
 
-/* Classe active (quand on clique) */
 .hint-tooltip.visible {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0); /* Remonte à sa place normale */
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Force l'affichage du bouton Suivant */
+#btn-next {
+  display: block !important;
+  margin-top: 10px;
 }
 
 /* =========================================
@@ -449,17 +522,5 @@ body > main.game-main {
   }
   .game-sidebar {
     order: 2;
-  }
-}
-
-@media (max-width: 600px) {
-  .filter-bar {
-    gap: 8px;
-  }
-  .filter-btn {
-    font-size: 0.8rem;
-    padding: 6px 12px;
-    flex: 1 1 auto;
-    text-align: center;
   }
 }

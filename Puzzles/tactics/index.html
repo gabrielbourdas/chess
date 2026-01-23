@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Open Chess - Tactique</title>
     <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
-      integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
-      crossorigin="anonymous"
     />
-
     <link rel="stylesheet" href="../../css/nav.css" />
     <link rel="stylesheet" href="../../css/style.css" />
     <link rel="stylesheet" href="../../css/media.css" />
-
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -63,53 +60,40 @@
 
           <div class="player-info">
             <div id="user-avatar" class="avatar"></div>
-
             <div class="details">
-              <span id="user-name" class="name">Chargement...</span>
-              <span class="rating">1200 Elo</span>
+              <span id="user-name" class="name">Joueur</span>
+              <span id="puzzle-rating" class="rating">Note du puzzle: ...</span>
             </div>
           </div>
         </div>
 
         <div class="game-sidebar">
-          <div class="sidebar-filters">
-            <button class="filter-btn active" onclick="setCategory('all')">
-              ♾️ Tout
-            </button>
-            <button class="filter-btn" onclick="setCategory('mat')">
-              🎯 Mat
-            </button>
-            <button class="filter-btn" onclick="setCategory('material')">
-              💎 Matériel
-            </button>
-            <button class="filter-btn" onclick="setCategory('position')">
-              🏰 Position
-            </button>
-            <button class="filter-btn" onclick="setCategory('defense')">
-              🛡️ Défense
-            </button>
-          </div>
-
-          <div
-            class="puzzle-info"
-            style="text-align: center; margin-bottom: 1rem"
-          >
-            <div class="rating-badge">Difficulté: Moyen</div>
+          <div class="sidebar-header">
+            <div class="streak-container">
+              🔥 Série : <span id="streak-display">0</span>
+            </div>
+            <div id="difficulty-badge" class="difficulty-badge medium">
+              Moyen
+            </div>
           </div>
 
           <div class="turn-indicator white-turn">
             <div class="turn-icon"></div>
-            <h3 id="status-text">Trait aux Blancs</h3>
-            <p>Trouve le meilleur coup !</p>
+            <h3 id="status-text">Chargement...</h3>
+          </div>
+
+          <div class="history-container">
+            <h4>Historique</h4>
+            <div id="move-history" class="moves-list">
+              <span class="empty-history">Le jeu va commencer...</span>
+            </div>
           </div>
 
           <div id="feedback-area" class="feedback"></div>
 
           <div class="controls">
             <div class="hint-wrapper" style="position: relative; width: 100%">
-              <div id="hint-bubble" class="hint-tooltip">
-                💡 Indice : Regarde les échecs possibles !
-              </div>
+              <div id="hint-bubble" class="hint-tooltip">💡 Indice...</div>
               <button id="btn-hint" class="btn-game secondary">
                 💡 Indice
               </button>
@@ -118,16 +102,18 @@
             <button
               id="btn-retry"
               class="btn-game secondary"
-              onclick="retryLastMove()"
+              style="display: none"
             >
               🔄 Réessayer
             </button>
-            <button id="btn-next" class="btn-game primary">Suivant ➡</button>
+
+            <button id="btn-next" class="btn-game primary">
+              Puzzle Suivant ➡
+            </button>
           </div>
         </div>
       </div>
     </main>
-
     <footer>
       <div class="footer-content">
         <div class="footer-section">
@@ -158,88 +144,18 @@
         </p>
       </div>
     </footer>
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.min.js"
-      integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
-      crossorigin="anonymous"
-    ></script>
-
-    <script
-      src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
-      integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
-      crossorigin="anonymous"
-    ></script>
-
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script type="module" src="game.js"></script>
 
-    <script src="data.js"></script>
-    <script src="game.js"></script>
-
-    <script type="module">
-      // 1. IMPORTS (Toujours tout en haut)
-      import { auth, db } from "../../js/auth.js";
-      import {
-        doc,
-        getDoc,
-      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-      // 2. LOGIQUE FIREBASE
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          console.log("Utilisateur connecté :", user.uid); // Pour le debug
-
-          const docRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-            // CAS 1 : TOUT VA BIEN, LE PROFIL EXISTE
-            const data = docSnap.data();
-            const pseudo = data.pseudo || "Sans Nom";
-
-            const nameElement = document.getElementById("user-name");
-            if (nameElement) nameElement.textContent = pseudo;
-
-            const avatarUrl = `https://api.dicebear.com/9.x/adventurer/svg?seed=${pseudo}`;
-            const avatarElement = document.getElementById("user-avatar");
-            if (avatarElement) {
-              avatarElement.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
-            }
-          } else {
-            // CAS 2 : LE COMPTE EXISTE MAIS PAS LES DONNÉES (Ton cas actuel)
-            console.log("Aucun document trouvé dans Firestore !");
-            document.getElementById("user-name").textContent = "Profil Vide";
-
-            // On met un avatar par défaut
-            document.getElementById("user-avatar").innerHTML = `❓`;
-          }
-        } else {
-          window.location.href = "/login/index.html";
-        }
-      });
-
-      // 3. LOGIQUE DU MENU (La Sidebar)
-      // On l'attache à 'window' pour que les boutons HTML (onclick) puissent les voir
-      window.showsidebar = function () {
-        const sidebar = document.querySelector(".sidebar");
-        sidebar.style.display = "flex";
-        setTimeout(() => {
-          sidebar.classList.add("active");
-        }, 10);
-      };
-
-      window.hidesidebar = function () {
-        const sidebar = document.querySelector(".sidebar");
-        sidebar.classList.remove("active");
-        setTimeout(() => {
-          sidebar.style.display = "none";
-        }, 300);
-      };
-
-      // 4. DATE DU FOOTER
-      const yearSpan = document.getElementById("year");
-      if (yearSpan) yearSpan.textContent = new Date().getFullYear();
-      // 5. GESTION DES CATÉGORIES (Mise à jour du titre)
+    <script>
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+      }
+      function hidesidebar() {
+        document.querySelector(".sidebar").style.display = "none";
+      }
     </script>
   </body>
 </html>

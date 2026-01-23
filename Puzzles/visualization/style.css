@@ -1,20 +1,19 @@
-/* --- CONFIGURATION DU MAIN --- */
+/* =========================================
+   1. LAYOUT PRINCIPAL & CONFIGURATION
+   ========================================= */
+
 body > main.game-main {
   width: 100% !important;
   max-width: 1200px !important;
   min-height: 90vh;
   display: flex;
-
-  /* AJOUTE ÇA : */
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
   padding: 80px 20px 40px 20px;
   margin: 0 auto;
 }
 
-/* --- ZONE DE JEU --- */
 .game-area {
   display: grid;
   grid-template-columns: 1fr 350px;
@@ -24,11 +23,13 @@ body > main.game-main {
   padding: 2rem;
   border-radius: 16px;
   border: 1px solid #383c44;
-  /* Ombre violette subtile pour marquer le mode "Visualisation" */
   box-shadow: 0 10px 40px rgba(168, 85, 247, 0.15);
 }
 
-/* --- 1. LE PLATEAU --- */
+/* =========================================
+   2. LE PLATEAU (BOARD) & PIÈCES
+   ========================================= */
+
 .board-wrapper {
   display: flex;
   flex-direction: column;
@@ -41,7 +42,6 @@ body > main.game-main {
   max-width: 600px;
   aspect-ratio: 1 / 1;
   background: #2b2d33;
-  /* Motif damier */
   background-image:
     linear-gradient(45deg, #383c44 25%, transparent 25%),
     linear-gradient(-45deg, #383c44 25%, transparent 25%),
@@ -53,8 +53,6 @@ body > main.game-main {
     0 20px,
     20px -20px,
     -20px 0px;
-
-  /* Bordure Violette ici ! */
   border: 5px solid #2b2d33;
   border-radius: 4px;
   display: flex;
@@ -65,7 +63,42 @@ body > main.game-main {
   text-align: center;
 }
 
-/* Info Joueur */
+/* CORRECTIFS CHESSBOARD */
+#board {
+  display: block !important;
+  padding: 0 !important;
+}
+
+#board img,
+.board-placeholder img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* COULEURS DES CASES & TEXTES */
+.white-1e1d7 {
+  background-color: #f0d9b5 !important;
+}
+.black-3c85d {
+  background-color: #b58863 !important;
+}
+
+.white-1e1d7 .notation-322f9 {
+  color: #b58863 !important;
+  font-weight: bold;
+}
+.black-3c85d .notation-322f9 {
+  color: #f0d9b5 !important;
+  font-weight: bold;
+}
+
+/* =========================================
+   3. INFO JOUEUR
+   ========================================= */
+
 .player-info {
   width: 100%;
   max-width: 600px;
@@ -90,7 +123,6 @@ body > main.game-main {
   height: 100%;
   object-fit: cover;
 }
-
 .details {
   display: flex;
   flex-direction: column;
@@ -104,7 +136,10 @@ body > main.game-main {
   font-size: 0.8rem;
 }
 
-/* --- 2. LA SIDEBAR --- */
+/* =========================================
+   4. SIDEBAR & HEADER
+   ========================================= */
+
 .game-sidebar {
   background: #18191c;
   border-radius: 12px;
@@ -114,46 +149,54 @@ body > main.game-main {
   gap: 1.5rem;
 }
 
-/* EN-TÊTE CORRIGÉ */
-.puzzle-header {
-  border-bottom: 1px solid #383c44;
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
   padding-bottom: 1rem;
-  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #383c44;
 }
 
-.puzzle-header h2 {
+.streak-container {
   color: #fff;
+  font-weight: bold;
+  font-size: 1rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 8px;
+  gap: 5px;
 }
 
-/* Badge CATEGORIE (Remplace l'ancien #puzzle-id) */
-#category-title {
-  background: rgba(168, 85, 247, 0.1); /* Fond Violet léger */
-  color: #a855f7; /* Texte Violet */
-  border: 1px solid rgba(168, 85, 247, 0.3);
-
-  padding: 5px 15px;
-  border-radius: 8px;
-
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 800;
-}
-
-.rating-badge {
-  background: rgba(220, 38, 38, 0.15); /* Rouge pour Difficile */
-  color: #ef4444;
-  display: inline-block;
+/* BADGES DIFFICULTÉ */
+.difficulty-badge {
   padding: 4px 10px;
   border-radius: 4px;
-  font-size: 0.85rem;
   font-weight: bold;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  background: rgba(255, 159, 0, 0.2);
+  color: #ff9f00;
+  border: 1px solid #ff9f00;
 }
+.difficulty-badge.easy {
+  background: rgba(88, 204, 2, 0.2);
+  color: #58cc02;
+  border-color: #58cc02;
+}
+.difficulty-badge.medium {
+  background: rgba(255, 159, 0, 0.2);
+  color: #ff9f00;
+  border-color: #ff9f00;
+}
+.difficulty-badge.hard {
+  background: rgba(255, 70, 70, 0.2);
+  color: #ff4646;
+  border-color: #ff4646;
+}
+
+/* =========================================
+   5. UI JEU & INPUT
+   ========================================= */
 
 .turn-indicator {
   display: flex;
@@ -182,7 +225,7 @@ body > main.game-main {
   font-size: 0.85rem;
 }
 
-/* --- ZONE DE SAISIE (INPUT) --- */
+/* ZONE DE SAISIE */
 .move-input-zone {
   background: #2b2d33;
   padding: 1rem;
@@ -202,25 +245,21 @@ body > main.game-main {
   gap: 10px;
 }
 
-/* Le champ texte style "Code" */
 #move-input {
   width: 100%;
   background: #18191c;
   border: 1px solid #383c44;
   color: #fff;
-  font-family: "Courier New", monospace; /* Police style terminal */
+  font-family: "Courier New", monospace;
   font-size: 1.1rem;
   padding: 10px;
   border-radius: 6px;
-  text-transform: uppercase; /* Force les majuscules */
 }
-
 #move-input:focus {
   outline: none;
-  border-color: #a855f7; /* Focus Violet */
+  border-color: #a855f7;
 }
 
-/* Bouton Envoyer */
 .btn-submit {
   background: #a855f7;
   color: #fff;
@@ -235,22 +274,49 @@ body > main.game-main {
   background: #9333ea;
 }
 
-.input-hint {
-  font-size: 0.75rem;
-  color: #72767d;
-  margin-top: 8px;
-  font-style: italic;
+/* NOUVEAU STYLE POUR LES INSTRUCTIONS */
+.input-instructions {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #383c44;
 }
 
-/* Boutons bas de page */
+.input-instructions p {
+  color: #999;
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+/* FEEDBACK */
+.feedback {
+  text-align: center;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+  border-radius: 8px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: transparent;
+}
+.feedback.visible {
+  opacity: 1;
+}
+
+/* CONTROLES */
 .controls {
   margin-top: auto;
   display: flex;
+  flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .btn-game {
-  flex: 1;
+  width: 100%;
   padding: 12px;
   border: none;
   border-radius: 6px;
@@ -259,7 +325,10 @@ body > main.game-main {
   font-size: 0.9rem;
   transition: 0.2s;
 }
-
+.btn-game.primary {
+  background: #00d9f6;
+  color: #000;
+}
 .btn-game.secondary {
   background: #2b2d33;
   color: #ccc;
@@ -271,56 +340,43 @@ body > main.game-main {
   border-color: #555;
 }
 
-/* --- BARRE DE FILTRES --- */
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-  justify-content: flex-start; /* Aligné à gauche de la zone de jeu */
-  width: 100%;
-}
-
-.filter-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #b9bbbe;
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
+/* --- INFOBULLE D'INDICE (Tooltip) --- */
+.hint-tooltip {
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: #2b2d33;
+  color: #fff;
+  border: 1px solid #00d9f6;
+  padding: 8px 12px;
+  border-radius: 6px;
   font-size: 0.9rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
+  font-weight: bold;
+  white-space: nowrap;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  pointer-events: none;
+}
+.hint-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #00d9f6 transparent transparent transparent;
+}
+.hint-tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
-.filter-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-/* LE BOUTON ACTIF EN VIOLET */
-.filter-btn.active {
-  background: #a855f7; /* Violet */
-  color: #fff;
-  border-color: #a855f7;
-  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
-}
-
-/* Responsive Mobile */
-@media (max-width: 600px) {
-  .filter-bar {
-    gap: 8px;
-  }
-  .filter-btn {
-    font-size: 0.8rem;
-    padding: 6px 12px;
-    flex: 1 1 auto;
-    text-align: center;
-  }
-}
-
-/* RESPONSIVE */
 @media (max-width: 900px) {
   .game-area {
     grid-template-columns: 1fr;
