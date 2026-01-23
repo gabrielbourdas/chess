@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Open Chess - Tactique</title>
     <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+      integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+      crossorigin="anonymous"
+    />
 
     <link rel="stylesheet" href="../../css/nav.css" />
     <link rel="stylesheet" href="../../css/style.css" />
@@ -53,9 +59,7 @@
     <main class="game-main">
       <div class="game-area">
         <div class="board-wrapper">
-          <div id="board" class="board-placeholder">
-            <span>ÉCHIQUIER EN COURS DE CHARGEMENT...</span>
-          </div>
+          <div id="board" class="board-container"></div>
 
           <div class="player-info">
             <div id="user-avatar" class="avatar"></div>
@@ -68,8 +72,28 @@
         </div>
 
         <div class="game-sidebar">
-          <div class="puzzle-header">
-            <h2>Puzzle #<span id="puzzle-id">492</span></h2>
+          <div class="sidebar-filters">
+            <button class="filter-btn active" onclick="setCategory('all')">
+              ♾️ Tout
+            </button>
+            <button class="filter-btn" onclick="setCategory('mat')">
+              🎯 Mat
+            </button>
+            <button class="filter-btn" onclick="setCategory('material')">
+              💎 Matériel
+            </button>
+            <button class="filter-btn" onclick="setCategory('position')">
+              🏰 Position
+            </button>
+            <button class="filter-btn" onclick="setCategory('defense')">
+              🛡️ Défense
+            </button>
+          </div>
+
+          <div
+            class="puzzle-info"
+            style="text-align: center; margin-bottom: 1rem"
+          >
             <div class="rating-badge">Difficulté: Moyen</div>
           </div>
 
@@ -79,24 +103,26 @@
             <p>Trouve le meilleur coup !</p>
           </div>
 
-          <div id="feedback-area" class="feedback hidden">
-            <span class="icon">✅</span> Excellent !
-          </div>
+          <div id="feedback-area" class="feedback"></div>
 
           <div class="controls">
+            <div class="hint-wrapper" style="position: relative; width: 100%">
+              <div id="hint-bubble" class="hint-tooltip">
+                💡 Indice : Regarde les échecs possibles !
+              </div>
+              <button id="btn-hint" class="btn-game secondary">
+                💡 Indice
+              </button>
+            </div>
+
             <button
+              id="btn-retry"
               class="btn-game secondary"
-              onclick="alert('Indice : Regarde le Roi !')"
-            >
-              💡 Indice
-            </button>
-            <button
-              class="btn-game secondary"
-              onclick="window.location.reload()"
+              onclick="retryLastMove()"
             >
               🔄 Réessayer
             </button>
-            <button class="btn-game primary">Suivant ➡</button>
+            <button id="btn-next" class="btn-game primary">Suivant ➡</button>
           </div>
         </div>
       </div>
@@ -132,6 +158,22 @@
         </p>
       </div>
     </footer>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.min.js"
+      integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+      integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+    <script src="data.js"></script>
+    <script src="game.js"></script>
 
     <script type="module">
       // 1. IMPORTS (Toujours tout en haut)
@@ -197,6 +239,7 @@
       // 4. DATE DU FOOTER
       const yearSpan = document.getElementById("year");
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+      // 5. GESTION DES CATÉGORIES (Mise à jour du titre)
     </script>
   </body>
 </html>

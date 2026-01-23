@@ -1,20 +1,24 @@
-/* --- CONFIGURATION DU MAIN --- */
-/* On écrase le CSS global pour centrer le jeu */
+/* =========================================
+   1. LAYOUT PRINCIPAL & CONFIGURATION
+   ========================================= */
+
+/* Configuration du Main pour centrer le jeu */
 body > main.game-main {
   width: 100% !important;
   max-width: 1200px !important;
-  min-height: 90vh; /* Prend tout l'écran */
+  min-height: 90vh;
   display: flex;
+  flex-direction: column; /* Empile la barre de filtre PUIS le jeu */
   align-items: center;
   justify-content: center;
   padding: 80px 20px 40px 20px;
   margin: 0 auto;
 }
 
-/* --- ZONE DE JEU (Grille) --- */
+/* Zone de jeu (Grille : Plateau à gauche, Sidebar à droite) */
 .game-area {
   display: grid;
-  grid-template-columns: 1fr 350px; /* Le plateau prend la place, la sidebar fait 350px */
+  grid-template-columns: 1fr 350px;
   gap: 2rem;
   width: 100%;
   background: #1e2024;
@@ -24,7 +28,6 @@ body > main.game-main {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* --- 1. LE PLATEAU --- */
 .board-wrapper {
   display: flex;
   flex-direction: column;
@@ -32,35 +35,192 @@ body > main.game-main {
   justify-content: center;
 }
 
-/* Le faux échiquier (En attendant le JS) */
-.board-placeholder {
+/* =========================================
+   2. LE PLATEAU (BOARD)
+   ========================================= */
+
+/* Le conteneur du plateau */
+.board-container {
   width: 100%;
   max-width: 600px;
-  aspect-ratio: 1 / 1; /* Reste toujours carré */
-  background: #2b2d33;
-  /* Petit motif damier css pour faire illusion */
-  background-image:
-    linear-gradient(45deg, #383c44 25%, transparent 25%),
-    linear-gradient(-45deg, #383c44 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #383c44 75%),
-    linear-gradient(-45deg, transparent 75%, #383c44 75%);
-  background-size: 40px 40px;
-  background-position:
-    0 0,
-    0 20px,
-    20px -20px,
-    -20px 0px;
-
-  border: 5px solid #18191c;
+  aspect-ratio: 1 / 1; /* Carré parfait */
+  background: transparent;
+  border: 5px solid #2b2d33;
   border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #72767d;
-  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden; /* Important pour les coins arrondis */
 }
 
-/* Info sous le plateau */
+/* ID du board (Style statique, pas d'animation ici) */
+#board {
+  border: none !important;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* Optimisation des images des pièces (Fluidité & Netteté) */
+.board-container img {
+  opacity: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  background: transparent !important;
+
+  /* Interdiction formelle de transformer/zoomer */
+  transform: none !important;
+  transition: none !important;
+
+  /* Optimisation GPU */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: top, left;
+}
+
+/* Force la taille pendant le drag & drop */
+.board-container .chessboard-moving-piece {
+  transform: none !important;
+  width: 100% !important;
+}
+
+/* =========================================
+   3. COULEURS & ANIMATIONS DU PLATEAU
+   ========================================= */
+
+/* Couleurs des cases (Thème Bois) */
+.white-1e1d7 {
+  background-color: #f0d9b5 !important; /* Beige */
+  color: #f0d9b5 !important;
+}
+
+.black-3c85d {
+  background-color: #b58863 !important; /* Marron */
+  color: #b58863 !important;
+}
+
+/* Indicateur de dernier coup (Jaune subtil) */
+.board-container .square-55d63[style*="background-color: rgb(255, 255, 0)"] {
+  background-color: rgba(255, 255, 0, 0.3) !important;
+}
+
+/* Animation d'entrée (Fade In Up) */
+@keyframes boardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Classe activée par JS pour lancer l'animation */
+.replay-anim {
+  animation: boardEntrance 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+}
+
+/* =========================================
+   4. INTERACTIONS & SÉLECTIONS (Logique Finale)
+   ========================================= */
+
+/* Reset général des styles de sélection par défaut */
+.highlight1-32417,
+.highlight2-9c5d2,
+.selected-square {
+  border: none !important;
+  opacity: 1 !important;
+}
+
+/* A. Case de Départ & Sélection Clic (Bordure Cyan) */
+.highlight1-32417,
+.selected-square {
+  box-shadow: inset 0 0 0 4px #00d9f6 !important;
+}
+
+/* B. Case d'Arrivée par défaut (Cachée pour gestion manuelle) */
+.highlight2-9c5d2 {
+  box-shadow: none !important;
+}
+
+/* C. Survol Légal (Activé par JS) */
+.legal-hover {
+  box-shadow: inset 0 0 0 4px #00d9f6 !important;
+}
+
+/* D. CORRECTION DES COULEURS DE FOND (Crucial) */
+/* Force la couleur du bois pour éviter la transparence lors de la sélection */
+
+/* Cases Blanches sélectionnées -> Restent Beiges */
+.white-1e1d7.highlight1-32417,
+.white-1e1d7.highlight2-9c5d2,
+.white-1e1d7.selected-square {
+  background-color: #f0d9b5 !important;
+}
+
+/* Cases Noires sélectionnées -> Restent Marrons */
+.black-3c85d.highlight1-32417,
+.black-3c85d.highlight2-9c5d2,
+.black-3c85d.selected-square {
+  background-color: #b58863 !important;
+}
+
+/* E. Aides Visuelles (Points & Cercles) */
+.legal-move {
+  /* Petit point au centre */
+  background-image: radial-gradient(
+    rgba(0, 217, 246, 0.5) 18%,
+    transparent 19%
+  );
+}
+
+.legal-capture {
+  /* Grand cercle pour la prise */
+  box-shadow: inset 0 0 0 4px rgba(0, 217, 246, 0.4);
+  border-radius: 50%;
+}
+
+/* --- FILTRES DANS LA SIDEBAR --- */
+.sidebar-filters {
+  display: grid;
+  /* 2 colonnes : ça fait des boutons compacts et propres */
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+/* Le bouton "Tout" prend toute la largeur (optionnel, pour faire joli) */
+.sidebar-filters .filter-btn:first-child {
+  grid-column: span 2;
+}
+
+.filter-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #b9bbbe;
+  padding: 10px;
+  border-radius: 8px; /* Moins arrondi pour aller avec la grille */
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: #00d9f6;
+  color: #18191c;
+  border-color: #00d9f6;
+  box-shadow: 0 0 10px rgba(0, 217, 246, 0.2);
+}
+/* Info Joueur (Sous le plateau) */
 .player-info {
   width: 100%;
   max-width: 600px;
@@ -74,20 +234,16 @@ body > main.game-main {
 }
 
 .avatar {
-  font-size: 1.5rem;
-}
-.avatar {
-  width: 50px; /* Taille fixe */
+  width: 50px;
   height: 50px;
-  border-radius: 50%; /* Rond parfait */
-  overflow: hidden; /* Coupe ce qui dépasse */
-  background: #383c44; /* Fond gris en attendant l'image */
+  border-radius: 50%;
+  overflow: hidden;
+  background: #383c44;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* On s'assure que l'image générée prend toute la place */
 .avatar img {
   width: 100%;
   height: 100%;
@@ -98,7 +254,6 @@ body > main.game-main {
   display: flex;
   flex-direction: column;
 }
-
 .name {
   color: #fff;
   font-weight: bold;
@@ -108,7 +263,7 @@ body > main.game-main {
   font-size: 0.8rem;
 }
 
-/* --- 2. LA SIDEBAR (Infos droites) --- */
+/* Sidebar Droite */
 .game-sidebar {
   background: #18191c;
   border-radius: 12px;
@@ -118,36 +273,11 @@ body > main.game-main {
   gap: 1.5rem;
 }
 
-/* --- EN-TÊTE DU PUZZLE --- */
+/* En-tête Puzzle */
 .puzzle-header {
   border-bottom: 1px solid #383c44;
   padding-bottom: 1rem;
   margin-bottom: 1.5rem;
-}
-
-.puzzle-header h2 {
-  color: #fff;
-  /* On utilise Flexbox pour aligner le texte "Puzzle #" et le numéro */
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Espace entre le texte et le numéro */
-
-  font-size: 1.4rem; /* Taille raisonnable pour le tout */
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-/* Le style du numéro (la boîte) */
-#puzzle-id {
-  font-size: 1.4rem; /* IMPORTANT : On force la même taille que le texte */
-  font-weight: 800; /* On le met un peu plus gras pour qu'il ressorte */
-  color: #fff;
-
-  /* On garde un style "Badge" mais beaucoup plus discret */
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 10px; /* Marges internes réduites */
-  border-radius: 6px;
-  border-left: 3px solid #00d9f6; /* La petite touche bleue Open Chess */
 }
 
 .rating-badge {
@@ -160,7 +290,7 @@ body > main.game-main {
   font-weight: bold;
 }
 
-/* Indicateur "C'est à qui de jouer" */
+/* Indicateur de tour */
 .turn-indicator {
   display: flex;
   flex-direction: column;
@@ -169,10 +299,9 @@ body > main.game-main {
   background: #26292f;
   padding: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #fff; /* Blanc par défaut */
+  border-left: 4px solid #fff;
 }
 
-/* Si c'est aux blancs */
 .turn-indicator.white-turn .turn-icon {
   width: 20px;
   height: 20px;
@@ -180,6 +309,15 @@ body > main.game-main {
   border-radius: 50%;
   margin-bottom: 10px;
 }
+
+.turn-indicator.black-turn {
+  border-left: 4px solid #000;
+}
+.turn-indicator.black-turn .turn-icon {
+  background: #000;
+  border: 1px solid #555;
+}
+
 .turn-indicator h3 {
   color: #fff;
   margin-bottom: 5px;
@@ -189,28 +327,43 @@ body > main.game-main {
   font-size: 0.9rem;
 }
 
-/* Feedback (Succès / Echec) */
+/* --- FEEDBACK STABILISÉ --- */
 .feedback {
   text-align: center;
-  padding: 1rem;
-  background: rgba(88, 204, 2, 0.1);
-  color: #58cc02;
+
+  /* HAUTEUR FIXE : Empêche le jeu de bouger quand le message apparaît */
+  height: 60px;
+  display: flex; /* Pour centrer le texte verticalement */
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0; /* Espace en haut et en bas */
+
   border-radius: 8px;
   font-weight: bold;
-}
-.hidden {
-  display: none;
+
+  /* GESTION DE L'INVISIBLE */
+  opacity: 0; /* Invisible par défaut (mais prend de la place) */
+  transition: opacity 0.3s; /* Petite animation d'apparition */
+
+  /* Couleur par défaut (sera écrasée par le JS) */
+  background: transparent;
 }
 
-/* Boutons */
+/* Quand le message doit s'afficher */
+.feedback.visible {
+  opacity: 1; /* Devient visible */
+}
+
+/* Boutons de contrôle */
 .controls {
-  margin-top: auto; /* Pousse les boutons vers le bas */
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
 .btn-game {
+  width: 100%;
   padding: 12px;
   border: none;
   border-radius: 6px;
@@ -237,16 +390,76 @@ body > main.game-main {
   background: #363940;
   color: #fff;
 }
+/* --- INFOBULLE D'INDICE (Tooltip) --- */
 
-/* --- RESPONSIVE --- */
+/* La bulle elle-même */
+.hint-tooltip {
+  position: absolute;
+  bottom: 125%; /* Juste au-dessus du bouton */
+  left: 50%;
+  transform: translateX(-50%) translateY(10px); /* Centrée horizontalement + petit décalage bas */
+
+  background-color: #2b2d33; /* Fond sombre */
+  color: #fff;
+  border: 1px solid #00d9f6; /* Bordure Cyan */
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  white-space: nowrap; /* Le texte tient sur une ligne */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+
+  /* État caché par défaut */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Effet "pop" */
+  pointer-events: none; /* Pour cliquer à travers si besoin */
+}
+
+/* La petite flèche en bas de la bulle */
+.hint-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* Tout en bas */
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #00d9f6 transparent transparent transparent; /* Triangle Cyan */
+}
+
+/* Classe active (quand on clique) */
+.hint-tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0); /* Remonte à sa place normale */
+}
+
+/* =========================================
+   6. RESPONSIVE
+   ========================================= */
+
 @media (max-width: 900px) {
   .game-area {
-    grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+    grid-template-columns: 1fr;
   }
   .board-wrapper {
-    order: 1; /* Plateau en premier */
+    order: 1;
   }
   .game-sidebar {
-    order: 2; /* Infos en dessous */
+    order: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .filter-bar {
+    gap: 8px;
+  }
+  .filter-btn {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    flex: 1 1 auto;
+    text-align: center;
   }
 }

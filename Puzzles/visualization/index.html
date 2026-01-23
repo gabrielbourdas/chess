@@ -55,6 +55,21 @@
     </header>
 
     <main class="game-main">
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="setCategory('all')">
+          ♾️ Tout
+        </button>
+        <button class="filter-btn" onclick="setCategory('mat')">🎯 Mat</button>
+        <button class="filter-btn" onclick="setCategory('material')">
+          💎 Matériel
+        </button>
+        <button class="filter-btn" onclick="setCategory('position')">
+          🏰 Position
+        </button>
+        <button class="filter-btn" onclick="setCategory('defense')">
+          🛡️ Défense
+        </button>
+      </div>
       <div class="game-area">
         <div class="board-wrapper">
           <div id="board" class="board-placeholder visualization-board">
@@ -72,7 +87,7 @@
 
         <div class="game-sidebar">
           <div class="puzzle-header">
-            <h2>Puzzle #<span id="puzzle-id">83</span></h2>
+            <h2><span id="category-title">Mélange</span></h2>
             <div class="rating-badge">Difficile</div>
           </div>
 
@@ -182,6 +197,29 @@
 
       const yearSpan = document.getElementById("year");
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+      // 5. GESTION DES CATÉGORIES (Mise à jour du titre)
+      window.setCategory = function (cat) {
+        // A. Gestion des boutons (Active/Inactive)
+        document
+          .querySelectorAll(".filter-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        event.target.classList.add("active");
+
+        // B. Dictionnaire des noms pour l'affichage
+        const names = {
+          all: "♾️ Mélange",
+          mat: "🎯 Mat",
+          material: "💎 Matériel",
+          position: "🏰 Position",
+          defense: "🛡️ Défense",
+        };
+
+        // C. Mise à jour du texte
+        document.getElementById("category-title").textContent = names[cat];
+
+        // (Ici on ajoutera plus tard la logique pour charger un nouveau puzzle)
+        console.log("Catégorie changée pour : " + cat);
+      };
     </script>
   </body>
 </html>
