@@ -1,4 +1,4 @@
-// logic.js (VISUALISATION - STOCKFISH LOCAL CORRIGÉ & UX AMÉLIORÉE + FLÈCHES)
+// logic.js (VISUALISATION - STOCKFISH LOCAL CORRIGÉ & UX AMÉLIORÉE + FLÈCHES + PROGRESSION ELO)
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
@@ -10,7 +10,7 @@ import {
   limit,
   doc,
   getDoc,
-  updateDoc,
+  setDoc, // <--- AJOUTÉ
   increment,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
@@ -282,7 +282,7 @@ function handleSuccess(sanMove, isCapture) {
     document.getElementById("streak-display").innerText = currentStreak;
     document.getElementById("move-input").disabled = true;
     showFeedback(true, "Visualisation réussie ! 🎉");
-    updateVisuStats(true);
+    updateVisuStats(true); // <--- Appel de la nouvelle fonction
     isPuzzleLocked = true;
   } else {
     setTimeout(() => {
@@ -312,7 +312,7 @@ function handleFailure(badMoveUCI) {
   document.getElementById("streak-display").innerText = 0;
 
   showFeedback(false, "Mauvais coup.");
-  updateVisuStats(false);
+  updateVisuStats(false); // <--- Appel de la nouvelle fonction
   // Analyse Stockfish
   askStockfishRefutation(badMoveUCI);
 }
@@ -643,7 +643,8 @@ function getArrowCoordinates(from, to) {
     y2: y2 + 0.5,
   };
 }
-// --- SAUVEGARDE STATS (MODE VISUALISATION - RECORD ELO) ---
+
+// --- SAUVEGARDE STATS (MODE VISUALISATION - CORRIGÉ ELO + MERGE) ---
 async function updateVisuStats(isWin) {
   const user = auth.currentUser;
   if (!user) return;
@@ -651,29 +652,43 @@ async function updateVisuStats(isWin) {
   const userRef = doc(db, "users", user.uid);
 
   try {
+    // 1. On récupère les stats actuelles
+    const docSnap = await getDoc(userRef);
+    const userData = docSnap.exists() ? docSnap.data() : {};
+
+    // 2. On récupère l'Elo actuel (ou 1000 par défaut si nouveau)
+    let currentElo = userData.currentVisuElo || 1000;
+    const bestElo = userData.bestVisuElo || 1000;
+
+    // 3. Calcul du nouveau score (+10 ou -10)
     if (isWin) {
-      const docSnap = await getDoc(userRef);
-      const userData = docSnap.exists() ? docSnap.data() : {};
-
-      const currentBest = userData.bestVisuElo || 0;
-      const puzzleElo = parseInt(currentPuzzle.rating) || 0;
-
-      const updates = {
-        visuSolved: increment(1),
-        visuStreak: increment(1),
-      };
-
-      // Si le puzzle visu réussi est plus fort que le record
-      if (puzzleElo > currentBest) {
-        updates.bestVisuElo = puzzleElo;
-      }
-
-      await updateDoc(userRef, updates);
+      currentElo += 10;
     } else {
-      await updateDoc(userRef, {
-        visuStreak: 0,
-      });
+      currentElo = Math.max(100, currentElo - 10); // On ne descend pas sous 100
     }
+
+    // 4. Préparation de la mise à jour
+    const updates = {
+      currentVisuElo: currentElo, // Ton niveau actuel
+    };
+
+    if (isWin) {
+      updates.visuSolved = increment(1);
+      updates.visuStreak = increment(1);
+
+      // Si ton nouveau niveau bat ton record, on met à jour le record
+      if (currentElo > bestElo) {
+        updates.bestVisuElo = currentElo;
+      }
+    } else {
+      updates.visuStreak = 0;
+    }
+
+    // 5. SAUVEGARDE SÉCURISÉE (setDoc + merge)
+    // C'est ce qui répare le bug de ton ami : si le doc n'existe pas, il le crée
+    await setDoc(userRef, updates, { merge: true });
+
+    console.log(`Niveau Visualisation mis à jour : ${currentElo}`);
   } catch (error) {
     console.error("Erreur sauvegarde stats visu:", error);
   }

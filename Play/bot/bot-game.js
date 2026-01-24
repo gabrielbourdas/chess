@@ -19,31 +19,41 @@ var playerColor = "w";
 var difficulty = 5;
 
 // =============================================
-// GESTION DES SONS (Lichess Assets)
+// GESTION DES SONS (MOUVEMENT & CAPTURE)
 // =============================================
 
-const soundStart = new Audio(
-  "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/gstart.mp3",
+// Liens directs vers les sons (Format MP3 standard)
+const audioMove = new Audio(
+  "https://images.chesscomfiles.com/chess-themes/sounds/_Common/standard/move.mp3",
 );
-const soundEnd = new Audio(
-  "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/winn.mp3",
-);
-const soundMove = new Audio(
-  "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/move.mp3",
-);
-const soundCapture = new Audio(
-  "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/capture.mp3",
+const audioCapture = new Audio(
+  "https://images.chesscomfiles.com/chess-themes/sounds/_Common/standard/capture.mp3",
 );
 
-// Fonction utilitaire pour choisir le bon son (Capture ou Move)
-function playAudioForMove(move) {
-  // 'c' = capture standard, 'e' = prise en passant
-  if (move.flags.includes("c") || move.flags.includes("e")) {
-    soundCapture.currentTime = 0; // Rembobine pour jouer instantanément
-    soundCapture.play().catch((e) => console.error("Son bloqué:", e));
-  } else {
-    soundMove.currentTime = 0;
-    soundMove.play().catch((e) => console.error("Son bloqué:", e));
+// Fonction pour jouer le son
+function playMoveSound(move) {
+  // Vérifie si le coup est une capture ('c') ou une prise en passant ('e')
+  const isCapture = move.flags.includes("c") || move.flags.includes("e");
+
+  // Sélectionne le bon fichier audio
+  const soundToPlay = isCapture ? audioCapture : audioMove;
+
+  // Remet le son au début (pour pouvoir le jouer rapidement plusieurs fois de suite)
+  soundToPlay.currentTime = 0;
+
+  // Tente de jouer le son
+  var playPromise = soundToPlay.play();
+
+  if (playPromise !== undefined) {
+    playPromise
+      .then((_) => {
+        // Le son s'est joué avec succès
+        console.log(isCapture ? "🔊 Son: Capture" : "🔊 Son: Mouvement");
+      })
+      .catch((error) => {
+        // Le navigateur a bloqué le son
+        console.warn("⚠️ Erreur Audio :", error);
+      });
   }
 }
 
@@ -146,11 +156,14 @@ function handleSquareClick(square) {
 }
 
 function attemptMove(from, to) {
+  // On effectue le mouvement
   var move = game.move({ from: from, to: to, promotion: "q" });
+
+  // Si le mouvement est invalide, on arrête
   if (move === null) return null;
 
-  // --- SON COUP JOUEUR ---
-  playAudioForMove(move);
+  // --- SON : On joue le son ici pour le joueur ---
+  playMoveSound(move);
 
   board.position(game.fen());
   clearArrows();
@@ -207,10 +220,11 @@ function makeBotMove(bestMoveUCI) {
   const promotion = bestMoveUCI.length > 4 ? bestMoveUCI[4] : "q";
 
   var move = game.move({ from: from, to: to, promotion: promotion });
+
   if (move === null) return;
 
-  // --- SON COUP BOT ---
-  playAudioForMove(move);
+  // --- SON : On joue le son ici pour le bot ---
+  playMoveSound(move);
 
   board.position(game.fen());
   updateStatus();
@@ -473,9 +487,6 @@ function startNewGame() {
   board.position("start");
   board.orientation(playerColor === "w" ? "white" : "black");
 
-  // --- JOUER SON DE DÉBUT ---
-  soundStart.play().catch((e) => console.log("Audio bloqué:", e));
-
   updateStatus();
   updateMoveHistory();
   clearArrows();
@@ -493,13 +504,9 @@ function updateStatus() {
 
   if (game.in_checkmate()) {
     status = "Partie terminée, " + moveColor + " sont en échec et mat.";
-    // --- SON DE FIN (MAT) ---
-    if (gameActive) soundEnd.play();
     gameActive = false;
   } else if (game.in_draw()) {
     status = "Partie terminée, match nul.";
-    // --- SON DE FIN (NUL) ---
-    if (gameActive) soundEnd.play();
     gameActive = false;
   } else {
     status = "Au tour des " + moveColor;

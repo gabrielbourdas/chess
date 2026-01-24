@@ -1,3 +1,5 @@
+// game.js (PUZZLES - STOCKFISH LOCAL + ELO SYSTEM)
+
 // Importation des fonctions Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
@@ -9,7 +11,7 @@ import {
   limit,
   doc,
   getDoc,
-  updateDoc,
+  setDoc, // <--- AJOUTÉ
   increment,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
@@ -384,7 +386,7 @@ function checkPuzzleProgress(source, target, moveObj) {
           }
       }
       showFeedback(true, successMessage);
-      updateClassicStats(true);
+      updateClassicStats(true); // <--- Appel de la fonction corrigée
       isPuzzleLocked = true;
       toggleRetryButton(false);
     } else {
@@ -392,7 +394,7 @@ function checkPuzzleProgress(source, target, moveObj) {
     }
   } else {
     currentStreak = 0;
-    updateClassicStats(false);
+    updateClassicStats(false); // <--- Appel de la fonction corrigée
     document.getElementById("streak-display").innerText = currentStreak;
     askStockfishRefutation();
     isWrongMoveState = true;
@@ -621,7 +623,7 @@ function generateRandomId() {
   return result;
 }
 
-// --- SAUVEGARDE STATS (MODE CLASSIQUE - RECORD ELO) ---
+// --- SAUVEGARDE STATS (CORRIGÉE AVEC ELO & SETDOC) ---
 async function updateClassicStats(isWin) {
   const user = auth.currentUser;
   if (!user) return;
@@ -629,35 +631,44 @@ async function updateClassicStats(isWin) {
   const userRef = doc(db, "users", user.uid);
 
   try {
+    // 1. On récupère les données actuelles
+    const docSnap = await getDoc(userRef);
+    const userData = docSnap.exists() ? docSnap.data() : {};
+
+    // 2. On récupère l'Elo actuel (ou 1200 par défaut)
+    let currentElo = userData.currentPuzzleElo || 1200;
+    const bestElo = userData.bestPuzzleElo || 1200;
+
+    // 3. Calcul simple (+10 / -10)
+    // (Tu pourras faire un calcul plus complexe plus tard basé sur la difficulté du puzzle)
     if (isWin) {
-      // 1. On récupère les données actuelles de l'utilisateur
-      const docSnap = await getDoc(userRef);
-      const userData = docSnap.exists() ? docSnap.data() : {};
-
-      // 2. On récupère l'ancien record (ou 0 si c'est la première fois)
-      const currentBest = userData.bestPuzzleElo || 0;
-
-      // 3. On récupère l'Elo du puzzle qu'on vient de réussir
-      const puzzleElo = parseInt(currentPuzzle.rating) || 0;
-
-      // 4. On prépare la mise à jour
-      const updates = {
-        puzzlesSolved: increment(1), // On garde le compteur total
-        puzzleStreak: increment(1), // On garde la série
-      };
-
-      // 5. SI le puzzle réussi est plus fort que l'ancien record, on met à jour
-      if (puzzleElo > currentBest) {
-        updates.bestPuzzleElo = puzzleElo;
-      }
-
-      await updateDoc(userRef, updates);
+      currentElo += 10;
     } else {
-      // En cas de défaite, on remet juste la série à 0 (on ne touche pas au record Elo)
-      await updateDoc(userRef, {
-        puzzleStreak: 0,
-      });
+      currentElo = Math.max(100, currentElo - 10);
     }
+
+    // 4. Préparation des mises à jour
+    const updates = {
+      currentPuzzleElo: currentElo, // Sauvegarde du niveau actuel
+    };
+
+    if (isWin) {
+      updates.puzzlesSolved = increment(1);
+      updates.puzzleStreak = increment(1);
+
+      // Mise à jour du record personnel
+      if (currentElo > bestElo) {
+        updates.bestPuzzleElo = currentElo;
+      }
+    } else {
+      updates.puzzleStreak = 0;
+    }
+
+    // 5. Sauvegarde
+    // On utilise setDoc avec merge: true au lieu de updateDoc
+    await setDoc(userRef, updates, { merge: true });
+
+    console.log(`Niveau Puzzle mis à jour : ${currentElo}`);
   } catch (error) {
     console.error("Erreur sauvegarde stats classiques:", error);
   }
