@@ -288,22 +288,121 @@ body > main.game-main {
   line-height: 1.4;
 }
 
-/* FEEDBACK */
+/* =========================================
+   6. FEEDBACK AMÉLIORÉ (STOCKFISH)
+   ========================================= */
+
 .feedback {
-  text-align: center;
-  height: 60px;
+  text-align: left;
+  min-height: 80px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
+  padding: 1rem;
   margin: 1rem 0;
   border-radius: 8px;
-  font-weight: bold;
+  font-size: 0.95rem;
+  line-height: 1.6;
   opacity: 0;
   transition: opacity 0.3s;
   background: transparent;
+  border: 2px solid transparent;
 }
+
 .feedback.visible {
   opacity: 1;
+}
+
+/* Feedback succès */
+.feedback.success {
+  background: linear-gradient(
+    135deg,
+    rgba(88, 204, 2, 0.1) 0%,
+    rgba(88, 204, 2, 0.05) 100%
+  );
+  border-color: rgba(88, 204, 2, 0.3);
+  color: #58cc02;
+}
+
+.feedback.success::before {
+  content: "✅ ";
+  font-size: 1.2rem;
+  margin-right: 5px;
+}
+
+/* Feedback erreur */
+.feedback.error {
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.1) 0%,
+    rgba(239, 68, 68, 0.05) 100%
+  );
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.feedback.error::before {
+  content: "❌ ";
+  font-size: 1.2rem;
+  margin-right: 5px;
+}
+
+/* Style pour le texte Stockfish */
+.feedback strong {
+  color: #fff;
+  font-weight: bold;
+  background: rgba(168, 85, 247, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 1.05rem;
+}
+
+.feedback .error-title {
+  display: block;
+  font-weight: bold;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+  color: #ef4444;
+}
+
+.feedback .analysis-text {
+  display: block;
+  color: #d1d5db;
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+
+.feedback .stockfish-response {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border-left: 3px solid #a855f7;
+}
+
+.feedback .stockfish-icon {
+  font-size: 1.1rem;
+}
+
+/* Animation de chargement pour l'analyse */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.feedback .analyzing {
+  animation: pulse 1.5s ease-in-out infinite;
+  color: #a855f7;
 }
 
 /* CONTROLES */
@@ -376,7 +475,41 @@ body > main.game-main {
   visibility: visible;
   transform: translateX(-50%) translateY(0);
 }
+/* =========================================
+   7. CALQUE FLÈCHES & CERCLES (SVG)
+   ========================================= */
 
+#board {
+  position: relative; /* Important pour que l'overlay se positionne bien */
+}
+
+#arrow-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Laisse passer les clics au travers */
+  z-index: 1000;
+}
+
+.arrow-line {
+  stroke: rgba(0, 217, 246, 0.8); /* Orange Lichess/Chess.com style */
+  stroke-width: 0.15;
+  stroke-linecap: round;
+  opacity: 0.8;
+}
+
+.arrow-head {
+  fill: rgba(0, 217, 246, 0.8);
+}
+
+.arrow-circle {
+  stroke: rgba(0, 217, 246, 0.8);
+  stroke-width: 0.08;
+  fill: none; /* Intérieur vide */
+  opacity: 0.8;
+}
 @media (max-width: 900px) {
   .game-area {
     grid-template-columns: 1fr;
@@ -386,5 +519,11 @@ body > main.game-main {
   }
   .game-sidebar {
     order: 2;
+  }
+
+  .feedback {
+    font-size: 0.9rem;
+    padding: 0.8rem;
+    min-height: 70px;
   }
 }

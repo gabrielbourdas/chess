@@ -1,0 +1,242 @@
+/* =========================================
+   STYLE SPÉCIFIQUE - RÈGLES SIMPLIFIÉES
+   ========================================= */
+
+/* --- 1. RESET CRITIQUE --- */
+/* Annule les effets globaux qui cassaient la mise en page */
+section.rules-section {
+  max-width: 100%;
+  flex: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 4rem;
+  overflow: visible;
+}
+
+section.rules-section:hover {
+  transform: none;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+section.rules-section h3 {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 1rem;
+  text-align: left;
+  color: inherit;
+}
+
+/* --- 2. LE TITRE (HORS DU MAIN) --- */
+.rules-page-title {
+  text-align: center;
+  /* C'est ICI qu'on règle le problème de la Nav qui écrase le texte */
+  margin-top: 140px; /* Pousse le titre bien en dessous de la barre fixe */
+  margin-bottom: 3rem;
+  padding: 0 1rem;
+}
+
+.rules-page-title h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow:
+    0 0 20px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(0, 217, 246, 0.4);
+}
+
+.rules-intro {
+  font-size: 1.2rem;
+  color: #ebebeb;
+  max-width: 700px;
+  margin: 0 auto;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px 20px;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+/* --- 3. LE CONTENEUR PRINCIPAL (MODE "VERRE") --- */
+.rules-container {
+  max-width: 1000px;
+  margin: 0 auto 5rem auto;
+
+  background-color: rgba(24, 25, 28, 0.85);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* --- TITRES DE SECTIONS --- */
+.rules-section h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(0, 217, 246, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #fff;
+}
+
+.rules-section h2 i {
+  color: #00d9f6;
+}
+
+/* =========================================
+   GRILLE DES PIÈCES
+   ========================================= */
+.pieces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.piece-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 25px;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s;
+}
+
+.piece-card:hover {
+  border-color: #00d9f6;
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.piece-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.piece-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.piece-card p {
+  color: #dcdcdc;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.capture-rule {
+  font-size: 0.95rem;
+  color: #ff9f00;
+  margin-top: 15px;
+  font-weight: bold;
+  background: rgba(255, 159, 0, 0.1);
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.piece-card.royal {
+  border: 1px solid rgba(255, 159, 0, 0.4);
+  background: linear-gradient(145deg, rgba(255, 159, 0, 0.05), transparent);
+}
+
+/* =========================================
+   BLOCS COUPS SPÉCIAUX
+   ========================================= */
+.special-move-block {
+  background: rgba(0, 217, 246, 0.08);
+  border-left: 4px solid #00d9f6;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.special-move-block h3 {
+  color: #00d9f6 !important;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.special-move-block.orange-accent {
+  background: rgba(255, 159, 0, 0.08);
+  border-left-color: #ff9f00;
+}
+.special-move-block.orange-accent h3 {
+  color: #ff9f00 !important;
+}
+
+.special-move-block ul {
+  padding-left: 20px;
+  margin-top: 15px;
+  color: #dcdcdc;
+}
+
+.special-move-block li {
+  margin-bottom: 8px;
+}
+
+/* =========================================
+   FIN DE PARTIE
+   ========================================= */
+.endgame-grid {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.endgame-card {
+  flex: 1 1 300px;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.endgame-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.win {
+  border: 1px solid rgba(0, 217, 246, 0.5);
+  box-shadow: 0 0 15px rgba(0, 217, 246, 0.1);
+}
+.win h3 {
+  color: #00d9f6 !important;
+}
+
+.draw {
+  border: 1px solid #b9bbbe;
+}
+.draw h3 {
+  color: #b9bbbe !important;
+}
+
+/* AJUSTEMENT MOBILE */
+@media (max-width: 600px) {
+  .rules-page-title {
+    margin-top: 100px;
+  }
+  .rules-page-title h1 {
+    font-size: 2.2rem;
+  }
+  .rules-container {
+    padding: 1.5rem;
+    margin: 2rem 1rem;
+  }
+}

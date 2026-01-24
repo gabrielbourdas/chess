@@ -30,7 +30,31 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// --- 2. DICTIONNAIRE DES THÈMES ---
+// --- 2. CONFIGURATION STOCKFISH ---
+var stockfish = null;
+var isEngineReady = false;
+
+try {
+  stockfish = new Worker("stockfish.js");
+
+  stockfish.onmessage = function (event) {
+    const message = event.data ? event.data : event;
+    if (message === "uciok") stockfish.postMessage("isready");
+    if (message === "readyok") {
+      isEngineReady = true;
+      console.log("✅ Stockfish est prêt !");
+    }
+  };
+  stockfish.onerror = function (e) {
+    console.error("❌ Erreur Stockfish", e);
+    isEngineReady = false;
+  };
+  stockfish.postMessage("uci");
+} catch (e) {
+  console.warn("⚠️ Impossible de charger Stockfish.", e);
+}
+
+// --- 3. DICTIONNAIRE DES THÈMES ---
 const THEMES_FR = {
   mate: "Échec et Mat ! 🏁",
   mateIn1: "Mat en 1 coup ! ⚡",
@@ -44,26 +68,28 @@ const THEMES_FR = {
   sacrifice: "Magnifique sacrifice ! 🎁",
   xRayAttack: "Attaque rayons X ! ☠️",
   promotion: "Promotion ! ♛",
-  zugzwang: "Zugzwang ! L'adversaire est bloqué.",
+  zugzwang: "Zugzwang !",
   deflection: "Déviation réussie !",
   attraction: "Sacrifice d'attraction !",
   interference: "Interférence tactique !",
   clearance: "Dégagement de case !",
-  endgame: "Bien joué pour cette finale.",
+  endgame: "Finale.",
 };
 
-// Variables Globales
+// Variables Globales Jeu
 var board = null;
 var game = new Chess();
 var currentPuzzle = null;
 var moveIndex = 0;
 var isPuzzleLocked = false;
 var isWrongMoveState = false;
-var currentStreak = 0; // <--- NOUVELLE VARIABLE SÉRIE
-
-// Variables UI
+var currentStreak = 0;
 var selectedSquare = null;
 var draggedSource = null;
+
+// --- VARIABLES POUR FLÈCHES ---
+var arrowStartSquare = null;
+var arrowsList = [];
 
 var config = {
   draggable: true,
@@ -82,6 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => board.resize(), 200);
   window.addEventListener("resize", board.resize);
 
+  // Initialisation du système de flèches
+  initArrowSystem();
+
   $("#board").on("click", ".square-55d63", function () {
     var square = $(this).attr("data-square");
     handleSquareInteraction(square);
@@ -95,6 +124,131 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadRandomPuzzle();
 });
+
+// --- SYSTÈME DE FLÈCHES (VISUALISATION CORRIGÉE) ---
+
+function initArrowSystem() {
+  // 1. Ajouter le SVG par-dessus le plateau
+  const $board = $("#board");
+  const svgOverlay = `
+    <svg id="arrow-overlay" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowhead" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto">
+          <polygon points="0 0, 4 2, 0 4" class="arrow-head" />
+        </marker>
+      </defs>
+      <g id="arrows-layer"></g>
+    </svg>
+  `;
+  $board.append(svgOverlay);
+
+  const boardEl = document.getElementById("board");
+
+  // Empêcher le menu contextuel (clic droit navigateur)
+  boardEl.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+  });
+
+  // --- CORRECTION MAJEURE ICI ---
+  // On utilise { capture: true } pour intercepter l'événement AVANT chessboard.js
+  boardEl.addEventListener(
+    "mousedown",
+    (e) => {
+      if (e.button === 2) {
+        // Clic Droit
+        // STOPPER LA PROPAGATION IMMÉDIATEMENT
+        // Cela empêche chessboard.js de recevoir le clic et de lancer le drag & drop de la pièce
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        const square = getSquareFromEvent(e);
+        if (square) arrowStartSquare = square;
+      } else {
+        // Clic Gauche : On laisse passer l'événement pour jouer, mais on efface les flèches
+        clearArrows();
+      }
+    },
+    { capture: true },
+  ); // <--- C'est ce paramètre qui donne la priorité
+
+  boardEl.addEventListener("mouseup", (e) => {
+    if (e.button === 2 && arrowStartSquare) {
+      // Pas besoin de stopper la propagation ici, le mal est évité au mousedown
+      const arrowEndSquare = getSquareFromEvent(e);
+
+      if (arrowEndSquare && arrowStartSquare !== arrowEndSquare) {
+        toggleArrow(arrowStartSquare, arrowEndSquare);
+      }
+      arrowStartSquare = null;
+    }
+  });
+}
+
+// Récupère la case (ex: "e4") sous la souris
+function getSquareFromEvent(e) {
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  const squareEl = $(el).closest(".square-55d63");
+  return squareEl.length ? squareEl.attr("data-square") : null;
+}
+
+function toggleArrow(from, to) {
+  const index = arrowsList.findIndex((a) => a.from === from && a.to === to);
+  if (index !== -1) arrowsList.splice(index, 1);
+  else arrowsList.push({ from, to });
+  renderArrows();
+}
+
+function clearArrows() {
+  arrowsList = [];
+  renderArrows();
+}
+
+function renderArrows() {
+  const layer = document.getElementById("arrows-layer");
+  if (!layer) return;
+  layer.innerHTML = "";
+
+  arrowsList.forEach((arrow) => {
+    const coords = getArrowCoordinates(arrow.from, arrow.to);
+
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", coords.x1);
+    line.setAttribute("y1", coords.y1);
+    line.setAttribute("x2", coords.x2);
+    line.setAttribute("y2", coords.y2);
+    line.setAttribute("class", "arrow-line");
+    line.setAttribute("marker-end", "url(#arrowhead)");
+
+    layer.appendChild(line);
+  });
+}
+
+function getArrowCoordinates(from, to) {
+  const files = "abcdefgh";
+  const ranks = "12345678";
+
+  let x1 = files.indexOf(from[0]);
+  let y1 = ranks.indexOf(from[1]);
+  let x2 = files.indexOf(to[0]);
+  let y2 = ranks.indexOf(to[1]);
+
+  const orientation = board.orientation();
+
+  if (orientation === "white") {
+    y1 = 7 - y1;
+    y2 = 7 - y2;
+  } else {
+    x1 = 7 - x1;
+    x2 = 7 - x2;
+  }
+
+  return {
+    x1: x1 + 0.5,
+    y1: y1 + 0.5,
+    x2: x2 + 0.5,
+    y2: y2 + 0.5,
+  };
+}
 
 // --- FIREBASE USER ---
 onAuthStateChanged(auth, async (user) => {
@@ -117,13 +271,18 @@ async function loadRandomPuzzle() {
   updateStatus("Recherche...", false);
   deselectSquare();
 
+  $("#board .square-55d63").removeClass("last-move-highlight");
+  clearArrows();
+
   isPuzzleLocked = false;
   isWrongMoveState = false;
   moveIndex = 0;
   toggleRetryButton(false);
-  document.getElementById("feedback-area").classList.remove("visible");
 
-  // Reset de l'historique visuel
+  const feedbackEl = document.getElementById("feedback-area");
+  feedbackEl.className = "feedback";
+  feedbackEl.innerHTML = "";
+
   document.getElementById("move-history").innerHTML =
     '<span class="empty-history">Chargement...</span>';
 
@@ -133,12 +292,8 @@ async function loadRandomPuzzle() {
     const q = query(puzzlesRef, where("__name__", ">=", randomId), limit(1));
     const snapshot = await getDocs(q);
 
-    if (!snapshot.empty) {
-      const doc = snapshot.docs[0];
-      setupPuzzle(doc.data());
-    } else {
-      loadRandomPuzzle();
-    }
+    if (!snapshot.empty) setupPuzzle(snapshot.docs[0].data());
+    else loadRandomPuzzle();
   } catch (error) {
     console.error("Erreur", error);
   }
@@ -146,17 +301,13 @@ async function loadRandomPuzzle() {
 
 function setupPuzzle(data) {
   currentPuzzle = data;
-
-  // --- MISE À JOUR SÉRIE & ELO ---
-  document.getElementById("streak-display").innerText = currentStreak; // Affiche la série
+  document.getElementById("streak-display").innerText = currentStreak;
   document.getElementById("puzzle-rating").innerText = data.rating;
-  document.getElementById("move-history").innerHTML =
-    '<span class="empty-history">À vous de jouer...</span>';
+
   const elo = data.rating;
   const badge = document.getElementById("difficulty-badge");
-  let text = "Moyen";
-  let cssClass = "medium";
-
+  let text = "Moyen",
+    cssClass = "medium";
   if (elo < 700) {
     text = "Débutant";
     cssClass = "easy";
@@ -173,25 +324,21 @@ function setupPuzzle(data) {
     text = "Expert";
     cssClass = "expert";
   }
-
   badge.innerText = text;
-  badge.className = `difficulty-badge ${cssClass}`; // Applique la couleur
-
-  // 3. Remplir les autres infos
-  document.getElementById("puzzle-rating").innerText = data.rating;
-  document.getElementById("move-history").innerHTML =
-    '<span class="empty-history">À vous de jouer...</span>';
-  // ----------------------------------
+  badge.className = `difficulty-badge ${cssClass}`;
 
   game.load(data.fen);
   board.position(data.fen, false);
+
+  setTimeout(() => {
+    renderArrows();
+  }, 100);
 
   let movesList = Array.isArray(data.moves)
     ? data.moves
     : data.moves.split(" ");
   currentPuzzle.movesList = movesList;
 
-  // Jouer le coup adverse
   setTimeout(() => {
     makeMoveOnBoard(movesList[0]);
     moveIndex = 1;
@@ -199,50 +346,41 @@ function setupPuzzle(data) {
   }, 500);
 }
 
-// --- LOGIQUE DE VALIDATION & ERREUR ---
-
 function attemptMove(source, target) {
   if (isWrongMoveState) return null;
 
   var move = game.move({ from: source, to: target, promotion: "q" });
   if (move === null) return null;
 
+  clearArrows(); // Effacer les flèches après un coup valide
+
   board.position(game.fen());
   updateMoveHistory();
-  checkPuzzleProgress(source, target);
+  highlightLastMove();
+  checkPuzzleProgress(source, target, move);
   return move;
 }
 
-function checkPuzzleProgress(source, target) {
-  const userMoveString = source + target;
+function checkPuzzleProgress(source, target, moveObj) {
+  const playedMoveUCI =
+    moveObj.from + moveObj.to + (moveObj.promotion ? moveObj.promotion : "");
   const expectedMoveString = currentPuzzle.movesList[moveIndex];
 
-  let isCorrect = false;
-  if (expectedMoveString.length > 4) {
-    isCorrect = userMoveString + "q" === expectedMoveString;
-  } else {
-    isCorrect = userMoveString === expectedMoveString;
-  }
-
-  if (isCorrect) {
-    // --- BON COUP ---
+  if (playedMoveUCI === expectedMoveString) {
     moveIndex++;
     if (moveIndex >= currentPuzzle.movesList.length) {
-      // VICTOIRE
-      currentStreak++; // On augmente la série
+      currentStreak++;
       document.getElementById("streak-display").innerText = currentStreak;
 
       let successMessage = "Puzzle Réussi ! 🎉";
       if (currentPuzzle.themes) {
         const themes = currentPuzzle.themes.split(" ");
-        for (let theme of themes) {
+        for (let theme of themes)
           if (THEMES_FR[theme]) {
             successMessage = THEMES_FR[theme];
             break;
           }
-        }
       }
-
       showFeedback(true, successMessage);
       isPuzzleLocked = true;
       toggleRetryButton(false);
@@ -250,39 +388,87 @@ function checkPuzzleProgress(source, target) {
       setTimeout(playComputerReply, 500);
     }
   } else {
-    // --- MAUVAIS COUP ---
-    currentStreak = 0; // On remet à zéro
+    currentStreak = 0;
     document.getElementById("streak-display").innerText = currentStreak;
-
-    showFeedback(false, "Mauvais coup !");
+    askStockfishRefutation();
     isWrongMoveState = true;
     toggleRetryButton(true);
   }
+}
+
+function askStockfishRefutation() {
+  const feedbackEl = document.getElementById("feedback-area");
+  if (!isEngineReady || !stockfish) {
+    showFeedback(false, "Mauvais coup.");
+    return;
+  }
+
+  feedbackEl.innerHTML = `<span class="error-title">Mauvais coup !</span><span class="analysis-text analyzing">🧠 Analyse en cours...</span>`;
+  feedbackEl.className = "feedback error visible";
+
+  const fenAfterBadMove = game.fen();
+  const originalHandler = stockfish.onmessage;
+
+  stockfish.onmessage = function (event) {
+    const message = event.data ? event.data : event;
+    if (typeof message === "string" && message.startsWith("bestmove")) {
+      const parts = message.split(" ");
+      const bestReply = parts[1];
+      if (bestReply && bestReply !== "(none)" && bestReply.length >= 4) {
+        const tempGame = new Chess(fenAfterBadMove);
+        const moveDetails = tempGame.move({
+          from: bestReply.substring(0, 2),
+          to: bestReply.substring(2, 4),
+          promotion: bestReply.length > 4 ? bestReply[4] : undefined,
+        });
+        if (moveDetails) {
+          feedbackEl.innerHTML = `<span class="error-title">Mauvais coup !</span><div class="stockfish-response"><span class="stockfish-icon">🤖</span><span class="analysis-text">L'adversaire répond <strong>${moveDetails.san}</strong> et gagne.</span></div>`;
+        } else
+          feedbackEl.innerHTML = `<span class="error-title">Mauvais coup !</span>`;
+      } else
+        feedbackEl.innerHTML = `<span class="error-title">Mauvais coup (Mat ou Pat).</span>`;
+      stockfish.onmessage = originalHandler;
+    }
+  };
+  stockfish.postMessage("position fen " + fenAfterBadMove);
+  stockfish.postMessage("go depth 15");
 }
 
 function retryLastMove() {
   if (!isWrongMoveState) return;
   game.undo();
   board.position(game.fen());
-
   updateMoveHistory();
+  highlightLastMove();
+  clearArrows();
 
   isWrongMoveState = false;
   toggleRetryButton(false);
-  document.getElementById("feedback-area").classList.remove("visible");
+  const feedbackEl = document.getElementById("feedback-area");
+  feedbackEl.className = "feedback";
+  feedbackEl.innerHTML = "";
   updateStatusWithTurn();
+}
+
+// --- FONCTIONS VISUELLES ---
+
+function highlightLastMove() {
+  $("#board .square-55d63").removeClass("last-move-highlight");
+  const history = game.history({ verbose: true });
+  if (history.length > 0) {
+    const lastMove = history[history.length - 1];
+    $("#board .square-" + lastMove.from).addClass("last-move-highlight");
+    $("#board .square-" + lastMove.to).addClass("last-move-highlight");
+  }
 }
 
 function showHint() {
   if (isPuzzleLocked || isWrongMoveState) return;
-
   const nextMove = currentPuzzle.movesList[moveIndex];
   const fromSquare = nextMove.substring(0, 2);
-
   const bubble = document.getElementById("hint-bubble");
   bubble.innerText = `💡 Indice : Regarde la pièce en ${fromSquare} !`;
   bubble.classList.add("visible");
-
   $("#board .square-" + fromSquare).addClass("highlight1-32417");
   setTimeout(() => {
     bubble.classList.remove("visible");
@@ -290,10 +476,9 @@ function showHint() {
   }, 3000);
 }
 
-// --- VISUEL & INTERACTION ---
-
 function handleSquareInteraction(square) {
   if (isPuzzleLocked || game.game_over() || isWrongMoveState) return;
+  clearArrows();
 
   if (selectedSquare !== null) {
     if (square === selectedSquare) {
@@ -305,9 +490,7 @@ function handleSquareInteraction(square) {
       var piece = game.get(square);
       if (piece && piece.color === game.turn()) selectSquare(square);
       else deselectSquare();
-    } else {
-      deselectSquare();
-    }
+    } else deselectSquare();
   } else {
     var piece = game.get(square);
     if (piece && piece.color === game.turn()) selectSquare(square);
@@ -323,6 +506,7 @@ function onDragStart(source, piece) {
     return false;
 
   draggedSource = source;
+  clearArrows();
   if (selectedSquare && selectedSquare !== source) deselectSquare();
   highlightLegalMoves(source);
 }
@@ -334,7 +518,6 @@ function onDrop(source, target) {
     handleSquareInteraction(source);
     return "snapback";
   }
-
   var move = attemptMove(source, target);
   if (move === null) return "snapback";
 }
@@ -342,76 +525,57 @@ function onDrop(source, target) {
 function onSnapEnd() {
   board.position(game.fen());
 }
-
-// --- UTILITAIRES ---
-
 function toggleRetryButton(show) {
   const btn = document.getElementById("btn-retry");
   btn.style.display = show ? "block" : "none";
   document.getElementById("btn-hint").style.display = show ? "none" : "block";
 }
-
 function playComputerReply() {
   const nextMoveStr = currentPuzzle.movesList[moveIndex];
   makeMoveOnBoard(nextMoveStr);
   moveIndex++;
   updateStatusWithTurn();
 }
-
 function makeMoveOnBoard(moveStr) {
   const from = moveStr.substring(0, 2);
   const to = moveStr.substring(2, 4);
   game.move({ from: from, to: to, promotion: "q" });
   board.position(game.fen());
   updateMoveHistory();
+  highlightLastMove();
 }
-
 function updateMoveHistory() {
   const history = game.history();
   const listElement = document.getElementById("move-history");
-
   if (history.length === 0) {
     listElement.innerHTML =
       '<span class="empty-history">Début de la partie</span>';
     return;
   }
-
   let html = "";
   for (let i = 0; i < history.length; i += 2) {
     const moveNumber = i / 2 + 1;
-    const whiteMove = history[i];
-    const blackMove = history[i + 1] || "";
-
-    html += `
-          <div class="move-pair">
-              <span class="move-number">${moveNumber}.</span>
-              <span class="move-white">${whiteMove}</span>
-              ${blackMove ? `<span class="move-black">${blackMove}</span>` : ""}
-          </div>
-      `;
+    html += `<div class="move-pair"><span class="move-number">${moveNumber}.</span><span class="move-white">${history[i]}</span>${history[i + 1] ? `<span class="move-black">${history[i + 1]}</span>` : ""}</div>`;
   }
-
   listElement.innerHTML = html;
   listElement.scrollTop = listElement.scrollHeight;
 }
-
 function updateStatusWithTurn() {
   const turn = game.turn() === "w" ? "Aux Blancs" : "Aux Noirs";
   updateStatus(`Trait ${turn} !`);
   board.orientation(game.turn() === "w" ? "white" : "black");
+  renderArrows();
 }
 function updateStatus(text) {
   document.getElementById("status-text").innerText = text;
 }
-
 function showFeedback(success, message) {
   const el = document.getElementById("feedback-area");
-  el.innerText = message;
+  el.innerHTML = message;
   el.className = success
     ? "feedback success visible"
     : "feedback error visible";
 }
-
 function selectSquare(square) {
   deselectSquare();
   selectedSquare = square;
@@ -427,11 +591,9 @@ function highlightLegalMoves(square) {
   var moves = game.moves({ square: square, verbose: true });
   for (var i = 0; i < moves.length; i++) {
     var target = moves[i].to;
-    if (moves[i].flags.includes("c") || moves[i].flags.includes("e")) {
+    if (moves[i].flags.includes("c") || moves[i].flags.includes("e"))
       $("#board .square-" + target).addClass("legal-capture");
-    } else {
-      $("#board .square-" + target).addClass("legal-move");
-    }
+    else $("#board .square-" + target).addClass("legal-move");
   }
 }
 function onMouseoverSquare(square) {

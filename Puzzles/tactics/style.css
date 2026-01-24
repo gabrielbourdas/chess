@@ -508,7 +508,45 @@ body > main.game-main {
   display: block !important;
   margin-top: 10px;
 }
+/* Surlignage du dernier coup joué */
+.last-move-highlight {
+  background-color: rgba(255, 255, 0, 0.4) !important; /* Jaune transparent */
+}
+/* =========================================
+   7. FLÈCHES DE VISUALISATION (SVG)
+   ========================================= */
 
+/* Le conteneur SVG qui se superpose au plateau */
+#arrow-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* LAISSE PASSER LES CLICS GAUCHES POUR JOUER */
+  z-index: 100; /* Au-dessus des pièces */
+}
+
+/* Style de la ligne de flèche (Corps) */
+.arrow-line {
+  stroke: rgba(0, 217, 246, 0.8); /* BLEU CYAN (#00d9f6) avec transparence */
+  stroke-width: 0.15; /* Épaisseur relative */
+  stroke-linecap: round;
+  opacity: 0.8;
+  filter: drop-shadow(
+    0 0 2px rgba(0, 0, 0, 0.5)
+  ); /* Petite ombre pour le contraste */
+}
+
+/* Style de la pointe de flèche */
+.arrow-head {
+  fill: rgba(0, 217, 246, 0.8); /* BLEU CYAN (#00d9f6) avec transparence */
+}
+
+/* Le parent du board doit être en relative pour positionner le SVG */
+.board-container {
+  position: relative;
+}
 /* =========================================
    6. RESPONSIVE
    ========================================= */
