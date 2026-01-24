@@ -74,8 +74,15 @@
           <div class="stat-card">
             <div class="icon-stat yellow"><i class="fas fa-trophy"></i></div>
             <div class="stat-info">
-              <h3>Elo Tactique</h3>
-              <p class="stat-value" id="stat-puzzle-elo">1200</p>
+              <h3>Elo Actuel</h3>
+              <p class="stat-value" id="stat-puzzle-current">1200</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="icon-stat fire"><i class="fas fa-crown"></i></div>
+            <div class="stat-info">
+              <h3>Record</h3>
+              <p class="stat-value" id="stat-puzzle-best">1200</p>
             </div>
           </div>
           <div class="stat-card">
@@ -83,13 +90,6 @@
             <div class="stat-info">
               <h3>Résolus</h3>
               <p class="stat-value" id="stat-puzzle-solved">0</p>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="icon-stat fire"><i class="fas fa-fire"></i></div>
-            <div class="stat-info">
-              <h3>Série</h3>
-              <p class="stat-value" id="stat-puzzle-streak">0</p>
             </div>
           </div>
         </div>
@@ -100,15 +100,15 @@
           <div class="stat-card">
             <div class="icon-stat purple"><i class="fas fa-brain"></i></div>
             <div class="stat-info">
-              <h3>Elo Visu</h3>
-              <p class="stat-value" id="stat-visu-elo">1200</p>
+              <h3>Elo Actuel</h3>
+              <p class="stat-value" id="stat-visu-current">1000</p>
             </div>
           </div>
           <div class="stat-card">
-            <div class="icon-stat blue"><i class="fas fa-tasks"></i></div>
+            <div class="icon-stat blue"><i class="fas fa-crown"></i></div>
             <div class="stat-info">
-              <h3>Résolus</h3>
-              <p class="stat-value" id="stat-visu-solved">0</p>
+              <h3>Record</h3>
+              <p class="stat-value" id="stat-visu-best">1000</p>
             </div>
           </div>
           <div class="stat-card">
@@ -128,6 +128,7 @@
         getFirestore,
         doc,
         getDoc,
+        setDoc, // <--- J'ai ajouté setDoc pour la réparation
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
       import {
         getAuth,
@@ -156,27 +157,48 @@
 
           if (docSnap.exists()) {
             const data = docSnap.data();
-            const pseudo = data.pseudo || "Joueur";
+            let pseudo = data.pseudo;
+
+            // --- RÉPARATION AUTOMATIQUE ---
+            // Si le pseudo n'existe pas, on le demande à l'utilisateur
+            if (!pseudo) {
+              pseudo = prompt(
+                "Oups ! Ton pseudo a disparu lors de l'inscription. Comment veux-tu t'appeler ?",
+              );
+              if (pseudo) {
+                // On sauvegarde le nouveau pseudo
+                await setDoc(docRef, { pseudo: pseudo }, { merge: true });
+                alert("Pseudo sauvegardé !");
+              } else {
+                pseudo = "Joueur Anonyme";
+              }
+            }
+            // ------------------------------
 
             document.getElementById("display-pseudo").innerText = pseudo;
             document.getElementById("display-avatar").innerHTML =
               `<img src="https://api.dicebear.com/9.x/adventurer/svg?seed=${pseudo}" alt="avatar">`;
 
-            // --- STATS TACTIQUE (Game.js) ---
-            document.getElementById("stat-puzzle-elo").innerText =
-              data.bestPuzzleElo || "---";
+            // --- STATS TACTIQUE (Mise à jour avec Elo Actuel vs Record) ---
+            // J'ai mis à jour l'affichage pour correspondre à ton nouveau système Elo
+            document.getElementById("stat-puzzle-current").innerText =
+              data.currentPuzzleElo || 1200; // Elo Actuel
+            document.getElementById("stat-puzzle-best").innerText =
+              data.bestPuzzleElo || 1200; // Record
             document.getElementById("stat-puzzle-solved").innerText =
               data.puzzlesSolved || 0;
-            document.getElementById("stat-puzzle-streak").innerText =
-              data.puzzleStreak || 0;
 
-            // --- STATS VISUALISATION (Logic.js) ---
-            document.getElementById("stat-visu-elo").innerText =
-              data.bestVisuElo || "---";
-            document.getElementById("stat-visu-solved").innerText =
-              data.visuSolved || 0;
+            // --- STATS VISUALISATION ---
+            document.getElementById("stat-visu-current").innerText =
+              data.currentVisuElo || 1000; // Elo Actuel
+            document.getElementById("stat-visu-best").innerText =
+              data.bestVisuElo || 1000; // Record
             document.getElementById("stat-visu-streak").innerText =
               data.visuStreak || 0;
+          } else {
+            // Si le document n'existe VRAIMENT pas (cas rare maintenant)
+            console.log("Aucun profil trouvé.");
+            document.getElementById("display-pseudo").innerText = "Invité";
           }
         } else {
           window.location.href = "/login/index.html";
