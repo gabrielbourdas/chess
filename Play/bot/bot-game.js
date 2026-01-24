@@ -18,25 +18,42 @@ var draggedSource = null;
 var playerColor = "w";
 var difficulty = 5;
 
-// --- CONFIGURATION PRÉCISE DES NIVEAUX (RÉAJUSTÉE) ---
-// Keys correspond aux values de ton <select> dans le HTML
+// =============================================
+// GESTION DES SONS (Lichess Assets)
+// =============================================
+
+const soundStart = new Audio(
+  "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/gstart.mp3",
+);
+const soundEnd = new Audio(
+  "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/winn.mp3",
+);
+const soundMove = new Audio(
+  "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/move.mp3",
+);
+const soundCapture = new Audio(
+  "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/capture.mp3",
+);
+
+// Fonction utilitaire pour choisir le bon son (Capture ou Move)
+function playAudioForMove(move) {
+  // 'c' = capture standard, 'e' = prise en passant
+  if (move.flags.includes("c") || move.flags.includes("e")) {
+    soundCapture.currentTime = 0; // Rembobine pour jouer instantanément
+    soundCapture.play().catch((e) => console.error("Son bloqué:", e));
+  } else {
+    soundMove.currentTime = 0;
+    soundMove.play().catch((e) => console.error("Son bloqué:", e));
+  }
+}
+
+// --- CONFIGURATION PRÉCISE DES NIVEAUX ---
 const LEVEL_CONFIG = {
-  // Débutant : Force l'Elo à 600. Fait des gaffes.
   1: { uciElo: 600, skill: 0, depth: 1, moveTime: 400 },
-
-  // Facile : Force l'Elo à 1000.
   3: { uciElo: 1000, skill: 3, depth: 2, moveTime: 600 },
-
-  // Moyen : Force l'Elo à 1400.
   5: { uciElo: 1400, skill: 6, depth: 5, moveTime: 1000 },
-
-  // Difficile : Elo 1800.
   10: { uciElo: 1800, skill: 10, depth: 8, moveTime: 1200 },
-
-  // Expert : Pas de limite Elo, Skill élevé.
   15: { uciElo: null, skill: 15, depth: 12, moveTime: 1500 },
-
-  // Grand Maître : Force maximale.
   20: { uciElo: null, skill: 20, depth: 18, moveTime: 2000 },
 };
 
@@ -78,7 +95,6 @@ function onDragStart(source, piece) {
 
   draggedSource = source;
 
-  // --- CORRECTION DÉSÉLECTION (TOGGLE) ---
   if (selectedSquare !== source) {
     deselectSquare();
     highlightLegalMoves(source);
@@ -103,32 +119,25 @@ function onDrop(source, target) {
 function handleSquareClick(square) {
   if (isGameOver() || !isPlayerTurn()) return;
 
-  // 1. Si on clique sur la case déjà active -> On l'éteint.
   if (selectedSquare === square) {
     deselectSquare();
     return;
   }
 
-  // 2. Si une autre case était sélectionnée -> On tente le mouvement
   if (selectedSquare) {
     var move = attemptMove(selectedSquare, square);
-
     if (move === null) {
-      // Mouvement impossible
       var piece = game.get(square);
-      // Si c'est une pièce à nous, on change la sélection
       if (piece && piece.color === game.turn()) {
         deselectSquare();
         selectSquare(square);
       } else {
-        deselectSquare(); // Clic dans le vide ou pièce adverse
+        deselectSquare();
       }
     } else {
-      // Mouvement valide -> attemptMove gère la suite
       deselectSquare();
     }
   } else {
-    // 3. Aucune sélection -> On sélectionne
     var piece = game.get(square);
     if (piece && piece.color === game.turn()) {
       selectSquare(square);
@@ -139,6 +148,9 @@ function handleSquareClick(square) {
 function attemptMove(from, to) {
   var move = game.move({ from: from, to: to, promotion: "q" });
   if (move === null) return null;
+
+  // --- SON COUP JOUEUR ---
+  playAudioForMove(move);
 
   board.position(game.fen());
   clearArrows();
@@ -165,16 +177,14 @@ function isPlayerTurn() {
 }
 
 // =============================================
-// 3. INTELLIGENCE ARTIFICIELLE (RÉAJUSTÉE ELO)
+// 3. INTELLIGENCE ARTIFICIELLE
 // =============================================
 
 function askBotToPlay() {
   if (!isEngineReady) return;
 
-  // 1. Récupérer la config
   const config = LEVEL_CONFIG[difficulty] || LEVEL_CONFIG[5];
 
-  // 2. Gestion de la limitation ELO (UCI_Elo)
   if (config.uciElo) {
     stockfish.postMessage("setoption name UCI_LimitStrength value true");
     stockfish.postMessage("setoption name UCI_Elo value " + config.uciElo);
@@ -182,20 +192,14 @@ function askBotToPlay() {
     stockfish.postMessage("setoption name UCI_LimitStrength value false");
   }
 
-  // 3. Skill Level
   stockfish.postMessage("setoption name Skill Level value " + config.skill);
-
-  // 4. Envoyer la position
   stockfish.postMessage("position fen " + game.fen());
-
-  // 5. Lancer la réflexion
   stockfish.postMessage(
     "go depth " + config.depth + " movetime " + config.moveTime,
   );
 }
 
 function makeBotMove(bestMoveUCI) {
-  // SÉCURITÉ : Si entre temps c'est devenu le tour du joueur
   if (game.turn() === playerColor) return;
 
   const from = bestMoveUCI.substring(0, 2);
@@ -203,9 +207,10 @@ function makeBotMove(bestMoveUCI) {
   const promotion = bestMoveUCI.length > 4 ? bestMoveUCI[4] : "q";
 
   var move = game.move({ from: from, to: to, promotion: promotion });
-
-  // Si le coup est illégal
   if (move === null) return;
+
+  // --- SON COUP BOT ---
+  playAudioForMove(move);
 
   board.position(game.fen());
   updateStatus();
@@ -214,7 +219,7 @@ function makeBotMove(bestMoveUCI) {
 }
 
 // =============================================
-// 4. GESTION VISUELLE (SURBRILLANCE)
+// 4. GESTION VISUELLE
 // =============================================
 
 function selectSquare(square) {
@@ -255,7 +260,6 @@ function highlightLastMove(from, to) {
 
 function onMouseoverSquare(square) {
   if (!draggedSource && !selectedSquare) return;
-
   var source = draggedSource || selectedSquare;
   var moves = game.moves({ square: source, verbose: true });
   if (moves.find((m) => m.to === square)) {
@@ -273,7 +277,6 @@ function onMouseoutSquare(square) {
 
 function initArrowSystem() {
   const $board = $("#board");
-
   if ($("#arrow-overlay").length === 0) {
     const svgOverlay = `
       <svg id="arrow-overlay" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
@@ -289,11 +292,9 @@ function initArrowSystem() {
   }
 
   const boardEl = document.getElementById("board");
-
   boardEl.addEventListener("contextmenu", (e) => {
     e.preventDefault();
   });
-
   boardEl.addEventListener(
     "mousedown",
     (e) => {
@@ -405,7 +406,6 @@ $(document).ready(function () {
 
   $("#btn-undo").on("click", function () {
     if (game.history().length < 1) return;
-    // Annulation intelligente
     if (playerColor === "w" && game.history().length < 2) {
       game.undo();
     } else if (game.turn() !== playerColor) {
@@ -414,7 +414,6 @@ $(document).ready(function () {
       game.undo();
       game.undo();
     }
-
     board.position(game.fen());
     updateStatus();
     updateMoveHistory();
@@ -441,24 +440,19 @@ $(document).ready(function () {
   });
 
   // --- SÉLECTEUR DE DIFFICULTÉ & MISE À JOUR TITRE ---
-
-  // Fonction locale pour mettre à jour le texte du titre
   function updateBotTitle() {
     var selectedText = $("#difficulty-select option:selected").text();
     $("#bot-name").text("Stockfish - " + selectedText);
   }
 
-  // Événement quand on change l'option
   $("#difficulty-select").on("change", function () {
     difficulty = parseInt($(this).val());
-    updateBotTitle(); // Met à jour l'affichage
+    updateBotTitle();
     console.log("Niveau choisi:", difficulty, LEVEL_CONFIG[difficulty]);
   });
 
-  // Lance la mise à jour une première fois au chargement
   updateBotTitle();
 
-  // Resize
   $(window).resize(function () {
     board.resize();
     renderArrows();
@@ -478,6 +472,10 @@ function startNewGame() {
   gameActive = true;
   board.position("start");
   board.orientation(playerColor === "w" ? "white" : "black");
+
+  // --- JOUER SON DE DÉBUT ---
+  soundStart.play().catch((e) => console.log("Audio bloqué:", e));
+
   updateStatus();
   updateMoveHistory();
   clearArrows();
@@ -495,9 +493,13 @@ function updateStatus() {
 
   if (game.in_checkmate()) {
     status = "Partie terminée, " + moveColor + " sont en échec et mat.";
+    // --- SON DE FIN (MAT) ---
+    if (gameActive) soundEnd.play();
     gameActive = false;
   } else if (game.in_draw()) {
     status = "Partie terminée, match nul.";
+    // --- SON DE FIN (NUL) ---
+    if (gameActive) soundEnd.play();
     gameActive = false;
   } else {
     status = "Au tour des " + moveColor;
