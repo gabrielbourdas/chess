@@ -57,8 +57,6 @@ function onDragStart(source, piece) {
   draggedSource = source;
 
   // --- CORRECTION DÉSÉLECTION (TOGGLE) ---
-  // Si on clique sur la pièce DÉJÀ sélectionnée, on ne fait rien ici.
-  // On laisse handleSquareClick gérer la désélection (le toggle).
   if (selectedSquare !== source) {
     deselectSquare();
     highlightLegalMoves(source);
@@ -83,7 +81,6 @@ function onDrop(source, target) {
 function handleSquareClick(square) {
   if (isGameOver() || !isPlayerTurn()) return;
 
-  // --- CORRECTION LOGIQUE TOGGLE ---
   // 1. Si on clique sur la case déjà active -> On l'éteint.
   if (selectedSquare === square) {
     deselectSquare();
@@ -400,11 +397,23 @@ $(document).ready(function () {
     difficulty = parseInt($(this).val());
   });
 
+  // --- FIX REDIMENSIONNEMENT CRITIQUE ---
+  // Gère le redimensionnement quand on change la taille de la fenêtre
   $(window).resize(function () {
     board.resize();
     renderArrows();
   });
 
+  // Force le redimensionnement au chargement pour éviter le plateau minuscule
+  // On le fait en plusieurs temps car le rendu CSS grid peut prendre quelques millisecondes
+  setTimeout(function () {
+    board.resize();
+    renderArrows();
+  }, 50);
+  setTimeout(function () {
+    board.resize();
+    renderArrows();
+  }, 200);
   setTimeout(function () {
     board.resize();
     renderArrows();
