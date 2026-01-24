@@ -1,69 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="img/logo.webp" type="image/x-icon" />
-    <link rel="stylesheet" href="../css/nav.css" />
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/media.css" />
-    <title>Open Chess</title>
+    <title>Jouer - Open Chess</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
+    <link rel="stylesheet" href="/css/nav.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/media.css" />
+
+    <link rel="stylesheet" href="/Play/css/style.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
   </head>
   <body>
     <header>
       <nav>
         <ul class="sidebar">
-          <li onclick="hidesidebar()">
+          <li class="close-btn" onclick="hidesidebar()">
             <a href="#"><img src="/img/close.svg" alt="close" /></a>
           </li>
-          <li class="animation">
-            <a href="/History/index.html">History <span></span></a>
-          </li>
-          <li class="animation">
-            <a href="/Learn/index.html">Learn <span></span></a>
-          </li>
-          <li class="animation">
-            <a href="/Play/index.html" class="active">Play <span></span></a>
-          </li>
-          <li class="animation">
-            <a href="/Info/index.html">Info <span></span></a>
-          </li>
+          <li class="sidebar-logo"><span>MENU</span></li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Analyze/index.html">Analyze</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+          <li><a href="/profile/index.html">Profile</a></li>
         </ul>
+
         <ul>
-          <li>
-            <a href="/index.html"
-              ><h1 id="site-name">
-                <span>Open Chess</span>
-              </h1></a
-            >
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
           </li>
-          <li class="animation" class="hideOnMobile">
-            <a href="/History/index.html">History <span></span></a>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
           </li>
-          <li class="animation" class="hideOnMobile">
+          <li class="hideOnMobile">
+            <a href="/Puzzles/index.html">Puzzles <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Analyze/index.html">Analyze <span></span></a>
+          </li>
+          <li class="hideOnMobile">
             <a href="/Learn/index.html">Learn <span></span></a>
           </li>
-          <li class="animation" class="hideOnMobile">
-            <a href="/Play/index.html" class="active">Play <span></span></a>
+          <li class="hideOnMobile">
+            <a href="/profile/index.html">Profile <span></span></a>
           </li>
-          <li class="animation" class="hideOnMobile">
-            <a href="/Info/index.html">Info <span></span></a>
-          </li>
-          <li onclick="showsidebar()">
+          <li class="menu-button" onclick="showsidebar()">
             <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
           </li>
         </ul>
       </nav>
-      <script>
-        function showsidebar() {
-          const sidebar = document.querySelector(".sidebar");
-          sidebar.style.display = "flex";
-        }
-        function hidesidebar() {
-          const sidebar = document.querySelector(".sidebar");
-          sidebar.style.display = "none";
-        }
-      </script>
     </header>
+
+    <main class="play-menu-container">
+      <div class="play-header">
+        <h1>Choisissez votre mode de jeu</h1>
+        <p>
+          Affrontez l'intelligence artificielle ou défiez des joueurs du monde
+          entier.
+        </p>
+      </div>
+
+      <div class="modes-grid">
+        <a href="/Play/bot/index.html" class="mode-card bot-mode">
+          <div class="card-content">
+            <div class="icon-box">
+              <i class="fas fa-robot"></i>
+            </div>
+            <h2>Contre l'Ordinateur</h2>
+            <p>
+              Défiez Stockfish à différents niveaux de difficulté. Idéal pour
+              s'entraîner sans pression.
+            </p>
+            <span class="btn-mode">Jouer Solo</span>
+          </div>
+          <div class="bg-decoration"></div>
+        </a>
+
+        <a href="#" class="mode-card online-mode">
+          <div class="card-content">
+            <div class="icon-box">
+              <i class="fas fa-globe-americas"></i>
+            </div>
+            <h2>Jouer en Ligne</h2>
+            <p>
+              Rejoignez l'arène et affrontez d'autres passionnés en temps réel.
+              Grimpez au classement !
+            </p>
+            <span class="btn-mode">Trouver un adversaire</span>
+          </div>
+          <div class="badge-soon">Bientôt</div>
+          <div class="bg-decoration"></div>
+        </a>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess</h3>
+          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Commencez l'aventure</h3>
+          <a href="/login/index.html" class="btn-register"
+            >S'inscrire Gratuitement</a
+          >
+        </div>
+
+        <div class="footer-section">
+          <h3>Liens Partenaires</h3>
+          <ul>
+            <li><a href="/rules/index.html">Règles Simplifiées</a></li>
+            <li><a href="/video/index.html">Chaîne YouTube</a></li>
+            <li><a href="/support/index.html">Support / Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          &copy; <span id="year">2026</span> <span>Open Chess</span>. Tous
+          droits réservés.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+        setTimeout(() => {
+          document.querySelector(".sidebar").classList.add("active");
+        }, 10);
+      }
+      function hidesidebar() {
+        document.querySelector(".sidebar").classList.remove("active");
+        setTimeout(() => {
+          document.querySelector(".sidebar").style.display = "none";
+        }, 300);
+      }
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>

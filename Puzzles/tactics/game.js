@@ -9,6 +9,8 @@ import {
   limit,
   doc,
   getDoc,
+  updateDoc,
+  increment,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
   getAuth,
@@ -382,6 +384,7 @@ function checkPuzzleProgress(source, target, moveObj) {
           }
       }
       showFeedback(true, successMessage);
+      updateClassicStats(true);
       isPuzzleLocked = true;
       toggleRetryButton(false);
     } else {
@@ -389,6 +392,7 @@ function checkPuzzleProgress(source, target, moveObj) {
     }
   } else {
     currentStreak = 0;
+    updateClassicStats(false);
     document.getElementById("streak-display").innerText = currentStreak;
     askStockfishRefutation();
     isWrongMoveState = true;
@@ -615,4 +619,46 @@ function generateRandomId() {
   for (let i = 0; i < 5; i++)
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   return result;
+}
+
+// --- SAUVEGARDE STATS (MODE CLASSIQUE - RECORD ELO) ---
+async function updateClassicStats(isWin) {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+
+  try {
+    if (isWin) {
+      // 1. On récupère les données actuelles de l'utilisateur
+      const docSnap = await getDoc(userRef);
+      const userData = docSnap.exists() ? docSnap.data() : {};
+
+      // 2. On récupère l'ancien record (ou 0 si c'est la première fois)
+      const currentBest = userData.bestPuzzleElo || 0;
+
+      // 3. On récupère l'Elo du puzzle qu'on vient de réussir
+      const puzzleElo = parseInt(currentPuzzle.rating) || 0;
+
+      // 4. On prépare la mise à jour
+      const updates = {
+        puzzlesSolved: increment(1), // On garde le compteur total
+        puzzleStreak: increment(1), // On garde la série
+      };
+
+      // 5. SI le puzzle réussi est plus fort que l'ancien record, on met à jour
+      if (puzzleElo > currentBest) {
+        updates.bestPuzzleElo = puzzleElo;
+      }
+
+      await updateDoc(userRef, updates);
+    } else {
+      // En cas de défaite, on remet juste la série à 0 (on ne touche pas au record Elo)
+      await updateDoc(userRef, {
+        puzzleStreak: 0,
+      });
+    }
+  } catch (error) {
+    console.error("Erreur sauvegarde stats classiques:", error);
+  }
 }

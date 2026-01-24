@@ -1,0 +1,226 @@
+/* =========================================
+   STYLE MENU PLAY (CHOIX DU MODE)
+   ========================================= */
+
+.play-menu-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- HEADER DU MENU --- */
+.play-header {
+  text-align: center;
+  margin-top: 8rem; /* Espace sous la navbar */
+  margin-bottom: 4rem;
+}
+
+.play-header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(0, 217, 246, 0.4);
+}
+
+.play-header p {
+  color: #b9bbbe;
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* --- GRILLE DES MODES --- */
+.modes-grid {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-bottom: 5rem;
+}
+
+/* --- CARTE GÉNÉRIQUE --- */
+.mode-card {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+  max-width: 450px;
+  background: rgba(24, 25, 28, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
+}
+
+.mode-card:hover {
+  transform: translateY(-10px);
+  background: rgba(30, 32, 36, 0.9);
+}
+
+/* Contenu de la carte */
+.card-content {
+  position: relative;
+  z-index: 2; /* Pour être au-dessus de la décoration */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.icon-box {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  transition: 0.4s;
+}
+
+.mode-card h2 {
+  color: #fff;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.mode-card p {
+  color: #b9bbbe;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  flex-grow: 1;
+}
+
+/* BOUTON DANS LA CARTE */
+.btn-mode {
+  display: inline-block;
+  padding: 12px 35px;
+  border-radius: 50px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: 0.3s;
+}
+
+/* --- STYLE SPÉCIFIQUE : BOT --- */
+.bot-mode:hover {
+  border-color: #00d9f6;
+  box-shadow: 0 0 30px rgba(0, 217, 246, 0.2);
+}
+
+.bot-mode .icon-box {
+  color: #00d9f6;
+}
+.bot-mode:hover .icon-box {
+  background: #00d9f6;
+  color: #18191c;
+  transform: scale(1.1);
+}
+
+.bot-mode .btn-mode {
+  background: transparent;
+  border: 2px solid #00d9f6;
+  color: #00d9f6;
+}
+
+.bot-mode:hover .btn-mode {
+  background: #00d9f6;
+  color: #18191c;
+}
+
+/* --- STYLE SPÉCIFIQUE : ONLINE --- */
+.online-mode:hover {
+  border-color: #ff9f00; /* Orange pour différencier */
+  box-shadow: 0 0 30px rgba(255, 159, 0, 0.2);
+}
+
+.online-mode .icon-box {
+  color: #ff9f00;
+}
+.online-mode:hover .icon-box {
+  background: #ff9f00;
+  color: #18191c;
+  transform: scale(1.1);
+}
+
+.online-mode .btn-mode {
+  background: transparent;
+  border: 2px solid #ff9f00;
+  color: #ff9f00;
+}
+
+.online-mode:hover .btn-mode {
+  background: #ff9f00;
+  color: #18191c;
+}
+
+/* --- DÉCORATION ARRIÈRE PLAN --- */
+.bg-decoration {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: 0.5s;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+.mode-card:hover .bg-decoration {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --- BADGE "BIENTÔT" --- */
+.badge-soon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #b9bbbe;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- MOBILE --- */
+@media (max-width: 768px) {
+  .modes-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .play-header {
+    margin-top: 6rem;
+  }
+
+  .play-header h1 {
+    font-size: 2.2rem;
+  }
+}

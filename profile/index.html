@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon Profil - Open Chess</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/nav.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/media.css" />
+    <link rel="stylesheet" href="/profile/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li class="sidebar-logo"><span>MENU</span></li>
+          <li><a href="/Play/index.html">Play</a></li>
+          <li><a href="/Puzzles/index.html">Puzzles</a></li>
+          <li><a href="/Analyze/index.html">Analyze</a></li>
+          <li><a href="/Learn/index.html">Learn</a></li>
+          <li><a href="/profile/index.html">Profile</a></li>
+        </ul>
+
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html" style="text-decoration: none">
+              <h1 id="site-name">Open Chess</h1>
+            </a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Play <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Puzzles/index.html">Puzzles <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Analyze/index.html">Analyze <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Learn/index.html">Learn <span></span></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/profile/index.html">Profile <span></span></a>
+          </li>
+          <li class="menu-button" onclick="showsidebar()">
+            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="profile-container">
+      <div class="profile-header">
+        <div class="avatar-container" id="display-avatar"></div>
+        <h1 id="display-pseudo">Chargement...</h1>
+        <p class="member-since">Membre Open Chess</p>
+        <button id="btn-logout" class="btn-logout">
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+      </div>
+
+      <div class="dual-stats-container">
+        <div class="stats-column">
+          <h2><i class="fas fa-puzzle-piece"></i> Tactique</h2>
+
+          <div class="stat-card">
+            <div class="icon-stat yellow"><i class="fas fa-trophy"></i></div>
+            <div class="stat-info">
+              <h3>Elo Tactique</h3>
+              <p class="stat-value" id="stat-puzzle-elo">1200</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="icon-stat green"><i class="fas fa-check"></i></div>
+            <div class="stat-info">
+              <h3>Résolus</h3>
+              <p class="stat-value" id="stat-puzzle-solved">0</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="icon-stat fire"><i class="fas fa-fire"></i></div>
+            <div class="stat-info">
+              <h3>Série</h3>
+              <p class="stat-value" id="stat-puzzle-streak">0</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-column">
+          <h2><i class="fas fa-eye"></i> Visualisation</h2>
+
+          <div class="stat-card">
+            <div class="icon-stat purple"><i class="fas fa-brain"></i></div>
+            <div class="stat-info">
+              <h3>Elo Visu</h3>
+              <p class="stat-value" id="stat-visu-elo">1200</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="icon-stat blue"><i class="fas fa-tasks"></i></div>
+            <div class="stat-info">
+              <h3>Résolus</h3>
+              <p class="stat-value" id="stat-visu-solved">0</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="icon-stat fire"><i class="fas fa-fire-alt"></i></div>
+            <div class="stat-info">
+              <h3>Série</h3>
+              <p class="stat-value" id="stat-visu-streak">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBNBUO3JupohDCYAMs7Xf6kKgxnnFgPpVM",
+        authDomain: "open-chess-2f3cf.firebaseapp.com",
+        projectId: "open-chess-2f3cf",
+        storageBucket: "open-chess-2f3cf.firebasestorage.app",
+        messagingSenderId: "447945730536",
+        appId: "1:447945730536:web:a1e3347bc13e94040bdc5d",
+        measurementId: "G-71F05DTLHG",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            const pseudo = data.pseudo || "Joueur";
+
+            document.getElementById("display-pseudo").innerText = pseudo;
+            document.getElementById("display-avatar").innerHTML =
+              `<img src="https://api.dicebear.com/9.x/adventurer/svg?seed=${pseudo}" alt="avatar">`;
+
+            // --- STATS TACTIQUE (Game.js) ---
+            document.getElementById("stat-puzzle-elo").innerText =
+              data.bestPuzzleElo || "---";
+            document.getElementById("stat-puzzle-solved").innerText =
+              data.puzzlesSolved || 0;
+            document.getElementById("stat-puzzle-streak").innerText =
+              data.puzzleStreak || 0;
+
+            // --- STATS VISUALISATION (Logic.js) ---
+            document.getElementById("stat-visu-elo").innerText =
+              data.bestVisuElo || "---";
+            document.getElementById("stat-visu-solved").innerText =
+              data.visuSolved || 0;
+            document.getElementById("stat-visu-streak").innerText =
+              data.visuStreak || 0;
+          }
+        } else {
+          window.location.href = "/login/index.html";
+        }
+      });
+
+      document.getElementById("btn-logout").addEventListener("click", () => {
+        signOut(auth).then(() => (window.location.href = "/index.html"));
+      });
+    </script>
+
+    <script>
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+      }
+      function hidesidebar() {
+        document.querySelector(".sidebar").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

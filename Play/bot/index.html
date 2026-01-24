@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jouer contre Stockfish - Open Chess</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+    <link rel="stylesheet" href="../../css/nav.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/media.css" />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="sidebar">
+          <li class="close-btn" onclick="hidesidebar()">
+            <a href="#"><img src="/img/close.svg" alt="close" /></a>
+          </li>
+          <li><a href="/index.html">Accueil</a></li>
+          <li><a href="/Play/index.html">Menu Jeu</a></li>
+        </ul>
+        <ul>
+          <li class="logo-container">
+            <a href="/index.html"><h1 id="site-name">Open Chess</h1></a>
+          </li>
+          <li class="hideOnMobile">
+            <a href="/Play/index.html">Retour Menu</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="game-container">
+      <div class="game-sidebar">
+        <div class="bot-profile">
+          <div class="avatar-bot">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="bot-info">
+            <h2 id="bot-name">Stockfish (Niv. 5)</h2>
+            <p class="status-indicator">En ligne</p>
+          </div>
+        </div>
+
+        <div class="controls-panel">
+          <div class="control-group">
+            <label><i class="fas fa-tachometer-alt"></i> Difficulté</label>
+            <select id="difficulty-select">
+              <option value="1">Niveau 1 (Débutant)</option>
+              <option value="3">Niveau 2 (Facile)</option>
+              <option value="5" selected>Niveau 3 (Moyen)</option>
+              <option value="10">Niveau 4 (Difficile)</option>
+              <option value="15">Niveau 5 (Expert)</option>
+              <option value="20">Niveau 6 (Grand Maître)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label><i class="fas fa-chess-king"></i> Votre Couleur</label>
+            <div class="color-choice">
+              <button id="btn-play-white" class="active">
+                <i class="fas fa-chess-pawn" style="color: #fff"></i> Blancs
+              </button>
+              <button id="btn-play-black">
+                <i class="fas fa-chess-pawn" style="color: #000"></i> Noirs
+              </button>
+            </div>
+          </div>
+
+          <div class="actions-group">
+            <button id="btn-new-game" class="btn-action primary">
+              Nouvelle Partie
+            </button>
+            <button id="btn-undo" class="btn-action secondary">
+              <i class="fas fa-undo"></i> Annuler
+            </button>
+          </div>
+        </div>
+        <div class="history-container">
+          <h4>Historique</h4>
+          <div id="move-history" class="moves-list">
+            <span class="empty-history">Début de partie</span>
+          </div>
+        </div>
+        <div class="status-box">
+          <p id="status">En attente...</p>
+        </div>
+      </div>
+
+      <div class="board-container">
+        <div id="board" style="width: 100%"></div>
+      </div>
+    </main>
+
+    <script src="bot-game.js"></script>
+    <script>
+      // Script pour le menu mobile
+      function showsidebar() {
+        document.querySelector(".sidebar").style.display = "flex";
+      }
+      function hidesidebar() {
+        document.querySelector(".sidebar").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

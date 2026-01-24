@@ -10,6 +10,8 @@ import {
   limit,
   doc,
   getDoc,
+  updateDoc,
+  increment,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
   getAuth,
@@ -280,6 +282,7 @@ function handleSuccess(sanMove, isCapture) {
     document.getElementById("streak-display").innerText = currentStreak;
     document.getElementById("move-input").disabled = true;
     showFeedback(true, "Visualisation réussie ! 🎉");
+    updateVisuStats(true);
     isPuzzleLocked = true;
   } else {
     setTimeout(() => {
@@ -309,7 +312,7 @@ function handleFailure(badMoveUCI) {
   document.getElementById("streak-display").innerText = 0;
 
   showFeedback(false, "Mauvais coup.");
-
+  updateVisuStats(false);
   // Analyse Stockfish
   askStockfishRefutation(badMoveUCI);
 }
@@ -639,4 +642,39 @@ function getArrowCoordinates(from, to) {
     x2: x2 + 0.5,
     y2: y2 + 0.5,
   };
+}
+// --- SAUVEGARDE STATS (MODE VISUALISATION - RECORD ELO) ---
+async function updateVisuStats(isWin) {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+
+  try {
+    if (isWin) {
+      const docSnap = await getDoc(userRef);
+      const userData = docSnap.exists() ? docSnap.data() : {};
+
+      const currentBest = userData.bestVisuElo || 0;
+      const puzzleElo = parseInt(currentPuzzle.rating) || 0;
+
+      const updates = {
+        visuSolved: increment(1),
+        visuStreak: increment(1),
+      };
+
+      // Si le puzzle visu réussi est plus fort que le record
+      if (puzzleElo > currentBest) {
+        updates.bestVisuElo = puzzleElo;
+      }
+
+      await updateDoc(userRef, updates);
+    } else {
+      await updateDoc(userRef, {
+        visuStreak: 0,
+      });
+    }
+  } catch (error) {
+    console.error("Erreur sauvegarde stats visu:", error);
+  }
 }
