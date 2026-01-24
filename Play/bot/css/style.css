@@ -1,192 +1,302 @@
 /* =========================================
-   STYLE SPÉCIFIQUE AU JEU (PLAY/CSS/STYLE.CSS)
+   STYLE GLOBAL & JEU (CORRIGÉ COMPLET)
    ========================================= */
 
+:root {
+  --bg-body: #18191c;
+  --bg-card: #24262b;
+  --bg-card-hover: #2f3136;
+  --text-main: #ebebeb;
+  --text-muted: #b9bbbe;
+  --accent-color: #00d9f6;
+  --border-color: #383c44;
+  --radius-std: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-body);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("/img/fond.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: var(--text-main);
+  font-size: 18px;
+  line-height: 1.6;
+  overflow-x: hidden; /* Empêche le scroll horizontal */
+}
+
+/* --- HEADER FIXE --- */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  z-index: 1000;
+  background: rgba(24, 25, 28, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--accent-color);
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
 /* --- MAIN (CONTENEUR PRINCIPAL) --- */
+/* Structure flexible pour gérer la hauteur plein écran */
 main {
-  /* OVERRIDE CRITIQUE : On annule le padding-top: 120px du style.css global */
-  padding: 0 !important;
-  margin: 0 !important;
-
-  /* On positionne le main pile sous le header (70px) */
-  margin-top: 70px !important;
-
-  /* La hauteur visible est exactement l'espace restant */
-  height: calc(100vh - 70px);
-  width: 100vw;
-  overflow: hidden; /* Empêche le double scrollbar */
-  background-color: transparent;
+  padding-top: 70px; /* Hauteur exacte du header */
+  height: 100vh; /* Force la hauteur à 100% de l'écran */
+  width: 100%;
+  overflow: hidden; /* Empêche le scroll global sur Desktop */
+  display: flex; /* Active flex pour centrer le contenu */
+  flex-direction: column;
 }
 
 /* =========================================
-   2. INTERFACE DE JEU (GRID LAYOUT ROBUSTE)
+   1. STYLES GÉNÉRAUX DU SITE (Accueil, etc.)
    ========================================= */
 
-.game-container {
-  display: grid;
-  /* Col 1 (Plateau) : Prend tout l'espace restant
-     Col 2 (Sidebar) : Largeur fixe ou min/max pour le menu
-  */
-  grid-template-columns: 1fr minmax(250px, 20vw);
-  grid-template-rows: 100%;
-  gap: 20px;
-  padding: 20px;
-  height: 100%;
-  width: 100%;
-  align-items: center; /* Centre le plateau verticalement */
-  box-sizing: border-box;
+div.title {
+  text-align: center;
+  margin-bottom: 3rem;
+  margin-top: 2rem;
 }
 
-/* --- PLATEAU (GAUCHE - DOIT ÊTRE EN PREMIER) --- */
-.board-container {
-  /* CHANGE L'ORDRE VISUEL : 1 = Premier élément (Gauche) */
-  order: 1;
+h2 span {
+  display: inline-block;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent-color);
+  border-radius: var(--radius-std);
+  padding: 1rem 2rem;
+  text-transform: uppercase;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
 
-  width: 100%;
-  height: 100%;
+h2 span:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 20px rgba(0, 217, 246, 0.2);
+}
+
+.cards {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  gap: 2rem;
+  padding: 0 2rem;
+}
+
+section {
+  flex: 1 1 300px;
+  max-width: 400px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-std);
+  padding: 2rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
   overflow: hidden;
 }
 
-/* Le chessboard.js */
-#board {
-  /* On force le plateau à être aussi grand que possible en hauteur */
-  /* Comme c'est un carré, la largeur suivra automatiquement */
-  height: 92% !important;
-  width: auto !important;
-  aspect-ratio: 1/1; /* Force le carré */
-
-  /* Empêche le plateau de dépasser la largeur de sa colonne */
-  max-width: 100%;
+section:hover {
+  transform: translateY(-10px);
+  background-color: var(--bg-card-hover);
+  border-color: var(--accent-color);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* --- SIDEBAR (DROITE - DOIT ÊTRE EN SECOND) --- */
-.game-sidebar {
-  /* CHANGE L'ORDRE VISUEL : 2 = Deuxième élément (Droite) */
-  order: 2;
+section h3 {
+  color: var(--accent-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+}
 
-  height: 95%; /* Un peu de marge en haut/bas pour l'esthétique */
-  width: 100%;
+section blockquote {
+  font-family: "Segoe UI", sans-serif;
+  color: var(--text-muted);
+  font-style: normal;
+  border-left: 3px solid var(--border-color);
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.btn-play {
+  background-color: #00d9f6;
+  color: #18191c;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  white-space: nowrap;
+  box-shadow: 0 0 15px rgba(0, 217, 246, 0.3);
+  display: inline-block;
+}
+
+.btn-play:hover {
+  box-shadow: 0 0 25px rgba(0, 217, 246, 0.6);
+  transform: scale(1.05);
+}
+
+/* =========================================
+   2. INTERFACE DE JEU (LAYOUT OPTIMISÉ)
+   ========================================= */
+
+.game-container {
+  flex: 1; /* Occupe l'espace restant sous le header */
+  display: flex;
+  flex-direction: row-reverse; /* Sidebar à Droite, Plateau à Gauche */
+
+  /* CENTRAGE VERTICAL ET HORIZONTAL */
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+  gap: 40px; /* Espace aéré entre plateau et menu */
+}
+
+/* --- SIDEBAR (MENU DROITE) --- */
+.game-sidebar {
+  width: 380px;
+  min-width: 320px;
+  flex-shrink: 0;
+
+  /* Limite la hauteur pour ne pas dépasser l'écran */
+  max-height: 90%;
+  overflow-y: auto; /* Scroll interne si nécessaire */
 
   background: rgba(24, 25, 28, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  padding: 1rem;
-  box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+  padding: 1.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
 
-  overflow-y: auto;
+/* --- PLATEAU (GAUCHE) --- */
+.board-container {
+  flex-grow: 0; /* Ne force pas l'extension, laisse le board décider */
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border-radius: 12px;
 }
 
-/* --- ÉLÉMENTS INTERNES SIDEBAR --- */
-.bot-profile {
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 10px;
-}
+/* Le chessboard.js - TAILLE OPTIMISÉE */
+#board {
+  /* Taille dynamique : 
+     Prend 85% de la hauteur de l'écran OU 60% de la largeur,
+     selon ce qui est le plus petit, pour rester toujours visible entier.
+  */
+  width: min(85vh, 60vw) !important;
+  height: min(85vh, 60vw) !important;
 
-.bot-profile i {
-  font-size: 2rem;
-  color: #00d9f6;
-  margin-bottom: 5px;
-}
-
-#bot-name {
-  font-size: 1.1rem;
-  margin: 5px 0;
-}
-
-.controls-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.control-group label {
-  display: block;
-  font-size: 0.85rem;
-  color: #b9bbbe;
-  margin-bottom: 5px;
-}
-
-/* Boutons et Inputs plus compacts */
-select,
-.btn-action {
-  width: 100%;
-  padding: 8px;
-  font-size: 0.9rem;
-}
-
-.color-choice {
-  display: flex;
-  gap: 5px;
-}
-
-.color-choice button {
-  flex: 1;
-  padding: 6px;
-  font-size: 0.8rem;
-}
-
-.history-container {
-  flex-grow: 1;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  padding: 10px;
-  overflow-y: auto;
-  min-height: 100px;
+  /* Maintient le carré parfait */
+  aspect-ratio: 1/1;
+  margin: 0 !important;
 }
 
 /* =========================================
-   3. STYLES DU BOARD (CHESSBOARD.JS RESET)
+   3. STYLES DU BOARD (COULEURS & PIÈCES)
    ========================================= */
 
+/* Reset critique pour Chessboard.js */
+#board,
+#board *,
+.board-b72b1,
+.board-b72b1 * {
+  box-sizing: content-box !important;
+}
 #board img {
   width: 100% !important;
   height: 100% !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+  opacity: 1 !important;
+}
+.square-55d63 {
+  position: relative !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  float: left !important;
+  transition: none !important;
 }
 
+/* Bordure du plateau */
 .board-b72b1 {
   border: 5px solid #383c44 !important;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
-  border-radius: 4px;
+  margin: 0 auto !important;
+  background: #383c44;
 }
 
-/* Couleurs personnalisées */
-.white-1e1d7 {
+/* COULEURS DES CASES (Camouflage) */
+.white-1e1d7,
+.white-1e1d7.highlight-selected,
+.white-1e1d7[style*="background-color"] {
   background-color: #f0d9b5 !important;
   color: #b58863 !important;
 }
-.black-3c85d {
+.black-3c85d,
+.black-3c85d.highlight-selected,
+.black-3c85d[style*="background-color"] {
   background-color: #b58863 !important;
   color: #f0d9b5 !important;
 }
 
-/* Highlights et Flèches */
+/* INDICATEURS */
 .highlight-selected {
-  box-shadow: inset 0 0 0 4px rgba(255, 255, 0, 0.7) !important;
+  box-shadow: inset 0 0 0 4px #00d9f6 !important;
 }
-.legal-move {
-  background: radial-gradient(
-    rgba(0, 0, 0, 0.2) 19%,
-    transparent 20%
-  ) !important;
-}
-.legal-capture {
-  background: radial-gradient(
-    rgba(200, 0, 0, 0.4) 40%,
-    transparent 40%
-  ) !important;
+.square-55d63:focus {
+  outline: none !important;
 }
 .last-move-highlight {
-  background-color: rgba(255, 255, 50, 0.4) !important;
+  box-shadow: inset 0 0 0 100px rgba(255, 255, 0, 0.4) !important;
+}
+.legal-move {
+  background-image: radial-gradient(
+    rgba(0, 217, 246, 0.5) 18%,
+    transparent 19%
+  ) !important;
+  background-repeat: no-repeat !important;
+}
+.legal-capture {
+  box-shadow: inset 0 0 0 4px rgba(0, 217, 246, 0.4) !important;
+}
+.legal-hover {
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
 }
 
+/* FLÈCHES SVG */
 #arrow-overlay {
   position: absolute;
   top: 0;
@@ -197,61 +307,169 @@ select,
   z-index: 100;
 }
 .arrow-line {
-  stroke: rgba(255, 170, 0, 0.8);
+  stroke: rgba(0, 217, 246, 0.8);
   stroke-width: 0.15;
   stroke-linecap: round;
-  marker-end: url(#arrowhead);
+  opacity: 0.8;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
 }
 .arrow-head {
-  fill: rgba(255, 170, 0, 0.8);
+  fill: rgba(0, 217, 246, 0.8);
 }
 
 /* =========================================
-   4. RESPONSIVE (MOBILES/TABLETTES)
+   4. ÉLÉMENTS DU MENU (SIDEBAR)
    ========================================= */
 
-@media (max-width: 1024px) {
-  /* On bascule en mode vertical si l'écran est trop étroit */
+.bot-profile {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.avatar-bot {
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 217, 246, 0.1);
+  border: 2px solid #00d9f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00d9f6;
+  font-size: 1.8rem;
+}
+.bot-info h2 {
+  color: #fff;
+  font-size: 1.3rem;
+  margin: 0;
+}
+.status-indicator {
+  color: #2ecc71;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.control-group {
+  margin-bottom: 1.5rem;
+}
+.control-group label {
+  color: #b9bbbe;
+  display: block;
+  margin-bottom: 8px;
+}
+
+select,
+.color-choice button {
+  width: 100%;
+  padding: 12px;
+  background: #18191c;
+  border: 1px solid #383c44;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.color-choice {
+  display: flex;
+  gap: 10px;
+}
+.color-choice button.active {
+  border-color: #00d9f6;
+  color: #00d9f6;
+}
+
+.btn-action {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border-radius: 50px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.primary {
+  background: #00d9f6;
+  color: #000;
+}
+.secondary {
+  background: transparent;
+  border: 2px solid #b9bbbe;
+  color: #b9bbbe;
+}
+
+.history-container {
+  margin-top: 2rem;
+  background: #202225;
+  padding: 15px;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+.move-pair {
+  display: flex;
+  justify-content: space-between;
+  color: #dcddde;
+  padding: 2px 0;
+}
+.move-pair:nth-child(odd) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+.move-number {
+  color: #72767d;
+  width: 35px;
+}
+.move-white {
+  color: #dcddde;
+  flex: 1;
+}
+.move-black {
+  color: #dcddde;
+  flex: 1;
+  text-align: right;
+}
+
+/* =========================================
+   5. RESPONSIVE (Mobiles & Tablettes)
+   ========================================= */
+
+@media (max-width: 1000px) {
+  /* On réactive le scroll normal pour le mobile */
   main {
-    height: auto !important;
-    overflow-y: auto !important;
+    height: auto;
+    overflow-y: auto;
+    padding-bottom: 40px;
   }
 
   .game-container {
     display: flex;
-    flex-direction: column;
-    height: auto;
-    padding-bottom: 60px;
-  }
-
-  /* --- PLATEAU (GAUCHE - DOIT ÊTRE EN PREMIER) --- */
-  .board-container {
-    order: 1; /* Place le plateau à gauche */
-    width: 100%;
-    height: 100%;
-
-    /* Centre le plateau dans la zone sombre */
-    display: flex;
-    justify-content: center;
+    flex-direction: column; /* On empile : Plateau en haut, Menu en bas */
     align-items: center;
-    overflow: hidden;
+    width: 100%;
+    padding: 10px;
+    gap: 20px;
   }
 
-  #board {
-    width: 80vw !important;
-    max-width: 88vh !important;
-    aspect-ratio: 1/1;
-    margin: 0 auto;
+  .board-container {
+    width: 100%;
+    margin: 0;
   }
-  #board img {
-    width: 100% !important;
-    height: 100% !important;
+
+  /* Sur mobile, on remet le plateau en largeur fluide */
+  #board {
+    width: 90vw !important;
+    height: 90vw !important;
   }
 
   .game-sidebar {
-    order: 2;
-    width: 100%;
-    height: auto;
-    min-height: auto;
+    width: 90vw;
+    min-width: unset;
+    margin: 0;
+    max-height: none;
+    overflow-y: visible;
   }
 }
