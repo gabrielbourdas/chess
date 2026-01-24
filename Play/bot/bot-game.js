@@ -14,9 +14,31 @@ var arrowStartSquare = null;
 var selectedSquare = null;
 var draggedSource = null;
 
-// Paramètres
+// Paramètres par défaut
 var playerColor = "w";
 var difficulty = 5;
+
+// --- CONFIGURATION PRÉCISE DES NIVEAUX (RÉAJUSTÉE) ---
+// Keys correspond aux values de ton <select> dans le HTML
+const LEVEL_CONFIG = {
+  // Débutant : Force l'Elo à 600. Fait des gaffes.
+  1: { uciElo: 600, skill: 0, depth: 1, moveTime: 400 },
+
+  // Facile : Force l'Elo à 1000.
+  3: { uciElo: 1000, skill: 3, depth: 2, moveTime: 600 },
+
+  // Moyen : Force l'Elo à 1400.
+  5: { uciElo: 1400, skill: 6, depth: 5, moveTime: 1000 },
+
+  // Difficile : Elo 1800.
+  10: { uciElo: 1800, skill: 10, depth: 8, moveTime: 1200 },
+
+  // Expert : Pas de limite Elo, Skill élevé.
+  15: { uciElo: null, skill: 15, depth: 12, moveTime: 1500 },
+
+  // Grand Maître : Force maximale.
+  20: { uciElo: null, skill: 20, depth: 18, moveTime: 2000 },
+};
 
 // =============================================
 // 1. INITIALISATION DE STOCKFISH
@@ -143,21 +165,48 @@ function isPlayerTurn() {
 }
 
 // =============================================
-// 3. INTELLIGENCE ARTIFICIELLE
+// 3. INTELLIGENCE ARTIFICIELLE (RÉAJUSTÉE ELO)
 // =============================================
 
 function askBotToPlay() {
   if (!isEngineReady) return;
+
+  // 1. Récupérer la config
+  const config = LEVEL_CONFIG[difficulty] || LEVEL_CONFIG[5];
+
+  // 2. Gestion de la limitation ELO (UCI_Elo)
+  if (config.uciElo) {
+    stockfish.postMessage("setoption name UCI_LimitStrength value true");
+    stockfish.postMessage("setoption name UCI_Elo value " + config.uciElo);
+  } else {
+    stockfish.postMessage("setoption name UCI_LimitStrength value false");
+  }
+
+  // 3. Skill Level
+  stockfish.postMessage("setoption name Skill Level value " + config.skill);
+
+  // 4. Envoyer la position
   stockfish.postMessage("position fen " + game.fen());
-  stockfish.postMessage("go depth " + difficulty);
+
+  // 5. Lancer la réflexion
+  stockfish.postMessage(
+    "go depth " + config.depth + " movetime " + config.moveTime,
+  );
 }
 
 function makeBotMove(bestMoveUCI) {
+  // SÉCURITÉ : Si entre temps c'est devenu le tour du joueur
+  if (game.turn() === playerColor) return;
+
   const from = bestMoveUCI.substring(0, 2);
   const to = bestMoveUCI.substring(2, 4);
   const promotion = bestMoveUCI.length > 4 ? bestMoveUCI[4] : "q";
 
-  game.move({ from: from, to: to, promotion: promotion });
+  var move = game.move({ from: from, to: to, promotion: promotion });
+
+  // Si le coup est illégal
+  if (move === null) return;
+
   board.position(game.fen());
   updateStatus();
   updateMoveHistory();
@@ -219,13 +268,12 @@ function onMouseoutSquare(square) {
 }
 
 // =============================================
-// 5. SYSTÈME DE FLÈCHES (ROBUSTE)
+// 5. SYSTÈME DE FLÈCHES
 // =============================================
 
 function initArrowSystem() {
   const $board = $("#board");
 
-  // 1. On injecte le SVG une seule fois
   if ($("#arrow-overlay").length === 0) {
     const svgOverlay = `
       <svg id="arrow-overlay" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
@@ -242,24 +290,19 @@ function initArrowSystem() {
 
   const boardEl = document.getElementById("board");
 
-  // Empêche le menu contextuel natif
   boardEl.addEventListener("contextmenu", (e) => {
     e.preventDefault();
   });
 
-  // --- CAPTURE DU CLIC DROIT AVANT CHESSBOARD.JS ---
   boardEl.addEventListener(
     "mousedown",
     (e) => {
       if (e.button === 2) {
-        // Clic Droit : On dessine, on bloque chessboard.js
         e.stopPropagation();
         e.stopImmediatePropagation();
-
         const square = getSquareFromEvent(e);
         if (square) arrowStartSquare = square;
       } else {
-        // Clic Gauche : On efface les flèches, on laisse jouer
         clearArrows();
       }
     },
@@ -298,12 +341,9 @@ function clearArrows() {
 function renderArrows() {
   const layer = document.getElementById("arrows-layer");
   if (!layer) return;
-
   layer.innerHTML = "";
-
   arrowsList.forEach((arrow) => {
     const coords = getArrowCoordinates(arrow.from, arrow.to);
-
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("x1", coords.x1);
     line.setAttribute("y1", coords.y1);
@@ -311,7 +351,6 @@ function renderArrows() {
     line.setAttribute("y2", coords.y2);
     line.setAttribute("class", "arrow-line");
     line.setAttribute("marker-end", "url(#arrowhead)");
-
     layer.appendChild(line);
   });
 }
@@ -319,14 +358,11 @@ function renderArrows() {
 function getArrowCoordinates(from, to) {
   const files = "abcdefgh";
   const ranks = "12345678";
-
   let x1 = files.indexOf(from[0]);
   let y1 = ranks.indexOf(from[1]);
   let x2 = files.indexOf(to[0]);
   let y2 = ranks.indexOf(to[1]);
-
   const orientation = board.orientation();
-
   if (orientation === "white") {
     y1 = 7 - y1;
     y2 = 7 - y2;
@@ -334,17 +370,11 @@ function getArrowCoordinates(from, to) {
     x1 = 7 - x1;
     x2 = 7 - x2;
   }
-
-  return {
-    x1: x1 + 0.5,
-    y1: y1 + 0.5,
-    x2: x2 + 0.5,
-    y2: y2 + 0.5,
-  };
+  return { x1: x1 + 0.5, y1: y1 + 0.5, x2: x2 + 0.5, y2: y2 + 0.5 };
 }
 
 // =============================================
-// 7. INITIALISATION
+// 7. INITIALISATION ET ÉVÉNEMENTS
 // =============================================
 
 $(document).ready(function () {
@@ -368,44 +398,71 @@ $(document).ready(function () {
     handleSquareClick(square);
   });
 
-  $("#btn-new-game").on("click", startNewGame);
+  // Boutons
+  $("#btn-new-game").on("click", function () {
+    startNewGame();
+  });
 
   $("#btn-undo").on("click", function () {
-    if (!gameActive) return;
-    game.undo();
-    game.undo();
+    if (game.history().length < 1) return;
+    // Annulation intelligente
+    if (playerColor === "w" && game.history().length < 2) {
+      game.undo();
+    } else if (game.turn() !== playerColor) {
+      game.undo();
+    } else {
+      game.undo();
+      game.undo();
+    }
+
     board.position(game.fen());
     updateStatus();
     updateMoveHistory();
     clearArrows();
     deselectSquare();
+    removeAllHighlights();
+    gameActive = true;
   });
 
   $("#btn-play-white").on("click", function () {
+    if ($(this).hasClass("active")) return;
     $(".color-choice button").removeClass("active");
     $(this).addClass("active");
     playerColor = "w";
+    startNewGame();
   });
 
   $("#btn-play-black").on("click", function () {
+    if ($(this).hasClass("active")) return;
     $(".color-choice button").removeClass("active");
     $(this).addClass("active");
     playerColor = "b";
+    startNewGame();
   });
 
+  // --- SÉLECTEUR DE DIFFICULTÉ & MISE À JOUR TITRE ---
+
+  // Fonction locale pour mettre à jour le texte du titre
+  function updateBotTitle() {
+    var selectedText = $("#difficulty-select option:selected").text();
+    $("#bot-name").text("Stockfish - " + selectedText);
+  }
+
+  // Événement quand on change l'option
   $("#difficulty-select").on("change", function () {
     difficulty = parseInt($(this).val());
+    updateBotTitle(); // Met à jour l'affichage
+    console.log("Niveau choisi:", difficulty, LEVEL_CONFIG[difficulty]);
   });
 
-  // --- FIX REDIMENSIONNEMENT CRITIQUE ---
-  // Gère le redimensionnement quand on change la taille de la fenêtre
+  // Lance la mise à jour une première fois au chargement
+  updateBotTitle();
+
+  // Resize
   $(window).resize(function () {
     board.resize();
     renderArrows();
   });
-
-  // Force le redimensionnement au chargement pour éviter le plateau minuscule
-  // On le fait en plusieurs temps car le rendu CSS grid peut prendre quelques millisecondes
   setTimeout(function () {
     board.resize();
     renderArrows();
@@ -414,10 +471,6 @@ $(document).ready(function () {
     board.resize();
     renderArrows();
   }, 200);
-  setTimeout(function () {
-    board.resize();
-    renderArrows();
-  }, 500);
 });
 
 function startNewGame() {
@@ -429,6 +482,7 @@ function startNewGame() {
   updateMoveHistory();
   clearArrows();
   deselectSquare();
+  removeAllHighlights();
 
   if (playerColor === "b") {
     window.setTimeout(askBotToPlay, 500);
@@ -471,8 +525,6 @@ function updateMoveHistory() {
     listHtml += "</div>";
   }
   $("#move-history").html(listHtml);
-
-  // Auto-scroll vers le bas
   var historyContainer = document.getElementById("move-history");
   if (historyContainer)
     historyContainer.scrollTop = historyContainer.scrollHeight;
