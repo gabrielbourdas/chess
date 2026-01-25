@@ -3,68 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess - Les Ouvertures</title>
-    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+    <title>Open Chess | Les Ouvertures</title>
 
-    <link rel="stylesheet" href="../css/nav.css" />
-    <link rel="stylesheet" href="./css/nav.css" />
-    <link rel="stylesheet" href="./css/learn.css" />
-    <link rel="stylesheet" href="../css/openings.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
     <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="./css/learn.css" />
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="/img/close.svg" alt="close" /></a>
-          </li>
-          <li><a href="/Play/index.html">Play</a></li>
-          <li><a href="/Puzzles/index.html">Puzzles</a></li>
-          <li><a href="/Learn/index.html">Learn</a></li>
+      <nav class="navbar">
+        <a href="../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
+        <ul class="nav-links">
+          <li><a href="../Play/index.html">Jouer</a></li>
+          <li><a href="../Puzzles/index.html">Défis</a></li>
+          <li><a href="../Analyze/index.html">Analyser</a></li>
+          <li><a href="./index.html" class="active">Apprendre</a></li>
         </ul>
-        <ul>
-          <li class="logo-container">
-            <a href="/index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-
-          <li class="hideOnMobile">
-            <a href="./index.html">Menu</a>
-          </li>
-
-          <li class="hideOnMobile">
-            <a
-              href="#"
-              style="
-                color: #00d9f6;
-                font-weight: bold;
-                border-bottom: 2px solid #00d9f6;
-              "
-              >Ouvertures</a
-            >
-          </li>
-
-          <li class="hideOnMobile">
-            <a href="./Midgame.html" class="nav-orange">Milieu</a>
-          </li>
-
-          <li class="hideOnMobile">
-            <a href="./Endgame.html" class="nav-green">Finales</a>
-          </li>
-
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="../login/index.html" class="btn-login">Connexion</a>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="../Play/index.html">Jouer</a>
+        <a href="../Puzzles/index.html">Défis</a>
+        <a href="../Analyze/index.html">Analyser</a>
+        <a href="./index.html">Apprendre</a>
+        <a href="../login/index.html">Connexion</a>
+      </div>
     </header>
 
     <main>
-      <div class="course-wrapper">
+      <div class="floating-nav-wrapper">
+        <nav class="sub-nav">
+          <a href="./index.html" class="sub-link">🎓 Accueil</a>
+          <a href="./Opening.html" class="sub-link active">📖 Ouvertures</a>
+          <a href="./Midgame.html" class="sub-link">⚔️ Milieu</a>
+          <a href="./Endgame.html" class="sub-link">👑 Finales</a>
+        </nav>
+      </div>
+
+      <div class="course-wrapper" style="padding-top: 2rem">
         <aside class="course-sidebar">
-          <h3 class="sidebar-title">Les Fondamentaux</h3>
+          <h3 class="sidebar-title">Bases & Théorie</h3>
           <ul class="course-menu">
             <li>
               <a
@@ -72,7 +69,7 @@
                 id="link-principes"
                 class="active"
                 onclick="switchTab('principes')"
-                >📖 Principes Généraux</a
+                >💡 Principes Généraux</a
               >
             </li>
             <li>
@@ -87,107 +84,36 @@
             </li>
           </ul>
 
-          <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            1. e4 e5 (Jeux Ouverts)
-          </h3>
-          <ul class="course-menu">
-            <li>
-              <a href="./Openings/jeu_ouvert.html#espagnole"
-                >🇪🇸 L'Espagnole (Ruy Lopez)</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/jeu_ouvert.html#italienne">🇮🇹 L'Italienne</a>
-            </li>
-            <li>
-              <a href="./Openings/jeu_ouvert.html#ecossaise">🏴󠁧󠁢󠁳󠁣󠁴󠁿 L'Écossaise</a>
-            </li>
-            <li>
-              <a href="./Openings/jeu_ouvert.html#russe">🇷🇺 La Défense Russe</a>
-            </li>
-          </ul>
-          <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            1. e4 divers (Semi-Ouverts)
-          </h3>
-          <ul class="course-menu">
-            <li>
-              <a href="./Openings/jeu_semi_ouvert.html#sicilienne"
-                >🇮🇹 La Sicilienne</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/jeu_semi_ouvert.html#francaise"
-                >🇫🇷 La Française</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/jeu_semi_ouvert.html#carokann"
-                >🛡️ La Caro-Kann</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/jeu_semi_ouvert.html#scandinave"
-                >❄️ La Scandinave</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/jeu_semi_ouvert.html#pirc"
-                >🏰 La Pirc / Moderne</a
-              >
-            </li>
-          </ul>
+          <div class="divider" style="margin: 1.5rem 0"></div>
 
-          <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            1. d4 (Jeux Fermés)
+          <h3 class="sidebar-title">
+            <a
+              href="openings/jeu_ouvert.html"
+              style="color: var(--accent-gold); text-decoration: none"
+              >Jeux Ouverts (1. e4 e5)</a
+            >
           </h3>
-          <ul class="course-menu">
-            <li>
-              <a href="./Openings/jeu_ferme.html#gambitdame"
-                >♕ Le Gambit Dame</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/jeu_ferme.html#londres"
-                >🇬🇧 Le Système de Londres</a
-              >
-            </li>
-            <li><a href="./Openings/jeu_ferme.html#autres">🧱 La Slave</a></li>
-            <li>
-              <a href="./Openings/jeu_ferme.html#kid"
-                >👳 L'Est-Indienne (KID)</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/jeu_ferme.html#nimzo">🧘 La Nimzo-Indienne</a>
-            </li>
-            <li>
-              <a href="./Openings/jeu_ferme.html#autres">💥 La Grünfeld</a>
-            </li>
-            <li>
-              <a href="./Openings/jeu_ferme.html#autres">🇳🇱 La Hollandaise</a>
-            </li>
-          </ul>
-
           <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            Ouvertures de Flanc
+            <a
+              href="openings/jeu_semi_ouvert.html"
+              style="color: var(--accent-gold); text-decoration: none"
+              >Jeux Semi-Ouverts</a
+            >
           </h3>
-          <ul class="course-menu">
-            <li>
-              <a href="./Openings/ouverture_de_flanc.html#anglaise"
-                >🇬🇧 L'Anglaise (1. c4)</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/ouverture_de_flanc.html#reti"
-                >🐴 La Réti (1. Cf3)</a
-              >
-            </li>
-            <li>
-              <a href="./Openings/ouverture_de_flanc.html#kia"
-                >⚔️ Attaque Est-Indienne</a
-              >
-            </li>
-          </ul>
+          <h3 class="sidebar-title" style="margin-top: 1.5rem">
+            <a
+              href="openings/jeu_ferme.html"
+              style="color: var(--accent-gold); text-decoration: none"
+              >Jeux Fermés (1. d4)</a
+            >
+          </h3>
+          <h3 class="sidebar-title" style="margin-top: 1.5rem">
+            <a
+              href="openings/ouverture_de_flanc.html"
+              style="color: var(--accent-gold); text-decoration: none"
+              >Ouvertures de Flanc</a
+            >
+          </h3>
         </aside>
 
         <div class="course-content">
@@ -200,7 +126,7 @@
                   la logique.
                 </p>
               </div>
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+              <hr class="divider" />
 
               <article class="principle-section">
                 <div class="principle-text">
@@ -217,7 +143,9 @@
                   <div class="board-mini">🎯</div>
                 </div>
               </article>
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <hr class="divider" />
+
               <article class="principle-section">
                 <div class="principle-text">
                   <h3>2. Développer les Pièces</h3>
@@ -231,7 +159,9 @@
                   <div class="board-mini">🚀</div>
                 </div>
               </article>
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
+
+              <hr class="divider" />
+
               <article class="principle-section">
                 <div class="principle-text">
                   <h3>3. Sécurité du Roi</h3>
@@ -255,15 +185,13 @@
                   maîtriser la notation algébrique.
                 </p>
               </div>
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
-
+              <hr class="divider" />
               <article class="principle-section">
                 <div class="principle-text">
                   <h3>1. Les Cases (Coordonnées)</h3>
                   <p>
                     Chaque case a un nom unique. On lit d'abord la
-                    <strong>Lettre</strong> (colonne) puis le
-                    <strong>Chiffre</strong> (rangée).
+                    <strong>Lettre</strong> puis le <strong>Chiffre</strong>.
                   </p>
                   <div class="move-box">
                     <strong>Exemple :</strong>
@@ -274,80 +202,18 @@
                   <div class="board-mini" style="font-size: 2rem">e4</div>
                 </div>
               </article>
-
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>2. Les Pièces (Lettres)</h3>
-                  <p>
-                    Chaque pièce est désignée par sa première lettre en
-                    majuscule (sauf le Pion qui n'a pas de lettre).
-                  </p>
-                  <ul
-                    style="
-                      color: #b9bbbe;
-                      line-height: 1.8;
-                      margin-left: 1rem;
-                      margin-top: 10px;
-                    "
-                  >
-                    <li>♔ <strong>R</strong> = Roi</li>
-                    <li>♕ <strong>D</strong> = Dame</li>
-                    <li>♖ <strong>T</strong> = Tour</li>
-                    <li>♗ <strong>F</strong> = Fou</li>
-                    <li>♘ <strong>C</strong> = Cavalier</li>
-                  </ul>
-                </div>
-                <div class="principle-visual">
-                  <div class="board-mini">C</div>
-                </div>
-              </article>
-
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>3. Symboles Spéciaux</h3>
-                  <p>
-                    Ces symboles expliquent ce qui se passe sur l'échiquier.
-                  </p>
-                  <div class="move-box">
-                    <strong>Liste :</strong>
-                    <span>x (prise), + (échec), # (mat), 0-0 (roque)</span>
-                  </div>
-                </div>
-                <div class="principle-visual">
-                  <div class="board-mini">#</div>
-                </div>
-              </article>
             </div>
 
             <div id="tab-valeur" style="display: none">
               <div class="hub-header">
                 <h2>Mathématiques du Jeu</h2>
-                <p>
-                  Savoir quelles pièces échanger est crucial. Voici le barème
-                  standard des points.
-                </p>
+                <p>Savoir quelles pièces échanger est crucial.</p>
               </div>
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
-
+              <hr class="divider" />
               <article class="principle-section">
                 <div class="principle-text">
                   <h3>1. Les Pièces Légères</h3>
-                  <p>
-                    Elles constituent votre infanterie et votre cavalerie
-                    légère.
-                  </p>
-                  <ul
-                    style="
-                      color: #b9bbbe;
-                      line-height: 1.8;
-                      margin-left: 1rem;
-                      margin-top: 10px;
-                    "
-                  >
+                  <ul class="clean-list">
                     <li>♟️ <strong>Pion :</strong> 1 point</li>
                     <li>♘ <strong>Cavalier :</strong> 3 points</li>
                     <li>♗ <strong>Fou :</strong> 3 points</li>
@@ -355,51 +221,6 @@
                 </div>
                 <div class="principle-visual">
                   <div class="board-mini">3</div>
-                </div>
-              </article>
-
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>2. Les Pièces Lourdes</h3>
-                  <p>
-                    L'artillerie lourde, capable de traverser tout l'échiquier.
-                  </p>
-                  <ul
-                    style="
-                      color: #b9bbbe;
-                      line-height: 1.8;
-                      margin-left: 1rem;
-                      margin-top: 10px;
-                    "
-                  >
-                    <li>♖ <strong>Tour :</strong> 5 points</li>
-                    <li>♕ <strong>Dame :</strong> 9 points</li>
-                  </ul>
-                  <div class="move-box">
-                    <strong>Astuce :</strong>
-                    <span>Deux Tours (5+5) > Une Dame (9)</span>
-                  </div>
-                </div>
-                <div class="principle-visual">
-                  <div class="board-mini">9</div>
-                </div>
-              </article>
-
-              <hr class="divider" style="margin: 2rem 0; opacity: 0.2" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>3. Le Roi</h3>
-                  <p>
-                    Sa valeur est <strong>infinie</strong>. S'il tombe, la
-                    partie est perdue, peu importe combien de points vous avez
-                    d'avance.
-                  </p>
-                </div>
-                <div class="principle-visual">
-                  <div class="board-mini">∞</div>
                 </div>
               </article>
             </div>
@@ -410,38 +231,22 @@
 
     <script type="module" src="../js/auth.js"></script>
     <script>
-      // Fonction pour gérer l'affichage de la sidebar mobile
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
-        setTimeout(() => {
-          document.querySelector(".sidebar").classList.add("active");
-        }, 10);
-      }
-      function hidesidebar() {
-        const sb = document.querySelector(".sidebar");
-        sb.classList.remove("active");
-        setTimeout(() => {
-          sb.style.display = "none";
-        }, 300);
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
       }
 
-      // NOUVELLE FONCTION : Gestion des onglets
       function switchTab(tabName) {
-        // 1. Masquer tous les contenus
         document.getElementById("tab-principes").style.display = "none";
         document.getElementById("tab-notation").style.display = "none";
         document.getElementById("tab-valeur").style.display = "none";
 
-        // 2. Afficher le bon contenu
         document.getElementById("tab-" + tabName).style.display = "block";
 
-        // 3. Mettre à jour la classe "active" dans le menu
-        // D'abord on enlève "active" partout
         document.getElementById("link-principes").classList.remove("active");
         document.getElementById("link-notation").classList.remove("active");
         document.getElementById("link-valeur").classList.remove("active");
 
-        // Ensuite on l'ajoute sur le lien cliqué
         document.getElementById("link-" + tabName).classList.add("active");
       }
     </script>

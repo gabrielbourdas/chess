@@ -1,69 +1,72 @@
 /* =========================================
-   PAGE LOGIN / AUTH
+   PAGE LOGIN - STYLE "GRANDMASTER"
    ========================================= */
 
-/* On force le main à prendre toute la hauteur pour centrer verticalement */
+/* On force le main à prendre toute la hauteur */
 .auth-main {
-  min-height: 80vh;
+  min-height: 100vh; /* Prend toute la hauteur de l'écran */
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* Centre verticalement... */
+  justify-content: center; /* ...et horizontalement */
+
+  /* Fond subtil "Grandmaster" */
   background: radial-gradient(
     circle at center,
-    rgba(0, 217, 246, 0.05) 0%,
+    rgba(212, 175, 55, 0.05) 0%,
     transparent 70%
   );
+
+  /* CORRECTION ICI : */
+  /* On ajoute 120px en haut pour compenser la barre de navigation (qui fait ~80px) */
+  padding-top: 120px;
+  padding-bottom: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  box-sizing: border-box;
 }
 
 .auth-wrapper {
   width: 100%;
-  max-width: 420px;
-  padding: 1rem;
+  max-width: 400px; /* Carte un peu plus fine pour l'élégance */
 }
 
 .auth-card {
-  background: rgba(30, 32, 36, 0.95);
+  background: var(--bg-secondary); /* Gris très sombre */
   backdrop-filter: blur(10px);
-  border: 1px solid #383c44;
-  border-top: 4px solid #00d9f6; /* Ligne Cyan au dessus */
-  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  border-top: 2px solid var(--accent-gold); /* Ligne Or fine au dessus */
+  border-radius: 4px; /* Coins plus carrés */
   padding: 2.5rem;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
   text-align: center;
+  transition: transform 0.3s ease;
 }
 
+/* En-tête */
 .auth-header {
   margin-bottom: 2rem;
 }
 
 .auth-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
   display: inline-block;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  filter: grayscale(0.5); /* Icône un peu moins saturée */
 }
 
 .auth-header h2 {
-  color: #fff;
+  font-family: var(--font-heading); /* Playfair Display */
+  color: var(--text-primary);
   font-size: 1.8rem;
   margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .auth-header p {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.9rem;
+  font-weight: 300;
 }
 
 /* Formulaire */
@@ -74,28 +77,31 @@
 
 .input-group label {
   display: block;
-  color: #ebebeb;
-  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
   margin-bottom: 8px;
-  font-weight: 600;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .input-group input {
   width: 100%;
-  background: #18191c;
-  border: 1px solid #383c44;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
   padding: 12px 15px;
-  border-radius: 6px;
+  border-radius: 2px;
   color: #fff;
-  font-size: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
   transition: all 0.3s;
-  box-sizing: border-box; /* Important pour ne pas dépasser */
+  box-sizing: border-box;
 }
 
 .input-group input:focus {
   outline: none;
-  border-color: #00d9f6;
-  box-shadow: 0 0 10px rgba(0, 217, 246, 0.2);
+  border-color: var(--accent-gold);
+  background: rgba(212, 175, 55, 0.05);
 }
 
 /* Options (Checkbox + Lien oubli) */
@@ -111,75 +117,79 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
+.checkbox-container input {
+  accent-color: var(--accent-gold); /* Checkbox dorée */
+}
+
 .forgot-pass {
-  color: #00d9f6;
+  color: var(--accent-gold);
   text-decoration: none;
   transition: 0.2s;
+  font-size: 0.8rem;
 }
 
 .forgot-pass:hover {
   text-decoration: underline;
+  color: #fff;
 }
 
-/* Gros Bouton */
-.btn-login {
+/* Bouton Pleine Largeur */
+.btn-primary.full-width {
   width: 100%;
+  display: block;
   padding: 14px;
-  background: linear-gradient(90deg, #00d9f6, #00b8d4);
-  color: #18191c;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  background: var(--accent-gold);
+  color: #050505; /* Texte noir sur or */
+  border: 1px solid var(--accent-gold);
+  margin-top: 1rem;
 }
 
-.btn-login:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(0, 217, 246, 0.4);
+.btn-primary.full-width:hover {
+  background: transparent;
+  color: var(--accent-gold);
 }
 
 /* Bas de carte */
 .auth-footer {
   margin-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border-subtle);
   padding-top: 1.5rem;
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .auth-footer a {
-  color: #fff;
-  font-weight: bold;
+  color: var(--text-primary);
+  font-weight: 600;
   text-decoration: none;
   margin-left: 5px;
+  transition: color 0.3s;
 }
 
 .auth-footer a:hover {
-  color: #00d9f6;
+  color: var(--accent-gold);
 }
-/* ... Tout le CSS précédent de la page login reste bon ... */
 
-/* CLASSE UTILITAIRE POUR CACHER */
+/* Utilitaires */
 .hidden {
   display: none !important;
 }
 
-/* PETITE ANIMATION D'APPARITION */
+/* Animation d'apparition douce */
 .fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -187,18 +197,10 @@
   }
 }
 
-/* Ajustement spécifique pour le formulaire d'inscription qui est plus long */
-#register-box .auth-icon {
-  font-size: 2.5rem; /* Un peu plus petit pour gagner de la place */
-  margin-bottom: 0.5rem;
-}
-
-#register-box .input-group {
-  margin-bottom: 1rem; /* Espacement un peu réduit */
-}
 /* Responsive */
 @media (max-width: 500px) {
   .auth-card {
     padding: 1.5rem;
+    border-top: 1px solid var(--accent-gold); /* Plus discret sur mobile */
   }
 }

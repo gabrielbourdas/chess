@@ -3,72 +3,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess - Accès Membre</title>
-    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
-    <link rel="stylesheet" href="../css/nav.css" />
+    <title>Open Chess | Identification</title>
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/nav.css" />
     <link rel="stylesheet" href="./css/style.css" />
-    <link rel="stylesheet" href="../css/media.css" />
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="/img/close.svg" alt="close" /></a>
-          </li>
-          <li class="sidebar-logo"><span>MENU</span></li>
-          <li><a href="/Play/index.html">Play</a></li>
-          <li><a href="/Puzzles/index.html">Puzzles</a></li>
-          <li><a href="/Analyze/index.html">Analyze</a></li>
-          <li><a href="/Learn/index.html">Learn</a></li>
-          <li><a href="/profile/index.html">Profile</a></li>
+      <nav class="navbar">
+        <a href="../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
+
+        <ul class="nav-links">
+          <li><a href="../Play/index.html">Jouer</a></li>
+          <li><a href="../Puzzles/index.html">Défis</a></li>
+          <li><a href="../Learn/index.html">Apprendre</a></li>
+          <li><a href="../Analyze/index.html">Analyser</a></li>
         </ul>
 
-        <ul>
-          <li class="logo-container">
-            <a href="/index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Play/index.html">Play <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Puzzles/index.html">Puzzles <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Analyze/index.html">Analyze <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Learn/index.html">Learn <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/profile/index.html">Profile <span></span></a>
-          </li>
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="#" class="btn-login" style="color: var(--accent-gold)"
+            >Connexion</a
+          >
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="../Play/index.html">Jouer</a>
+        <a href="../Puzzles/index.html">Défis</a>
+        <a href="../Learn/index.html">Apprendre</a>
+        <a href="../Analyze/index.html">Analyser</a>
+      </div>
     </header>
 
     <main class="auth-main">
       <div class="auth-wrapper">
         <div id="login-box" class="auth-card fade-in">
           <div class="auth-header">
-            <div class="auth-icon">🔐</div>
-            <h2>Accès au QG</h2>
-            <p>Identifie-toi pour lancer une partie.</p>
+            <div class="auth-icon">🗝️</div>
+            <h2>Espace Membre</h2>
+            <p>Veuillez vous identifier pour accéder à l'échiquier.</p>
           </div>
 
           <form action="#" class="auth-form">
             <div class="input-group">
-              <label for="login-user">Email</label>
+              <label for="login-user">Adresse Email</label>
               <input
                 type="text"
                 id="login-user"
-                placeholder="Rentrez votre email"
+                placeholder="exemple@email.com"
                 required
               />
             </div>
@@ -87,15 +83,17 @@
                 <input type="checkbox" checked />
                 <span class="checkmark"></span> Se souvenir
               </label>
-              <a href="#" class="forgot-pass">Oublié ?</a>
+              <a href="#" class="forgot-pass">Mot de passe oublié ?</a>
             </div>
 
-            <button type="submit" class="btn-login">Login</button>
+            <button type="submit" class="btn-primary full-width">
+              Connexion
+            </button>
           </form>
 
           <div class="auth-footer">
             <p>
-              Nouveau challenger ?
+              Première visite ?
               <a href="#" onclick="switchForm('register')">Créer un compte</a>
             </p>
           </div>
@@ -103,9 +101,9 @@
 
         <div id="register-box" class="auth-card hidden fade-in">
           <div class="auth-header">
-            <div class="auth-icon">⚔️</div>
-            <h2>Rejoindre le Club</h2>
-            <p>Crée ton profil pour suivre ta progression.</p>
+            <div class="auth-icon">♟️</div>
+            <h2>Nouveau Joueur</h2>
+            <p>Rejoignez le cercle et suivez votre progression.</p>
           </div>
 
           <form action="#" class="auth-form">
@@ -114,17 +112,17 @@
               <input
                 type="text"
                 id="reg-user"
-                placeholder="Ton nom de guerre"
+                placeholder="Votre nom de joueur"
                 required
               />
             </div>
 
             <div class="input-group">
-              <label for="reg-email">Email (Optionnel)</label>
+              <label for="reg-email">Email</label>
               <input
                 type="email"
                 id="reg-email"
-                placeholder="Pour récupérer le mot de passe"
+                placeholder="Pour la récupération du compte"
               />
             </div>
 
@@ -133,23 +131,23 @@
               <input
                 type="password"
                 id="reg-pass"
-                placeholder="Choisis bien..."
+                placeholder="6 caractères minimum"
                 required
               />
             </div>
 
             <div class="input-group">
-              <label for="reg-pass-conf">Confirmer</label>
+              <label for="reg-pass-conf">Confirmation</label>
               <input
                 type="password"
                 id="reg-pass-conf"
-                placeholder="Répète le mot de passe"
+                placeholder="Confirmez le mot de passe"
                 required
               />
             </div>
 
-            <button type="submit" class="btn-login">
-              Valider l'inscription
+            <button type="submit" class="btn-primary full-width">
+              Finaliser l'inscription
             </button>
           </form>
 
@@ -164,38 +162,39 @@
     </main>
 
     <footer>
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>Open Chess</h3>
-          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h4>Open Chess<span class="dot">.</span></h4>
+          <p>L'excellence stratégique à portée de main.</p>
         </div>
-        <div class="footer-section">
-          <h3>Commencez l'aventure</h3>
-          <a href="/login/index.html" class="btn-register"
-            >S'inscrire Gratuitement</a
-          >
+        <div class="footer-nav-group">
+          <div class="footer-col">
+            <h5>Navigation</h5>
+            <ul>
+              <li><a href="../Play/index.html">Jouer</a></li>
+              <li><a href="../Puzzles/index.html">Puzzles</a></li>
+              <li><a href="../Learn/index.html">Apprendre</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>Support</h5>
+            <ul>
+              <li><a href="../support/index.html">Contact</a></li>
+              <li><a href="../rules/index.html">Règles</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="footer-section">
-          <h3>Liens Utiles</h3>
-          <ul>
-            <li><a href="/rules/index.html">Règles Simplifiées</a></li>
-            <li><a href="/video/index.html">Chaîne YouTube</a></li>
-            <li><a href="/support/index.html">Support</a></li>
-          </ul>
+        <div class="footer-copy">
+          &copy; <span id="year">2026</span> Open Chess.
         </div>
-      </div>
-      <div class="footer-bottom">
-        <p>
-          &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
-        </p>
       </div>
     </footer>
 
     <script type="module">
-      // 1. IMPORT DU CERVEAU
+      // 1. IMPORT DU CERVEAU (Ajuste si ton fichier est bien dans /js/auth.js à la racine)
       import { auth, db } from "../js/auth.js";
 
-      // 2. IMPORT DES OUTILS
+      // 2. IMPORT DES OUTILS FIREBASE
       import {
         createUserWithEmailAndPassword,
         signInWithEmailAndPassword,
@@ -207,7 +206,7 @@
         setDoc,
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-      // --- LOGIQUE D'INSCRIPTION CORRIGÉE ---
+      // --- LOGIQUE D'INSCRIPTION ---
       const registerForm = document.querySelector("#register-box form");
       if (registerForm) {
         registerForm.addEventListener("submit", (e) => {
@@ -225,32 +224,31 @@
           createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
               const user = userCredential.user;
-
-              // CORRECTION ICI : On retourne la promesse de setDoc
-              // Cela oblige le code à attendre que la sauvegarde soit finie
               return setDoc(doc(db, "users", user.uid), {
                 pseudo: pseudo,
                 email: email,
                 progress: { opening: 0, puzzles: 0 },
+                currentPuzzleElo: 1200, // Initialisation Stats
+                puzzlesSolved: 0,
+                currentVisuElo: 1000,
               });
             })
             .then(() => {
-              // On arrive ici UNIQUEMENT quand la base de données a fini de sauvegarder
-              alert("Bienvenue au club, " + pseudo + " !");
+              alert("Bienvenue, " + pseudo + ". Votre compte est prêt.");
               window.location.href = "../index.html";
             })
             .catch((error) => {
               let msg = "Erreur : " + error.message;
               if (error.code === "auth/email-already-in-use")
-                msg = "Cet email est déjà utilisé.";
+                msg = "Cet email est déjà inscrit.";
               if (error.code === "auth/weak-password")
-                msg = "Mot de passe trop faible (6 caractères min).";
+                msg = "Mot de passe trop faible.";
               alert(msg);
             });
         });
       }
 
-      // --- LOGIQUE DE CONNEXION (Rien ne change ici) ---
+      // --- LOGIQUE DE CONNEXION ---
       const loginForm = document.querySelector("#login-box form");
       if (loginForm) {
         loginForm.addEventListener("submit", (e) => {
@@ -260,78 +258,66 @@
 
           signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-              console.log("Connecté !");
+              console.log("Accès autorisé.");
               window.location.href = "../index.html";
             })
             .catch((error) => {
               console.error(error);
-              alert("Email ou mot de passe incorrect.");
+              alert("Identifiants incorrects.");
             });
         });
       }
 
-      // --- LOGIQUE MOT DE PASSE OUBLIÉ ---
+      // --- MOT DE PASSE OUBLIÉ ---
       const forgotBtn = document.querySelector(".forgot-pass");
       if (forgotBtn) {
         forgotBtn.addEventListener("click", (e) => {
           e.preventDefault();
           let email = document.getElementById("login-user").value;
-
           if (!email) {
             email = prompt(
-              "Entre ton adresse email pour recevoir le lien de réinitialisation :",
+              "Veuillez entrer votre email pour réinitialiser le mot de passe :",
             );
           }
-
           if (!email) return;
 
           sendPasswordResetEmail(auth, email)
             .then(() => {
-              alert(
-                "📧 Email envoyé ! Vérifie ta boîte de réception (et tes spams) pour changer ton mot de passe.",
-              );
+              alert("Un email de réinitialisation a été envoyé.");
             })
             .catch((error) => {
-              console.error(error);
-              if (error.code === "auth/user-not-found") {
-                alert("Aucun compte ne correspond à cet email.");
-              } else if (error.code === "auth/invalid-email") {
-                alert("L'adresse email n'est pas valide.");
-              } else {
-                alert("Erreur : " + error.message);
-              }
+              alert("Erreur : " + error.message);
             });
         });
       }
 
-      // --- FONCTIONS VISUELLES ---
-      window.showsidebar = function () {
-        document.querySelector(".sidebar").style.display = "flex";
-        setTimeout(() => {
-          document.querySelector(".sidebar").classList.add("active");
-        }, 10);
-      };
-      window.hidesidebar = function () {
-        document.querySelector(".sidebar").classList.remove("active");
-        setTimeout(() => {
-          document.querySelector(".sidebar").style.display = "none";
-        }, 300);
+      // --- FONCTIONS UI (Menu & Switch Form) ---
+      window.toggleMenu = function () {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
       };
 
       window.switchForm = function (target) {
         const loginBox = document.getElementById("login-box");
         const registerBox = document.getElementById("register-box");
+
+        // Reset des animations pour qu'elles se rejouent
+        loginBox.classList.remove("fade-in");
+        registerBox.classList.remove("fade-in");
+        void loginBox.offsetWidth; // Trigger reflow
+
         if (target === "register") {
           loginBox.classList.add("hidden");
           registerBox.classList.remove("hidden");
+          registerBox.classList.add("fade-in");
         } else {
           registerBox.classList.add("hidden");
           loginBox.classList.remove("hidden");
+          loginBox.classList.add("fade-in");
         }
       };
 
-      const yearSpan = document.getElementById("year");
-      if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+      document.getElementById("year").textContent = new Date().getFullYear();
     </script>
   </body>
 </html>

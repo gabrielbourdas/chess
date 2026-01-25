@@ -3,91 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess - Centre d'Aide</title>
-    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+    <title>Open Chess | Assistance</title>
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml" />
 
-    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/media.css" />
-
+    <link rel="stylesheet" href="../css/nav.css" />
     <link rel="stylesheet" href="./css/style.css" />
-
-    <style>
-      .faq-container {
-        max-width: 600px !important; /* Force le bloc à être plus petit */
-        margin: 0 auto 5rem auto;
-        position: relative;
-        z-index: 10;
-      }
-    </style>
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="/img/close.svg" alt="close" /></a>
-          </li>
-          <li class="sidebar-logo"><span>MENU</span></li>
-          <li><a href="/Play/index.html">Play</a></li>
-          <li><a href="/Puzzles/index.html">Puzzles</a></li>
-          <li><a href="/Analyze/index.html">Analyze</a></li>
-          <li><a href="/Learn/index.html">Learn</a></li>
-          <li><a href="/profile/index.html">Profile</a></li>
+      <nav class="navbar">
+        <a href="/" class="logo">OPEN CHESS<span class="dot">.</span></a>
+
+        <ul class="nav-links">
+          <li><a href="/Play/index.html">Jouer</a></li>
+          <li><a href="/Puzzles/index.html">Défis</a></li>
+          <li><a href="/Learn/index.html">Apprendre</a></li>
+          <li><a href="/Analyze/index.html">Analyser</a></li>
         </ul>
 
-        <ul>
-          <li class="logo-container">
-            <a href="/index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Play/index.html">Play <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Puzzles/index.html">Puzzles <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Analyze/index.html">Analyze <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Learn/index.html">Learn <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/profile/index.html">Profile <span></span></a>
-          </li>
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="/login/index.html" class="btn-login">Connexion</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="/Play/index.html">Jouer</a>
+        <a href="/Puzzles/index.html">Défis</a>
+        <a href="/Learn/index.html">Apprendre</a>
+        <a href="/login/index.html">Connexion</a>
+      </div>
     </header>
 
     <main>
-      <div class="title">
-        <h2><span>Centre d'Aide</span></h2>
-        <p style="color: var(--text-muted); margin-top: 1rem">
-          Une question ? Un problème ? Nous sommes là pour vous.
-        </p>
-      </div>
+      <section class="support-hero">
+        <div class="section-header">
+          <span class="subtitle">Centre d'Aide</span>
+          <h2>Comment pouvons-nous <br /><em>vous assister ?</em></h2>
+          <p class="section-desc">
+            Une question sur les règles ou un problème technique ? Nous sommes
+            là pour garantir la fluidité de votre expérience.
+          </p>
+          <div class="separator"></div>
+        </div>
+      </section>
 
       <div class="contact-section">
-        <div class="support-card single-card">
-          <div class="icon-box orange">📩</div>
-          <h3>Un problème ou une suggestion ?</h3>
+        <div class="support-card">
+          <div class="icon-box">✉️</div>
+          <h3>Contact Direct</h3>
           <p>
-            Comme le site est encore en construction, il est possible qu'il y
-            ait quelques bugs.
-            <br />Si tu en trouves un, ou si tu as une idée pour améliorer le
-            jeu, dis-le-moi !
+            Le site est en constante évolution. Si vous rencontrez une anomalie
+            ou si vous avez une suggestion pour améliorer le jeu, votre retour
+            est précieux.
           </p>
           <a
             href="https://mail.google.com/mail/?view=cm&fs=1&to=gabrielbourdas@gmail.com"
             target="_blank"
-            class="btn-support btn-question"
+            class="btn-primary"
           >
-            M'envoyer un message
+            Envoyer un message
           </a>
         </div>
       </div>
@@ -97,14 +83,15 @@
 
         <div class="faq-wrapper">
           <details>
-            <summary>Au secours, un pion a disparu ! (C'est un bug ?)</summary>
+            <summary>Au secours, un pion a disparu ! (Bug ?)</summary>
             <div class="faq-content">
               <p>
-                Il y a 99% de chances que ce soit la
-                <strong>Prise en Passant</strong> ! C'est une règle spéciale :
-                si un pion adverse avance de deux cases et atterrit juste à côté
-                du vôtre, vous pouvez le manger comme s'il n'avait avancé que
-                d'une seule case. Ce n'est pas un bug, c'est les échecs ! ♟️
+                Il s'agit très probablement de la
+                <strong>Prise en Passant</strong>. C'est une règle spéciale
+                d'échecs : si un pion adverse avance de deux cases et atterrit à
+                côté du vôtre, vous pouvez le capturer comme s'il n'avait avancé
+                que d'une case. Ce n'est pas un bug, c'est l'élégance du jeu !
+                ♟️
               </p>
             </div>
           </details>
@@ -113,36 +100,33 @@
             <summary>Ma progression est-elle sauvegardée ?</summary>
             <div class="faq-content">
               <p>
-                Oui, à condition d'être <strong>connecté</strong>. Tout est
-                synchronisé en temps réel. Tu peux commencer un cours sur ton PC
-                et finir les puzzles sur ton téléphone. Si tu joues en "Invité",
-                tout sera perdu à la fermeture.
+                Oui, à condition d'être <strong>connecté</strong> à votre
+                compte. Vos scores Elo et vos statistiques sont synchronisés en
+                temps réel. En mode "Invité", les données sont effacées à la
+                fermeture de la page.
               </p>
             </div>
           </details>
 
           <details>
-            <summary>
-              Mon classement Elo est-il le même que sur Chess.com ?
-            </summary>
+            <summary>Mon Elo est-il le même que sur Chess.com ?</summary>
             <div class="faq-content">
               <p>
-                Pas exactement. Chaque site utilise sa propre formule
-                mathématique. Utilise ton classement Open Chess pour mesurer ta
-                propre progression ici, pas pour te comparer aux Grands Maîtres
-                !
+                Pas exactement. Chaque plateforme utilise sa propre formule
+                mathématique (Glicko-2, Elo, etc.) et possède son propre pool de
+                joueurs. Utilisez votre classement Open Chess pour mesurer votre
+                progression personnelle ici.
               </p>
             </div>
           </details>
 
           <details>
-            <summary>J'ai fini les cours, et maintenant ?</summary>
+            <summary>J'ai terminé tous les cours, que faire ?</summary>
             <div class="faq-content">
               <p>
-                Bravo ! 🎉 La section "Milieu de Jeu" est la prochaine étape. De
-                nouveaux modules (Ouvertures avancées, Finales complexes) sont
-                ajoutés régulièrement. N'hésite pas à utiliser le bouton
-                <strong>"On ajoute quoi ?"</strong> pour voter.
+                Félicitations ! 🎉 La section "Analyse" est votre prochaine
+                étape pour étudier vos propres parties. De nouveaux modules
+                (Ouvertures avancées, Finales) sont en cours de rédaction.
               </p>
             </div>
           </details>
@@ -151,47 +135,40 @@
     </main>
 
     <footer>
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>Open Chess</h3>
-          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h4>Open Chess<span class="dot">.</span></h4>
+          <p>L'excellence stratégique à portée de main.</p>
         </div>
-        <div class="footer-section">
-          <h3>Commencez l'aventure</h3>
-          <a href="/login/index.html" class="btn-register"
-            >S'inscrire Gratuitement</a
-          >
+        <div class="footer-nav-group">
+          <div class="footer-col">
+            <h5>Navigation</h5>
+            <ul>
+              <li><a href="/Play/index.html">Jouer</a></li>
+              <li><a href="/Puzzles/index.html">Puzzles</a></li>
+              <li><a href="/Learn/index.html">Apprendre</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>Support</h5>
+            <ul>
+              <li><a href="/support/index.html">Contact</a></li>
+              <li><a href="/rules/index.html">Règles</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="footer-section">
-          <h3>Liens Utiles</h3>
-          <ul>
-            <li><a href="/rules/index.html">Règles Simplifiées</a></li>
-            <li><a href="/video/index.html">Chaîne YouTube</a></li>
-            <li><a href="/support/index.html">Support</a></li>
-          </ul>
+        <div class="footer-copy">
+          &copy; <span id="year">2026</span> Open Chess.
         </div>
-      </div>
-      <div class="footer-bottom">
-        <p>
-          &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
-        </p>
       </div>
     </footer>
 
     <script>
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
-        setTimeout(() => {
-          document.querySelector(".sidebar").classList.add("active");
-        }, 10);
-      }
-      function hidesidebar() {
-        document.querySelector(".sidebar").classList.remove("active");
-        setTimeout(() => {
-          document.querySelector(".sidebar").style.display = "none";
-        }, 300);
-      }
       document.getElementById("year").textContent = new Date().getFullYear();
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
+      }
     </script>
   </body>
 </html>

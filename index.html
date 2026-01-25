@@ -3,207 +3,306 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="img/logo.png" type="image/x-icon" />
-    <link rel="stylesheet" href="./css/nav.css" />
+    <title>Mon Espace Échecs | Accueil</title>
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
     <link rel="stylesheet" href="./css/style.css" />
-    <link rel="stylesheet" href="./css/media.css" />
-    <title>Open Chess - Accueil</title>
+    <link rel="stylesheet" href="./css/nav.css" />
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="/img/close.svg" alt="close" /></a>
-          </li>
-          <li class="sidebar-logo"><span>MENU</span></li>
-          <li><a href="/Play/index.html">Play</a></li>
-          <li><a href="/Puzzles/index.html">Puzzles</a></li>
-          <li><a href="/Analyze/index.html">Analyze</a></li>
-          <li><a href="/Learn/index.html">Learn</a></li>
-          <li><a href="/profile/index.html">Profile</a></li>
+      <nav class="navbar">
+        <a href="/" class="logo">OPEN CHESS<span class="dot">.</span></a>
+        <ul class="nav-links">
+          <li><a href="/Play/index.html">Jouer</a></li>
+          <li><a href="/Puzzles/index.html">Défis</a></li>
+          <li><a href="/Learn/index.html">Apprendre</a></li>
+          <li><a href="/Analyze/index.html">Analyser</a></li>
         </ul>
-
-        <ul>
-          <li class="logo-container">
-            <a href="/index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Play/index.html">Play <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Puzzles/index.html">Puzzles <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Analyze/index.html">Analyze <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Learn/index.html">Learn <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/profile/index.html">Profile <span></span></a>
-          </li>
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="/login/index.html" class="btn-login" id="nav-login-btn"
+            >Connexion</a
+          >
+          <a href="/Play/index.html" class="btn-primary small"
+            >Lancer un défi</a
+          >
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="/Play/index.html">Jouer</a>
+        <a href="/Puzzles/index.html">Défis</a>
+        <a href="/Learn/index.html">Apprendre</a>
+        <a href="/login/index.html">Connexion</a>
+      </div>
     </header>
 
     <main>
-      <div class="title">
-        <h2><span>Open Chess</span></h2>
+      <section class="hero">
+        <div class="hero-content">
+          <span class="subtitle"
+            >Bienvenue <span id="hero-username">Invité</span></span
+          >
+          <h1>Échecs & <br /><em>Camaraderie.</em></h1>
+          <p>
+            Bienvenue sur mon échiquier virtuel. Connecte-toi pour suivre ta
+            progression et compare tes scores avec les autres.
+          </p>
+          <div class="cta-group">
+            <a href="/Play/index.html" class="btn-primary">Jouer contre l'IA</a>
+            <a href="/Puzzles/index.html" class="btn-secondary"
+              >Résoudre un puzzle</a
+            >
+          </div>
+        </div>
+        <div class="hero-visual"></div>
+      </section>
+
+      <div class="personal-stats" id="stats-container">
+        <div class="stat-loading" id="stat-loading">
+          Connexion aux archives...
+        </div>
+
+        <div class="stats-content" id="stats-content" style="display: none">
+          <div class="stat-item">
+            <span class="label">Elo Tactique</span>
+            <span class="value" id="stat-puzzle-elo">1200</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">Puzzles Résolus</span>
+            <span class="value" id="stat-puzzles-solved">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="label">Elo Visualisation</span>
+            <span class="value" id="stat-visu-elo">1000</span>
+          </div>
+        </div>
       </div>
 
-      <div class="featured-wrapper">
-        <section class="featured-lesson">
-          <div class="featured-content">
-            <span class="badge-new">Bienvenue sur Open Chess</span>
-            <div class="text-group">
-              <h3>Le Jeu des Rois</h3>
-              <p>La plateforme moderne pour apprendre, analyser et jouer.</p>
-            </div>
-          </div>
-          <div class="featured-actions">
-            <a href="/Play/index.html" class="btn-play">▶ Jouer Maintenant</a>
-          </div>
-        </section>
-      </div>
+      <section class="progression-section">
+        <div class="section-header">
+          <h2>Votre chemin vers la maîtrise</h2>
+          <p class="section-desc">
+            Pas sûr de quoi faire ? Voici mes recommandations basées sur votre
+            niveau actuel.
+          </p>
+          <div class="separator"></div>
+        </div>
 
-      <div class="cards">
-        <section>
-          <h3 style="color: #00d9f6">Intellect</h3>
-          <div class="card-content">
-            <p>Un exercice mental complet :</p>
-            <ul class="quick-links">
-              <li>
-                <span style="color: #fff; font-weight: bold"
-                  >🧠 Concentration :</span
-                ><br />
-                <span style="font-size: 0.85rem; color: #b9bbbe"
-                  >Apprenez à rester focalisé sur l'objectif.</span
-                >
-              </li>
-              <li>
-                <span style="color: #fff; font-weight: bold">💡 Logique :</span
-                ><br />
-                <span style="font-size: 0.85rem; color: #b9bbbe"
-                  >Développez votre pensée stratégique.</span
-                >
-              </li>
-            </ul>
-          </div>
-          <h4 class="card-footer cyan">Musclez votre cerveau</h4>
-        </section>
-
-        <section>
-          <h3 style="color: #ff9f00">Pour Tous</h3>
-          <div class="card-content">
-            <p>Un jeu universel et intemporel :</p>
-            <ul class="quick-links">
-              <li>
-                <span style="color: #fff; font-weight: bold"
-                  >🌍 Sans Frontières :</span
-                ><br />
-                <span style="font-size: 0.85rem; color: #b9bbbe"
-                  >Un langage commun à travers le monde.</span
-                >
-              </li>
-              <li>
-                <span style="color: #fff; font-weight: bold"
-                  >👶 De 7 à 77 ans :</span
-                ><br />
-                <span style="font-size: 0.85rem; color: #b9bbbe"
-                  >Il n'est jamais trop tard pour apprendre.</span
-                >
-              </li>
-            </ul>
-          </div>
-          <h4 class="card-footer orange">Rejoignez l'aventure</h4>
-        </section>
-
-        <section>
-          <h3 style="color: #58cc02">Le Défi</h3>
-          <div class="card-content">
-            <p>Vivez des émotions uniques :</p>
-            <ul class="quick-links">
-              <li>
-                <span style="color: #fff; font-weight: bold"
-                  >🏆 Compétition :</span
-                ><br />
-                <span style="font-size: 0.85rem; color: #b9bbbe"
-                  >Mesurez-vous à d'autres passionnés.</span
-                >
-              </li>
-              <li>
-                <span style="color: #fff; font-weight: bold"
-                  >📈 Progression :</span
-                ><br />
-                <span style="font-size: 0.85rem; color: #b9bbbe"
-                  >Gravissez les échelons du classement.</span
-                >
-              </li>
-            </ul>
-          </div>
-          <h4 class="card-footer green">Relevez le challenge</h4>
-        </section>
-      </div>
+        <div class="progression-table-wrapper">
+          <table class="progression-table">
+            <thead>
+              <tr>
+                <th>Votre Niveau (Elo)</th>
+                <th>Profil</th>
+                <th>Objectif du jour</th>
+                <th>L'outil recommandé</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="level-row beginner">
+                <td><span class="elo-badge">< 800</span></td>
+                <td>Le Débutant Curieux</td>
+                <td>
+                  Comprendre les mécanismes et éviter de donner des pièces.
+                </td>
+                <td>
+                  <a href="/Learn/index.html" class="table-link"
+                    >→ Apprendre les bases</a
+                  >
+                </td>
+              </tr>
+              <tr class="level-row intermediate">
+                <td><span class="elo-badge">800 - 1200</span></td>
+                <td>L'Amateur Éclairé</td>
+                <td>Reconnaître les motifs tactiques (Fourchette, Clouage).</td>
+                <td>
+                  <a href="/Puzzles/index.html" class="table-link"
+                    >→ Puzzles Tactiques</a
+                  >
+                </td>
+              </tr>
+              <tr class="level-row advanced">
+                <td><span class="elo-badge">1200 - 1600</span></td>
+                <td>Le Stratège</td>
+                <td>
+                  Calculer plusieurs coups à l'avance sans voir le plateau.
+                </td>
+                <td>
+                  <a href="/Visualisation/index.html" class="table-link"
+                    >→ Entraînement Visu</a
+                  >
+                </td>
+              </tr>
+              <tr class="level-row expert">
+                <td><span class="elo-badge">1600 +</span></td>
+                <td>Le Tueur de Rois</td>
+                <td>Analyser ses propres erreurs pour ne plus les refaire.</td>
+                <td>
+                  <a href="/Analyze/index.html" class="table-link"
+                    >→ Analyser vos parties</a
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
     <footer>
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>Open Chess</h3>
-          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h4>Open Chess<span class="dot">.</span></h4>
+          <p>Site développé avec passion pour la famille et les amis.</p>
         </div>
 
-        <div class="footer-section">
-          <h3>Commencez l'aventure</h3>
-          <p>
-            Créez votre compte pour accéder aux cours et suivre votre
-            progression.
-          </p>
-          <a href="/login/index.html" class="btn-register"
-            >S'inscrire Gratuitement</a
-          >
+        <div class="footer-nav-group">
+          <div class="footer-col">
+            <h5>Le Jeu</h5>
+            <ul>
+              <li><a href="/Play/index.html">Jouer</a></li>
+              <li><a href="/Puzzles/index.html">Puzzles</a></li>
+              <li><a href="/Analyze/index.html">Analyse</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h5>Infos Pratiques</h5>
+            <ul>
+              <li><a href="/rules/index.html">Règles Simplifiées</a></li>
+              <li><a href="/video/index.html">Chaîne YouTube</a></li>
+              <li><a href="/support/index.html">Support / Contact</a></li>
+            </ul>
+          </div>
         </div>
 
-        <div class="footer-section">
-          <h3>Liens Partenaires</h3>
-          <ul>
-            <li><a href="/rules/index.html">Règles Simplifiées</a></li>
-            <li><a href="/video/index.html">Chaîne YouTube</a></li>
-            <li><a href="/support/index.html">Support / Contact</a></li>
-          </ul>
+        <div class="footer-copy">
+          &copy; <span id="year">2026</span> - Fait maison.
         </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>
-          &copy; <span id="year">2026</span> <span>Open Chess</span>. Tous
-          droits réservés.
-        </p>
       </div>
     </footer>
 
     <script>
-      function showsidebar() {
-        const sidebar = document.querySelector(".sidebar");
-        sidebar.style.display = "flex";
-        setTimeout(() => {
-          sidebar.classList.add("active");
-        }, 10);
-      }
-      function hidesidebar() {
-        const sidebar = document.querySelector(".sidebar");
-        sidebar.classList.remove("active");
-        setTimeout(() => {
-          sidebar.style.display = "none";
-        }, 300);
-      }
+      // Menu Mobile & Date
       document.getElementById("year").textContent = new Date().getFullYear();
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
+      }
+    </script>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      // 1. Même config que tes autres fichiers (Copié depuis ton game.js)
+      const firebaseConfig = {
+        apiKey: "AIzaSyBNBUO3JupohDCYAMs7Xf6kKgxnnFgPpVM",
+        authDomain: "open-chess-2f3cf.firebaseapp.com",
+        projectId: "open-chess-2f3cf",
+        storageBucket: "open-chess-2f3cf.firebasestorage.app",
+        messagingSenderId: "447945730536",
+        appId: "1:447945730536:web:a1e3347bc13e94040bdc5d",
+        measurementId: "G-71F05DTLHG",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+
+      // 2. Écouteur de connexion
+      onAuthStateChanged(auth, async (user) => {
+        const loadingEl = document.getElementById("stat-loading");
+        const contentEl = document.getElementById("stats-content");
+        const heroName = document.getElementById("hero-username");
+        const navLogin = document.getElementById("nav-login-btn");
+
+        if (user) {
+          // --- UTILISATEUR CONNECTÉ ---
+          navLogin.textContent = "Mon Compte";
+          navLogin.href = "/profile/index.html"; // Lien vers le profil si existant
+
+          try {
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+
+              // Mise à jour Nom
+              heroName.textContent = data.pseudo || "Joueur";
+
+              // Mise à jour Stats (avec valeurs par défaut si undefined)
+              // Note: currentPuzzleElo vient de ton game.js
+              // Note: currentVisuElo vient de ton logic.js
+              animateValue(
+                "stat-puzzle-elo",
+                0,
+                data.currentPuzzleElo || 1200,
+                1000,
+              );
+              animateValue(
+                "stat-puzzles-solved",
+                0,
+                data.puzzlesSolved || 0,
+                1000,
+              );
+              animateValue(
+                "stat-visu-elo",
+                0,
+                data.currentVisuElo || 1000,
+                1000,
+              );
+
+              loadingEl.style.display = "none";
+              contentEl.style.display = "flex";
+            } else {
+              loadingEl.textContent = "Profil introuvable (Premier login ?)";
+            }
+          } catch (e) {
+            console.error("Erreur récup stats:", e);
+            loadingEl.textContent = "Erreur de chargement des stats.";
+          }
+        } else {
+          // --- UTILISATEUR NON CONNECTÉ ---
+          heroName.textContent = "l'Ami";
+          loadingEl.innerHTML =
+            "<a href='/login/index.html' style='color:var(--accent-gold);text-decoration:underline;'>Connectez-vous</a> pour voir vos stats.";
+        }
+      });
+
+      // Petit effet d'animation pour les chiffres
+      function animateValue(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        if (!obj) return;
+        let startTimestamp = null;
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          obj.innerHTML = Math.floor(progress * (end - start) + start);
+          if (progress < 1) {
+            window.requestAnimationFrame(step);
+          }
+        };
+        window.requestAnimationFrame(step);
+      }
     </script>
   </body>
 </html>

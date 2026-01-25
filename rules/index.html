@@ -3,236 +3,241 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Règles Simplifiées - Open Chess</title>
-    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+    <title>Open Chess | Les Règles</title>
+    <link rel="icon" href="/img/logo.png" />
 
-    <link rel="stylesheet" href="/css/nav.css" />
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/media.css" />
-
-    <link rel="stylesheet" href="/rules/css/style.css" />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="/img/close.svg" alt="close" /></a>
-          </li>
-          <li class="sidebar-logo"><span>MENU</span></li>
-          <li><a href="/Play/index.html">Play</a></li>
-          <li><a href="/Puzzles/index.html">Puzzles</a></li>
-          <li><a href="/Analyze/index.html">Analyze</a></li>
-          <li><a href="/Learn/index.html">Learn</a></li>
-          <li><a href="/profile/index.html">Profile</a></li>
+      <nav class="navbar">
+        <a href="../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
+
+        <ul class="nav-links">
+          <li><a href="../Play/index.html">Jouer</a></li>
+          <li><a href="../Puzzles/index.html">Défis</a></li>
+          <li><a href="../Learn/index.html">Apprendre</a></li>
+          <li><a href="../Analyze/index.html">Analyser</a></li>
         </ul>
 
-        <ul>
-          <li class="logo-container">
-            <a href="/index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Play/index.html">Play <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Puzzles/index.html">Puzzles <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Analyze/index.html">Analyze <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Learn/index.html">Learn <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/profile/index.html">Profile <span></span></a>
-          </li>
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="../login/index.html" class="btn-login">Connexion</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="../Play/index.html">Jouer</a>
+        <a href="../Puzzles/index.html">Défis</a>
+        <a href="../Learn/index.html">Apprendre</a>
+        <a href="../login/index.html">Connexion</a>
+      </div>
     </header>
 
-    <div class="rules-page-title">
-      <h1>Les Règles Simplifiées</h1>
-      <p class="rules-intro">
-        Le but du jeu est de mettre le Roi adverse "Échec et Mat". <br />
-        Voici l'essentiel pour démarrer rapidement.
-      </p>
-    </div>
-
-    <main class="rules-container">
-      <section class="rules-section">
-        <h2><i class="fas fa-chess"></i> Les Déplacements</h2>
-        <div class="pieces-grid">
-          <div class="piece-card">
-            <div class="piece-title">
-              <span class="piece-icon">♟️</span> Le Pion
-            </div>
-            <p>
-              Avance d'une case tout droit.
-              <strong>Au premier coup uniquement</strong>, il peut avancer de
-              deux cases.
-            </p>
-            <p class="capture-rule">
-              <i class="fas fa-crosshairs"></i> Mange en diagonale (une case).
-            </p>
-          </div>
-
-          <div class="piece-card">
-            <div class="piece-title">
-              <span class="piece-icon">♜</span> La Tour
-            </div>
-            <p>
-              Se déplace horizontalement ou verticalement, d'autant de cases
-              qu'elle veut.
-            </p>
-          </div>
-
-          <div class="piece-card">
-            <div class="piece-title">
-              <span class="piece-icon">♞</span> Le Cavalier
-            </div>
-            <p>
-              Se déplace en "L". C'est la seule pièce qui peut sauter par-dessus
-              les autres.
-            </p>
-          </div>
-
-          <div class="piece-card">
-            <div class="piece-title">
-              <span class="piece-icon">♝</span> Le Fou
-            </div>
-            <p>Se déplace en diagonale uniquement, sur sa couleur de départ.</p>
-          </div>
-
-          <div class="piece-card">
-            <div class="piece-title">
-              <span class="piece-icon">♛</span> La Dame
-            </div>
-            <p>
-              La pièce la plus puissante. Combine les mouvements de la Tour et
-              du Fou.
-            </p>
-          </div>
-
-          <div class="piece-card royal">
-            <div class="piece-title">
-              <span class="piece-icon">♚</span> Le Roi
-            </div>
-            <p>
-              Se déplace d'une seule case autour de lui. Il ne doit jamais se
-              mettre en danger.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="rules-section">
-        <h2><i class="fas fa-star"></i> Les Coups Spéciaux</h2>
-        <p class="section-intro">
-          Ces règles sont souvent oubliées des débutants !
-        </p>
-
-        <div class="special-move-block">
-          <h3>1. Le Roque (Protéger le Roi)</h3>
-          <p>Le seul coup où l'on bouge deux pièces : le Roi et une Tour.</p>
-          <ul>
-            <li>
-              <strong>Condition :</strong> Le Roi et la Tour ne doivent jamais
-              avoir bougé.
-            </li>
-            <li>
-              <strong>Action :</strong> Le Roi bouge de deux cases vers la Tour,
-              et la Tour saute par-dessus.
-            </li>
-          </ul>
-        </div>
-
-        <div class="special-move-block orange-accent">
-          <h3>2. La Prise "En Passant"</h3>
-          <p>
-            Si un pion adverse avance de deux cases et atterrit juste à côté du
-            vôtre, vous pouvez le manger comme s'il n'avait avancé que d'une
-            case (au coup suivant uniquement).
+    <main>
+      <section class="rules-hero">
+        <div class="section-header">
+          <span class="subtitle">Le Manuel du Stratège</span>
+          <h2>Les Lois de l'Échiquier</h2>
+          <p class="section-desc">
+            Le but ultime est simple : piéger le Roi adverse ("Échec et Mat").
+            Voici les fondamentaux pour commencer votre ascension.
           </p>
-        </div>
-
-        <div class="special-move-block">
-          <h3>3. La Promotion</h3>
-          <p>
-            Si votre pion atteint le bout de l'échiquier, il se transforme en
-            Dame (ou autre pièce).
-          </p>
+          <div class="separator"></div>
         </div>
       </section>
 
-      <section class="rules-section">
-        <h2><i class="fas fa-flag-checkered"></i> Fin de Partie</h2>
-        <div class="endgame-grid">
-          <div class="endgame-card win">
-            <h3>Échec et Mat (Victoire)</h3>
-            <p>Le Roi est attaqué et ne peut pas fuir.</p>
+      <div class="rules-container">
+        <section class="rules-section">
+          <h3><i class="fas fa-chess-king"></i> L'Armée & Les Mouvements</h3>
+          <div class="pieces-grid">
+            <div class="piece-card">
+              <div class="card-top">
+                <span class="piece-icon">♟️</span>
+                <h4>Le Pion</h4>
+              </div>
+              <p>
+                L'âme du jeu. Avance d'une case (deux au départ). Capture en
+                diagonale. Courageux mais ne recule jamais.
+              </p>
+            </div>
+
+            <div class="piece-card">
+              <div class="card-top">
+                <span class="piece-icon">♜</span>
+                <h4>La Tour</h4>
+              </div>
+              <p>
+                La forteresse. Se déplace horizontalement ou verticalement sur
+                toute la longueur du plateau.
+              </p>
+            </div>
+
+            <div class="piece-card">
+              <div class="card-top">
+                <span class="piece-icon">♞</span>
+                <h4>Le Cavalier</h4>
+              </div>
+              <p>
+                L'imprévisible. Se déplace en "L". C'est la seule pièce capable
+                de sauter par-dessus les autres.
+              </p>
+            </div>
+
+            <div class="piece-card">
+              <div class="card-top">
+                <span class="piece-icon">♝</span>
+                <h4>Le Fou</h4>
+              </div>
+              <p>
+                Le sniper. Se déplace en diagonale aussi loin qu'il le souhaite,
+                toujours sur sa couleur d'origine.
+              </p>
+            </div>
+
+            <div class="piece-card">
+              <div class="card-top">
+                <span class="piece-icon">♛</span>
+                <h4>La Dame</h4>
+              </div>
+              <p>
+                La puissance absolue. Combine les mouvements de la Tour et du
+                Fou. C'est votre atout offensif majeur.
+              </p>
+            </div>
+
+            <div class="piece-card royal">
+              <div class="card-top">
+                <span class="piece-icon">♚</span>
+                <h4>Le Roi</h4>
+              </div>
+              <p>
+                Le cœur du royaume. Se déplace d'une case dans toutes les
+                directions. S'il tombe, la partie est finie.
+              </p>
+            </div>
           </div>
-          <div class="endgame-card draw">
-            <h3>Le Pat (Nul)</h3>
-            <p>
-              Le Roi n'est PAS attaqué, mais ne peut plus bouger. Match nul.
-            </p>
+        </section>
+
+        <section class="rules-section">
+          <h3><i class="fas fa-star"></i> Les Manœuvres Spéciales</h3>
+
+          <div class="special-grid">
+            <div class="special-card">
+              <div class="special-header">
+                <span class="num">01</span>
+                <h4>Le Roque</h4>
+              </div>
+              <p>
+                Mise à l'abri du Roi. Le Roi bouge de deux cases vers une Tour,
+                et la Tour saute par-dessus lui. <br /><em
+                  >Condition : Ni le Roi ni la Tour n'ont bougé.</em
+                >
+              </p>
+            </div>
+
+            <div class="special-card">
+              <div class="special-header">
+                <span class="num">02</span>
+                <h4>La Prise en Passant</h4>
+              </div>
+              <p>
+                Une capture de pion unique. Si un pion adverse avance de deux
+                cases et se place à côté du vôtre, vous pouvez le prendre comme
+                s'il n'avait avancé que d'une case.
+              </p>
+            </div>
+
+            <div class="special-card">
+              <div class="special-header">
+                <span class="num">03</span>
+                <h4>La Promotion</h4>
+              </div>
+              <p>
+                La récompense ultime. Si un pion atteint la dernière rangée
+                adverse, il se transforme immédiatement en Dame (ou autre
+                pièce).
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section class="rules-section">
+          <h3><i class="fas fa-flag-checkered"></i> Le Dénouement</h3>
+          <div class="endgame-wrapper">
+            <div class="endgame-box win">
+              <h4>Échec et Mat</h4>
+              <p>
+                Le Roi est attaqué et n'a aucune case de fuite. C'est la
+                victoire.
+              </p>
+            </div>
+
+            <div class="endgame-box draw">
+              <h4>Le Pat (Match Nul)</h4>
+              <p>
+                Le Roi n'est PAS attaqué, mais le joueur ne peut bouger aucune
+                pièce. La partie est nulle.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
     <footer>
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>Open Chess</h3>
-          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h4>Open Chess<span class="dot">.</span></h4>
+          <p>L'excellence stratégique à portée de main.</p>
         </div>
-        <div class="footer-section">
-          <h3>Commencez l'aventure</h3>
-          <a href="/login/index.html" class="btn-register"
-            >S'inscrire Gratuitement</a
-          >
+        <div class="footer-nav-group">
+          <div class="footer-col">
+            <h5>Navigation</h5>
+            <ul>
+              <li><a href="../Play/index.html">Jouer</a></li>
+              <li><a href="../Puzzles/index.html">Puzzles</a></li>
+              <li><a href="../Learn/index.html">Apprendre</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5>Support</h5>
+            <ul>
+              <li><a href="../support/index.html">Contact</a></li>
+              <li><a href="../rules/index.html">Règles</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="footer-section">
-          <h3>Liens Utiles</h3>
-          <ul>
-            <li><a href="/rules/index.html">Règles Simplifiées</a></li>
-            <li><a href="/video/index.html">Chaîne YouTube</a></li>
-            <li><a href="/support/index.html">Support</a></li>
-          </ul>
+        <div class="footer-copy">
+          &copy; <span id="year">2026</span> Open Chess.
         </div>
-      </div>
-      <div class="footer-bottom">
-        <p>
-          &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
-        </p>
       </div>
     </footer>
 
     <script>
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
-        setTimeout(() => {
-          document.querySelector(".sidebar").classList.add("active");
-        }, 10);
-      }
-      function hidesidebar() {
-        document.querySelector(".sidebar").classList.remove("active");
-        setTimeout(() => {
-          document.querySelector(".sidebar").style.display = "none";
-        }, 300);
-      }
       document.getElementById("year").textContent = new Date().getFullYear();
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
+      }
     </script>
   </body>
 </html>

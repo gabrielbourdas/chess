@@ -1,242 +1,221 @@
 /* =========================================
-   STYLE SPÉCIFIQUE - RÈGLES SIMPLIFIÉES
+   PAGE RÈGLES - STYLE "GRANDMASTER"
    ========================================= */
 
-/* --- 1. RESET CRITIQUE --- */
-/* Annule les effets globaux qui cassaient la mise en page */
-section.rules-section {
-  max-width: 100%;
-  flex: none;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  margin-bottom: 4rem;
-  overflow: visible;
-}
-
-section.rules-section:hover {
-  transform: none;
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-}
-
-section.rules-section h3 {
-  border-bottom: none;
-  padding-bottom: 0;
-  margin-bottom: 1rem;
-  text-align: left;
-  color: inherit;
-}
-
-/* --- 2. LE TITRE (HORS DU MAIN) --- */
-.rules-page-title {
+/* --- HERO SECTION --- */
+.rules-hero {
+  padding: 4rem 2rem 1rem 2rem;
   text-align: center;
-  /* C'est ICI qu'on règle le problème de la Nav qui écrase le texte */
-  margin-top: 140px; /* Pousse le titre bien en dessous de la barre fixe */
-  margin-bottom: 3rem;
-  padding: 0 1rem;
 }
 
-.rules-page-title h1 {
-  font-size: 3.5rem;
+.section-header h2 {
+  font-family: var(--font-heading);
+  font-size: 3rem;
   margin-bottom: 1rem;
-  color: #fff;
-  text-shadow:
-    0 0 20px rgba(0, 0, 0, 0.8),
-    0 0 40px rgba(0, 217, 246, 0.4);
+  color: var(--text-primary);
 }
 
-.rules-intro {
-  font-size: 1.2rem;
-  color: #ebebeb;
-  max-width: 700px;
+.section-desc {
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  font-weight: 300;
+}
+
+.separator {
+  width: 60px;
+  height: 2px;
+  background: var(--accent-gold);
   margin: 0 auto;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-  background: rgba(0, 0, 0, 0.4);
-  padding: 10px 20px;
-  border-radius: 50px;
-  display: inline-block;
+  opacity: 0.8;
 }
 
-/* --- 3. LE CONTENEUR PRINCIPAL (MODE "VERRE") --- */
+/* --- MAIN CONTAINER --- */
 .rules-container {
   max-width: 1000px;
-  margin: 0 auto 5rem auto;
-
-  background-color: rgba(24, 25, 28, 0.85);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 3rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  margin: 0 auto 6rem auto;
+  padding: 0 1.5rem;
 }
 
-/* --- TITRES DE SECTIONS --- */
-.rules-section h2 {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  padding-bottom: 15px;
-  border-bottom: 2px solid rgba(0, 217, 246, 0.3);
+.rules-section {
+  margin-bottom: 5rem;
+}
+
+.rules-section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 2.5rem;
   display: flex;
   align-items: center;
-  gap: 15px;
-  color: #fff;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 1rem;
 }
 
-.rules-section h2 i {
-  color: #00d9f6;
+.rules-section h3 i {
+  color: var(--accent-gold);
+  font-size: 1.4rem;
 }
 
-/* =========================================
-   GRILLE DES PIÈCES
-   ========================================= */
+/* --- GRID PIÈCES --- */
 .pieces-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
+  gap: 1.5rem;
 }
 
 .piece-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 25px;
-  transition:
-    transform 0.3s ease,
-    border-color 0.3s ease,
-    background 0.3s;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .piece-card:hover {
-  border-color: #00d9f6;
   transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-gold-dim);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.piece-title {
+/* Style spécial pour le Roi */
+.piece-card.royal {
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: linear-gradient(145deg, rgba(212, 175, 55, 0.05), transparent);
+}
+
+.card-top {
   display: flex;
   align-items: center;
-  gap: 15px;
-  font-size: 1.4rem;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: #fff;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .piece-icon {
   font-size: 2.5rem;
   line-height: 1;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+  /* Optionnel: effet d'ombre dorée légère */
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+}
+
+.card-top h4 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  color: var(--text-primary);
 }
 
 .piece-card p {
-  color: #dcdcdc;
-  line-height: 1.6;
-  margin-bottom: 10px;
-}
-
-.capture-rule {
+  color: var(--text-secondary);
   font-size: 0.95rem;
-  color: #ff9f00;
-  margin-top: 15px;
-  font-weight: bold;
-  background: rgba(255, 159, 0, 0.1);
-  padding: 5px 10px;
-  border-radius: 4px;
-  display: inline-block;
+  line-height: 1.6;
 }
 
-.piece-card.royal {
-  border: 1px solid rgba(255, 159, 0, 0.4);
-  background: linear-gradient(145deg, rgba(255, 159, 0, 0.05), transparent);
+/* --- SPECIAL MOVES (GRID) --- */
+.special-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
-/* =========================================
-   BLOCS COUPS SPÉCIAUX
-   ========================================= */
-.special-move-block {
-  background: rgba(0, 217, 246, 0.08);
-  border-left: 4px solid #00d9f6;
-  padding: 25px;
-  border-radius: 8px;
-  margin-bottom: 25px;
+.special-card {
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid var(--accent-gold);
+  padding: 1.5rem;
+  border-radius: 0 4px 4px 0;
 }
 
-.special-move-block h3 {
-  color: #00d9f6 !important;
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-}
-
-.special-move-block.orange-accent {
-  background: rgba(255, 159, 0, 0.08);
-  border-left-color: #ff9f00;
-}
-.special-move-block.orange-accent h3 {
-  color: #ff9f00 !important;
-}
-
-.special-move-block ul {
-  padding-left: 20px;
-  margin-top: 15px;
-  color: #dcdcdc;
-}
-
-.special-move-block li {
-  margin-bottom: 8px;
-}
-
-/* =========================================
-   FIN DE PARTIE
-   ========================================= */
-.endgame-grid {
+.special-header {
   display: flex;
-  gap: 25px;
+  align-items: baseline;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.special-header .num {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.special-header h4 {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  color: var(--accent-gold);
+}
+
+.special-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.special-card em {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #777;
+  font-style: italic;
+}
+
+/* --- FIN DE PARTIE --- */
+.endgame-wrapper {
+  display: flex;
+  gap: 2rem;
   flex-wrap: wrap;
 }
 
-.endgame-card {
+.endgame-box {
   flex: 1 1 300px;
-  padding: 30px;
-  border-radius: 12px;
+  padding: 2.5rem;
+  border-radius: 4px;
   text-align: center;
-  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
 }
 
-.endgame-card h3 {
+.endgame-box h4 {
+  font-family: var(--font-heading);
   font-size: 1.5rem;
   margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.win {
-  border: 1px solid rgba(0, 217, 246, 0.5);
-  box-shadow: 0 0 15px rgba(0, 217, 246, 0.1);
-}
-.win h3 {
-  color: #00d9f6 !important;
+.endgame-box p {
+  color: var(--text-secondary);
 }
 
-.draw {
-  border: 1px solid #b9bbbe;
+/* Victoire (Or) */
+.endgame-box.win {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.05);
 }
-.draw h3 {
-  color: #b9bbbe !important;
+.endgame-box.win h4 {
+  color: var(--accent-gold);
 }
 
-/* AJUSTEMENT MOBILE */
-@media (max-width: 600px) {
-  .rules-page-title {
-    margin-top: 100px;
-  }
-  .rules-page-title h1 {
+/* Nul (Argent/Gris) */
+.endgame-box.draw {
+  border-color: #666;
+}
+.endgame-box.draw h4 {
+  color: #aaa;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .section-header h2 {
     font-size: 2.2rem;
   }
   .rules-container {
-    padding: 1.5rem;
-    margin: 2rem 1rem;
+    padding: 0 1rem;
+  }
+  .endgame-wrapper {
+    flex-direction: column;
   }
 }

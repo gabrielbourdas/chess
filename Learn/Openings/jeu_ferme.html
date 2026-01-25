@@ -3,57 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess - Jeux Fermés (1. d4)</title>
-    <link rel="icon" href="../../img/logo.webp" type="image/x-icon" />
+    <title>Open Chess | Jeux Fermés (1. d4)</title>
 
-    <link rel="stylesheet" href="../../css/nav.css" />
-    <link rel="stylesheet" href="../css/nav.css" />
-    <link rel="stylesheet" href="../css/learn.css" />
-    <link rel="stylesheet" href="../css/openings.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
     <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/nav.css" />
+    <link rel="stylesheet" href="../css/learn.css" />
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="../../img/close.svg" alt="close" /></a>
-          </li>
-          <li><a href="../../Play/index.html">Play</a></li>
-          <li><a href="../../Puzzles/index.html">Puzzles</a></li>
-          <li><a href="../../Learn/index.html">Learn</a></li>
+      <nav class="navbar">
+        <a href="../../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
+        <ul class="nav-links">
+          <li><a href="../../Play/index.html">Jouer</a></li>
+          <li><a href="../../Puzzles/index.html">Défis</a></li>
+          <li><a href="../../Analyze/index.html">Analyser</a></li>
+          <li><a href="../index.html" class="active">Apprendre</a></li>
         </ul>
-        <ul>
-          <li class="logo-container">
-            <a href="../../index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="../index.html">Menu</a>
-          </li>
-          <li class="hideOnMobile">
-            <a
-              href="../Opening.html"
-              style="
-                color: #00d9f6;
-                font-weight: bold;
-                border-bottom: 2px solid #00d9f6;
-              "
-              >Ouvertures</a
-            >
-          </li>
-          <li class="hideOnMobile">
-            <a href="../Midgame.html" class="nav-orange">Milieu</a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="../Endgame.html" class="nav-green">Finales</a>
-          </li>
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="../../img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="../../login/index.html" class="btn-login">Connexion</a>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="../../Play/index.html">Jouer</a>
+        <a href="../../Puzzles/index.html">Défis</a>
+        <a href="../index.html">Apprendre</a>
+        <a href="../../login/index.html">Connexion</a>
+      </div>
     </header>
 
     <main>
@@ -87,7 +78,7 @@
             </li>
             <li>
               <a href="#" id="link-autres" onclick="switchTab('autres')"
-                >🌍 Autres (Slave, Grünfeld...)</a
+                >🌍 Autres</a
               >
             </li>
           </ul>
@@ -112,52 +103,40 @@
                   indémodable.
                 </p>
               </div>
-
               <div class="pgn-sequence">
-                <span class="move-number">1.</span>
-                <span class="move-white">d4</span>
-                <span class="move-black">d5</span>
-                <span class="move-number">2.</span>
-                <span class="move-white">c4</span>
+                <span class="move-number">1.</span
+                ><span class="move-white">d4</span
+                ><span class="move-black">d5</span>
+                <span class="move-number">2.</span
+                ><span class="move-white">c4</span>
               </div>
-
-              <div class="position-image-container">
-                <img
-                  class="position-image"
-                  src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2&color=white&theme=brown"
-                  alt="Gambit Dame"
-                />
-              </div>
-
-              <article class="principle-section">
+              <div class="principle-section">
                 <div class="principle-text">
                   <h3>🎯 Le Plan Stratégique</h3>
                   <p>
                     Les Blancs attaquent le pion central d5 non pas avec une
                     pièce, mais avec un pion latéral (c4).
                   </p>
-                  <p style="margin-top: 10px">
+                  <p>
                     L'idée est d'échanger le pion c (moins important) contre le
-                    pion d (central) pour dominer le centre. Si les Noirs
-                    prennent (dxc4), les Blancs récupéreront le pion plus tard
-                    tout en contrôlant le centre.
+                    pion d (central) pour dominer le centre.
                   </p>
                 </div>
-                <div class="principle-visual">
-                  <div class="board-mini">♕</div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 0 2&color=white&theme=brown"
+                    alt="Gambit Dame"
+                  />
                 </div>
-              </article>
-
+              </div>
               <div class="pros-cons-grid">
                 <div class="pros-box">
                   <h4>Avantages</h4>
                   <ul>
                     <li>Lutte immédiate pour le centre.</li>
                     <li>Développement naturel et actif.</li>
-                    <li>
-                      Moins risqué que le Gambit Roi (car le Roi est en
-                      sécurité).
-                    </li>
+                    <li>Moins risqué que le Gambit Roi.</li>
                   </ul>
                 </div>
                 <div class="cons-box">
@@ -180,41 +159,34 @@
                   à apprendre.
                 </p>
               </div>
-
               <div class="pgn-sequence">
-                <span class="move-number">1.</span>
-                <span class="move-white">d4</span>
-                <span class="move-black">d5</span>
-                <span class="move-number">2.</span>
-                <span class="move-white">Ff4</span>
+                <span class="move-number">1.</span
+                ><span class="move-white">d4</span
+                ><span class="move-black">d5</span>
+                <span class="move-number">2.</span
+                ><span class="move-white">Ff4</span>
               </div>
-
-              <div class="position-image-container">
-                <img
-                  class="position-image"
-                  src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 1 2&color=white&theme=brown"
-                  alt="Système de Londres"
-                />
-              </div>
-
-              <article class="principle-section">
+              <div class="principle-section">
                 <div class="principle-text">
                   <h3>🎯 Le Plan Stratégique</h3>
                   <p>
                     Au lieu d'attaquer le centre immédiatement avec c4, les
                     Blancs développent leur Fou de cases noires en f4.
                   </p>
-                  <p style="margin-top: 10px">
+                  <p>
                     Les Blancs construisent ensuite une pyramide de pions (c3,
                     d4, e3) très solide. C'est un "système" car on joue presque
-                    toujours les mêmes coups, peu importe ce que font les Noirs.
+                    toujours les mêmes coups.
                   </p>
                 </div>
-                <div class="principle-visual">
-                  <div class="board-mini">🇬🇧</div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 1 2&color=white&theme=brown"
+                    alt="Londres"
+                  />
                 </div>
-              </article>
-
+              </div>
               <div class="pros-cons-grid">
                 <div class="pros-box">
                   <h4>Avantages</h4>
@@ -243,54 +215,44 @@
                   L'arme des joueurs agressifs (Fischer, Kasparov) contre 1. d4.
                 </p>
               </div>
-
               <div class="pgn-sequence">
-                <span class="move-number">1.</span>
-                <span class="move-white">d4</span>
-                <span class="move-black">Cf6</span>
-                <span class="move-number">2.</span>
-                <span class="move-white">c4</span>
-                <span class="move-black">g6</span>
-                <span class="move-number">3.</span>
-                <span class="move-white">Cc3</span>
-                <span class="move-black">Fg7</span>
+                <span class="move-number">1.</span
+                ><span class="move-white">d4</span
+                ><span class="move-black">Cf6</span>
+                <span class="move-number">2.</span
+                ><span class="move-white">c4</span
+                ><span class="move-black">g6</span>
+                <span class="move-number">3.</span
+                ><span class="move-white">Cc3</span
+                ><span class="move-black">Fg7</span>
               </div>
-
-              <div class="position-image-container">
-                <img
-                  class="position-image"
-                  src="https://lichess1.org/export/fen.gif?fen=rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4&color=white&theme=brown"
-                  alt="Est-Indienne"
-                />
-              </div>
-
-              <article class="principle-section">
+              <div class="principle-section">
                 <div class="principle-text">
                   <h3>🎯 Le Plan Stratégique</h3>
                   <p>
                     Les Noirs laissent volontairement le centre aux Blancs. Ils
                     fianchettent leur Fou (Fg7) et roquent.
                   </p>
-                  <p style="margin-top: 10px">
+                  <p>
                     Ensuite, ils lancent une contre-attaque brutale sur l'aile
-                    Roi (souvent avec ...e5 puis ...f5), pendant que les Blancs
-                    attaquent à l'aile Dame. C'est une course de vitesse !
+                    Roi, pendant que les Blancs attaquent à l'aile Dame.
                   </p>
                 </div>
-                <div class="principle-visual">
-                  <div class="board-mini">👳</div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=rnbqk2r/ppppppbp/5np1/8/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4&color=white&theme=brown"
+                    alt="KID"
+                  />
                 </div>
-              </article>
-
+              </div>
               <div class="pros-cons-grid">
                 <div class="pros-box">
                   <h4>Avantages</h4>
                   <ul>
-                    <li>
-                      Offre de grandes chances de gain (positions complexes).
-                    </li>
+                    <li>Offre de grandes chances de gain.</li>
                     <li>Les attaques de mat sont fréquentes.</li>
-                    <li>Fonctionne contre presque tout (d4, c4, Cf3).</li>
+                    <li>Fonctionne contre presque tout.</li>
                   </ul>
                 </div>
                 <div class="cons-box">
@@ -310,44 +272,37 @@
                 <h2>La Défense Nimzo-Indienne</h2>
                 <p>La défense la plus respectée à haut niveau contre 1. d4.</p>
               </div>
-
               <div class="pgn-sequence">
-                <span class="move-number">1.</span>
-                <span class="move-white">d4</span>
-                <span class="move-black">Cf6</span>
-                <span class="move-number">2.</span>
-                <span class="move-white">c4</span>
-                <span class="move-black">e6</span>
-                <span class="move-number">3.</span>
-                <span class="move-white">Cc3</span>
-                <span class="move-black">Fb4</span>
+                <span class="move-number">1.</span
+                ><span class="move-white">d4</span
+                ><span class="move-black">Cf6</span>
+                <span class="move-number">2.</span
+                ><span class="move-white">c4</span
+                ><span class="move-black">e6</span>
+                <span class="move-number">3.</span
+                ><span class="move-white">Cc3</span
+                ><span class="move-black">Fb4</span>
               </div>
-
-              <div class="position-image-container">
-                <img
-                  class="position-image"
-                  src="https://lichess1.org/export/fen.gif?fen=rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4&color=white&theme=brown"
-                  alt="Nimzo-Indienne"
-                />
-              </div>
-
-              <article class="principle-section">
+              <div class="principle-section">
                 <div class="principle-text">
                   <h3>🎯 Le Plan Stratégique</h3>
                   <p>
                     Les Noirs clouent le Cavalier c3 qui protège la case e4.
                     Cela empêche les Blancs de jouer e4 et de dominer le centre.
                   </p>
-                  <p style="margin-top: 10px">
+                  <p>
                     Les Noirs sont prêts à échanger leur Fou contre le Cavalier
-                    pour doubler les pions blancs et créer des faiblesses
-                    statiques.
+                    pour doubler les pions blancs.
                   </p>
                 </div>
-                <div class="principle-visual">
-                  <div class="board-mini">🧘</div>
+                <div class="position-image-container">
+                  <img
+                    class="position-image"
+                    src="https://lichess1.org/export/fen.gif?fen=rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4&color=white&theme=brown"
+                    alt="Nimzo"
+                  />
                 </div>
-              </article>
+              </div>
             </div>
 
             <div id="tab-autres" style="display: none">
@@ -355,16 +310,10 @@
                 <h2>Les Autres Classiques</h2>
                 <p>D'autres réponses majeures à connaître.</p>
               </div>
-
-              <div class="variant-card" style="border-left: 4px solid #58cc02">
+              <div class="variant-card">
                 <div class="variant-title">La Défense Slave</div>
-                <div
-                  class="pgn-sequence"
-                  style="margin: 0.5rem 0; font-size: 0.9rem"
-                >
-                  1. d4 d5 2. c4 c6
-                </div>
-                <div class="position-image-container" style="margin: 1rem 0">
+                <div class="variant-moves">1. d4 d5 2. c4 c6</div>
+                <div class="position-image-container">
                   <img
                     class="position-image"
                     src="https://lichess1.org/export/fen.gif?fen=rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3&color=white&theme=brown"
@@ -373,28 +322,22 @@
                 </div>
                 <div class="variant-desc">
                   Comme la Caro-Kann mais contre d4. Très solide, le Fou c8
-                  reste libre. Une ouverture de championnat du monde.
+                  reste libre.
                 </div>
               </div>
-
-              <div class="variant-card" style="border-left: 4px solid #ff5500">
+              <div class="variant-card">
                 <div class="variant-title">La Défense Grünfeld</div>
-                <div
-                  class="pgn-sequence"
-                  style="margin: 0.5rem 0; font-size: 0.9rem"
-                >
-                  1. d4 Cf6 2. c4 g6 3. Cc3 d5 !
-                </div>
-                <div class="position-image-container" style="margin: 1rem 0">
+                <div class="variant-moves">1. d4 Cf6 2. c4 g6 3. Cc3 d5 !</div>
+                <div class="position-image-container">
                   <img
                     class="position-image"
                     src="https://lichess1.org/export/fen.gif?fen=rnbqk2r/ppp1pp1p/5np1/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 4&color=white&theme=brown"
-                    alt="Grünfeld"
+                    alt="Grunfeld"
                   />
                 </div>
                 <div class="variant-desc">
                   Les Noirs laissent les Blancs construire un centre massif pour
-                  mieux le faire exploser tactiquement. Très dynamique.
+                  mieux le faire exploser tactiquement.
                 </div>
               </div>
             </div>
@@ -405,25 +348,13 @@
 
     <script type="module" src="../../js/auth.js"></script>
     <script>
-      // Sidebar Mobile
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
-        setTimeout(() => {
-          document.querySelector(".sidebar").classList.add("active");
-        }, 10);
-      }
-      function hidesidebar() {
-        const sb = document.querySelector(".sidebar");
-        sb.classList.remove("active");
-        setTimeout(() => {
-          sb.style.display = "none";
-        }, 300);
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
       }
 
-      // Gestion des Onglets
       function switchTab(tabName) {
         const tabs = ["gambitdame", "londres", "kid", "nimzo", "autres"];
-
         tabs.forEach((t) => {
           const el = document.getElementById("tab-" + t);
           if (el) el.style.display = "none";
@@ -433,20 +364,19 @@
 
         const target = document.getElementById("tab-" + tabName);
         if (target) target.style.display = "block";
-
         const activeLink = document.getElementById("link-" + tabName);
         if (activeLink) activeLink.classList.add("active");
       }
 
-      // Gestion de l'URL (Hash)
       window.onload = function () {
         const hash = window.location.hash.replace("#", "");
-        const validTabs = ["gambitdame", "londres", "kid", "nimzo", "autres"];
-
-        if (hash && validTabs.includes(hash)) {
+        if (
+          hash &&
+          ["gambitdame", "londres", "kid", "nimzo", "autres"].includes(hash)
+        ) {
           switchTab(hash);
         } else {
-          switchTab("gambitdame"); // Par défaut
+          switchTab("gambitdame");
         }
       };
     </script>

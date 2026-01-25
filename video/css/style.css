@@ -1,151 +1,165 @@
 /* =========================================
-   PAGE VIDEO (CREATOR CARDS)
+   PAGE VIDÉO - STYLE "GRANDMASTER"
    ========================================= */
 
+/* Ajustement Section Hero */
+.video-hero {
+  padding: 4rem 2rem 2rem 2rem;
+  text-align: center;
+}
+
+.section-desc {
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  color: var(--text-secondary);
+  font-weight: 300;
+}
+
+/* Grille */
 .creators-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 3rem;
-  padding: 0 2rem;
-  max-width: 1400px;
+  gap: 2.5rem;
+  padding: 2rem;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
+/* Carte Créateur */
 .creator-card {
-  flex: 1 1 300px;
+  flex: 1 1 320px;
   max-width: 380px;
-  background-color: #24262b;
-  border: 1px solid #383c44;
-  border-radius: 16px;
-  overflow: hidden; /* Important pour que la bannière ne dépasse pas */
-  position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px; /* Coins plus nets pour style pro */
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
 .creator-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-5px);
+  border-color: var(--accent-gold);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Bannière de couleur en haut de la carte */
-.card-banner {
-  height: 100px;
-  width: 100%;
-}
-.card-banner.cyan {
-  background: linear-gradient(45deg, #00d9f6, #008ba3);
-}
-.card-banner.orange {
-  background: linear-gradient(45deg, #ff9f00, #b36e00);
-}
-.card-banner.green {
-  background: linear-gradient(45deg, #58cc02, #3a8501);
+/* En-tête de Carte (Avatar + Nom) */
+.card-header {
+  padding: 2.5rem 1.5rem 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.02),
+    transparent
+  );
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* Avatar Rond */
-.card-avatar {
+.avatar-frame {
   width: 100px;
   height: 100px;
-  margin: -50px auto 0 auto; /* Remonte l'image pour chevaucher la bannière */
   border-radius: 50%;
-  border: 4px solid #24262b; /* Bordure couleur du fond pour effet de découpe */
-  overflow: hidden;
-  background: #18191c;
-  z-index: 2;
-  position: relative;
+  padding: 3px;
+  border: 1px solid var(--accent-gold-dim);
+  margin-bottom: 1rem;
+  transition: border-color 0.3s ease;
 }
 
-.card-avatar img {
+.creator-card:hover .avatar-frame {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.avatar-frame img {
   width: 100%;
   height: 100%;
+  border-radius: 50%;
   object-fit: cover;
+  filter: grayscale(20%); /* Légère désaturation pour le style sombre */
+  transition: filter 0.3s;
 }
 
-/* Corps de la carte */
-.card-body {
+.creator-card:hover .avatar-frame img {
+  filter: grayscale(0%); /* Retour couleur au survol */
+}
+
+.card-header h3 {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  font-size: 1.4rem;
+  margin-bottom: 0.2rem;
+}
+
+.role-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent-gold);
+  font-weight: 600;
+}
+
+/* Contenu de la Carte */
+.card-content {
   padding: 1.5rem;
-  text-align: center;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-}
-
-.card-body h3 {
-  color: #ffffff;
-  font-size: 1.5rem;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  font-weight: 800;
-}
-
-.badge-level {
-  display: inline-block;
-  font-size: 0.8rem;
-  color: #b9bbbe;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 10px;
-  border-radius: 20px;
-  margin-bottom: 15px;
+  text-align: center;
 }
 
 .description {
   font-size: 0.95rem;
-  color: #b9bbbe;
-  line-height: 1.5;
-  margin-bottom: 20px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
 }
 
-/* Liste des points forts */
-.pros-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 25px 0;
-  text-align: left;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 8px;
+/* Tags / Badges */
+.tags-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
 }
 
-.pros-list li {
-  margin-bottom: 8px;
-  color: #ebebeb;
-  font-size: 0.9rem;
-}
-.pros-list li:last-child {
-  margin-bottom: 0;
-}
-
-/* Bouton YouTube */
-.btn-yt {
-  margin-top: auto;
-  display: block;
-  padding: 12px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #18191c;
+.tag {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50px;
+  color: #ccc;
+  background: rgba(255, 255, 255, 0.03);
   transition: 0.3s;
 }
 
-.btn-yt.cyan {
-  background: #00d9f6;
-  box-shadow: 0 0 15px rgba(0, 217, 246, 0.3);
-}
-.btn-yt.orange {
-  background: #ff9f00;
-  box-shadow: 0 0 15px rgba(255, 159, 0, 0.3);
-}
-.btn-yt.green {
-  background: #58cc02;
-  box-shadow: 0 0 15px rgba(88, 204, 2, 0.3);
+.creator-card:hover .tag {
+  border-color: rgba(212, 175, 55, 0.3);
+  color: #fff;
 }
 
-.btn-yt:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+/* Bouton Spécifique */
+.full-width {
+  width: 100%;
+  text-align: center;
+  margin-top: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .video-hero {
+    padding-top: 2rem;
+  }
+  .creators-grid {
+    gap: 2rem;
+    padding: 1rem;
+  }
 }

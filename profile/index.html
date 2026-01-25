@@ -3,138 +3,175 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mon Profil - Open Chess</title>
-    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/nav.css" />
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/media.css" />
-    <link rel="stylesheet" href="/profile/css/style.css" />
+    <title>Open Chess | Mon Profil</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/nav.css" />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="/img/close.svg" alt="close" /></a>
-          </li>
-          <li class="sidebar-logo"><span>MENU</span></li>
-          <li><a href="/Play/index.html">Play</a></li>
-          <li><a href="/Puzzles/index.html">Puzzles</a></li>
-          <li><a href="/Analyze/index.html">Analyze</a></li>
-          <li><a href="/Learn/index.html">Learn</a></li>
-          <li><a href="/profile/index.html">Profile</a></li>
+      <nav class="navbar">
+        <a href="../../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
+        <ul class="nav-links">
+          <li><a href="../../Play/index.html">Jouer</a></li>
+          <li><a href="../../Puzzles/index.html">Défis</a></li>
+          <li><a href="../../Learn/index.html">Apprendre</a></li>
+          <li><a href="../../Analyze/index.html">Analyser</a></li>
         </ul>
-
-        <ul>
-          <li class="logo-container">
-            <a href="/index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Play/index.html">Play <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Puzzles/index.html">Puzzles <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Analyze/index.html">Analyze <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Learn/index.html">Learn <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/profile/index.html">Profile <span></span></a>
-          </li>
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="#" class="btn-login" style="color: var(--accent-gold)"
+            >Mon Compte</a
+          >
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="../../Play/index.html">Jouer</a>
+        <a href="../../Puzzles/index.html">Défis</a>
+        <a href="../../Learn/index.html">Apprendre</a>
+        <a href="../../Analyze/index.html">Analyser</a>
+      </div>
     </header>
 
-    <main class="profile-container">
-      <div class="profile-header">
-        <div class="avatar-container" id="display-avatar"></div>
-        <h1 id="display-pseudo">Chargement...</h1>
-        <p class="member-since">Membre Open Chess</p>
-        <button id="btn-logout" class="btn-logout">
-          <i class="fas fa-sign-out-alt"></i> Déconnexion
-        </button>
-      </div>
+    <main class="profile-main">
+      <div class="dashboard-grid">
+        <section class="dashboard-card identity-card">
+          <div class="profile-avatar-container">
+            <label
+              for="file-input"
+              class="avatar-label"
+              title="Changer l'image"
+            >
+              <img
+                id="profile-pic"
+                src="https://api.dicebear.com/9.x/adventurer/svg?seed=Invité"
+                alt="Avatar"
+                class="avatar-img"
+              />
+              <div class="avatar-overlay"><i class="fas fa-camera"></i></div>
+              <input type="file" id="file-input" accept="image/*" hidden />
+            </label>
+          </div>
 
-      <div class="dual-stats-container">
-        <div class="stats-column">
-          <h2><i class="fas fa-puzzle-piece"></i> Tactique</h2>
+          <div class="identity-info">
+            <h1 id="profile-pseudo" class="pseudo-text">Chargement...</h1>
+            <p id="profile-email" class="email-text">...</p>
+            <p id="profile-date" class="date-text">Membre depuis ...</p>
+          </div>
+        </section>
 
-          <div class="stat-card">
-            <div class="icon-stat yellow"><i class="fas fa-trophy"></i></div>
-            <div class="stat-info">
-              <h3>Elo Actuel</h3>
-              <p class="stat-value" id="stat-puzzle-current">1200</p>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="icon-stat fire"><i class="fas fa-crown"></i></div>
-            <div class="stat-info">
-              <h3>Record</h3>
-              <p class="stat-value" id="stat-puzzle-best">1200</p>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="icon-stat green"><i class="fas fa-check"></i></div>
-            <div class="stat-info">
-              <h3>Résolus</h3>
-              <p class="stat-value" id="stat-puzzle-solved">0</p>
-            </div>
-          </div>
-        </div>
+        <section class="dashboard-card performance-card">
+          <h2 class="card-title">Statistiques de Jeu</h2>
 
-        <div class="stats-column">
-          <h2><i class="fas fa-eye"></i> Visualisation</h2>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-header">
+                <span class="stat-icon">🧩</span>
+                <h3>Tactique</h3>
+              </div>
+              <div class="stat-content">
+                <div class="stat-row">
+                  <span class="label">Elo Actuel</span>
+                  <span class="value gold" id="val-puzzle-elo">1200</span>
+                </div>
+                <div class="stat-row">
+                  <span class="label">Meilleur Elo</span>
+                  <span class="value" id="val-puzzle-best">1200</span>
+                </div>
+                <div class="stat-row">
+                  <span class="label">Résolus</span>
+                  <span class="value" id="val-puzzle-solved">0</span>
+                </div>
+              </div>
+            </div>
 
-          <div class="stat-card">
-            <div class="icon-stat purple"><i class="fas fa-brain"></i></div>
-            <div class="stat-info">
-              <h3>Elo Actuel</h3>
-              <p class="stat-value" id="stat-visu-current">1000</p>
+            <div class="stat-box">
+              <div class="stat-header">
+                <span class="stat-icon">👁️</span>
+                <h3>Visualisation</h3>
+              </div>
+              <div class="stat-content">
+                <div class="stat-row">
+                  <span class="label">Elo Actuel</span>
+                  <span class="value gold" id="val-visu-elo">1000</span>
+                </div>
+                <div class="stat-row">
+                  <span class="label">Série Max</span>
+                  <span class="value" id="val-visu-best">0</span>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="icon-stat blue"><i class="fas fa-crown"></i></div>
-            <div class="stat-info">
-              <h3>Record</h3>
-              <p class="stat-value" id="stat-visu-best">1000</p>
-            </div>
+
+          <div class="quick-action">
+            <a href="../../Puzzles/index.html" class="text-link"
+              >→ Lancer une session d'entraînement</a
+            >
           </div>
-          <div class="stat-card">
-            <div class="icon-stat fire"><i class="fas fa-fire-alt"></i></div>
-            <div class="stat-info">
-              <h3>Série</h3>
-              <p class="stat-value" id="stat-visu-streak">0</p>
-            </div>
+        </section>
+
+        <section class="dashboard-card settings-card">
+          <h2 class="card-title">Paramètres</h2>
+          <div class="account-actions">
+            <button id="logout-btn" class="action-btn outline-btn">
+              Déconnexion
+            </button>
+            <button id="delete-account-btn" class="action-btn danger-btn">
+              Supprimer le compte
+            </button>
           </div>
-        </div>
+        </section>
       </div>
     </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h4>Open Chess<span class="dot">.</span></h4>
+          <p>L'excellence stratégique à portée de main.</p>
+        </div>
+        <div class="footer-copy">
+          &copy; <span id="year">2026</span> Open Chess.
+        </div>
+      </div>
+    </footer>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import {
-        getFirestore,
-        doc,
-        getDoc,
-        setDoc, // <--- J'ai ajouté setDoc pour la réparation
-      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-      import {
         getAuth,
         onAuthStateChanged,
         signOut,
+        updateProfile,
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      import {
+        getStorage,
+        ref,
+        uploadBytes,
+        getDownloadURL,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyBNBUO3JupohDCYAMs7Xf6kKgxnnFgPpVM",
@@ -147,76 +184,99 @@
       };
 
       const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
       const auth = getAuth(app);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
+
+      // Éléments DOM Identité
+      const pseudoEl = document.getElementById("profile-pseudo");
+      const emailEl = document.getElementById("profile-email");
+      const dateEl = document.getElementById("profile-date");
+      const picEl = document.getElementById("profile-pic");
+
+      // Éléments DOM Stats
+      const puzzleEloEl = document.getElementById("val-puzzle-elo");
+      const puzzleBestEl = document.getElementById("val-puzzle-best");
+      const puzzleSolvedEl = document.getElementById("val-puzzle-solved");
+      const visuEloEl = document.getElementById("val-visu-elo");
+      const visuBestEl = document.getElementById("val-visu-best");
 
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-          const docRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(docRef);
+          // 1. Infos Auth de base
+          emailEl.textContent = user.email;
+          const creationDate = new Date(
+            user.metadata.creationTime,
+          ).toLocaleDateString("fr-FR");
+          dateEl.textContent = "Membre depuis le " + creationDate;
 
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            let pseudo = data.pseudo;
+          // 2. Récupération Firestore (Stats + Pseudo)
+          try {
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
 
-            // --- RÉPARATION AUTOMATIQUE ---
-            // Si le pseudo n'existe pas, on le demande à l'utilisateur
-            if (!pseudo) {
-              pseudo = prompt(
-                "Oups ! Ton pseudo a disparu lors de l'inscription. Comment veux-tu t'appeler ?",
-              );
-              if (pseudo) {
-                // On sauvegarde le nouveau pseudo
-                await setDoc(docRef, { pseudo: pseudo }, { merge: true });
-                alert("Pseudo sauvegardé !");
-              } else {
-                pseudo = "Joueur Anonyme";
-              }
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+
+              // --- IDENTITÉ ---
+              pseudoEl.textContent = data.pseudo || "Joueur";
+              if (user.photoURL) picEl.src = user.photoURL;
+              else
+                picEl.src = `https://api.dicebear.com/9.x/adventurer/svg?seed=${data.pseudo || "User"}`;
+
+              // --- STATISTIQUES (Mapping des champs JS) ---
+              // Puzzles
+              puzzleEloEl.textContent = data.currentPuzzleElo || 1200;
+              puzzleBestEl.textContent =
+                data.bestPuzzleElo || data.currentPuzzleElo || 1200;
+              puzzleSolvedEl.textContent = data.puzzlesSolved || 0;
+
+              // Visualisation
+              visuEloEl.textContent = data.currentVisuElo || 1000;
+              visuBestEl.textContent =
+                data.bestVisuElo || data.currentVisuElo || 1000;
+            } else {
+              pseudoEl.textContent = "Profil non initialisé";
             }
-            // ------------------------------
-
-            document.getElementById("display-pseudo").innerText = pseudo;
-            document.getElementById("display-avatar").innerHTML =
-              `<img src="https://api.dicebear.com/9.x/adventurer/svg?seed=${pseudo}" alt="avatar">`;
-
-            // --- STATS TACTIQUE (Mise à jour avec Elo Actuel vs Record) ---
-            // J'ai mis à jour l'affichage pour correspondre à ton nouveau système Elo
-            document.getElementById("stat-puzzle-current").innerText =
-              data.currentPuzzleElo || 1200; // Elo Actuel
-            document.getElementById("stat-puzzle-best").innerText =
-              data.bestPuzzleElo || 1200; // Record
-            document.getElementById("stat-puzzle-solved").innerText =
-              data.puzzlesSolved || 0;
-
-            // --- STATS VISUALISATION ---
-            document.getElementById("stat-visu-current").innerText =
-              data.currentVisuElo || 1000; // Elo Actuel
-            document.getElementById("stat-visu-best").innerText =
-              data.bestVisuElo || 1000; // Record
-            document.getElementById("stat-visu-streak").innerText =
-              data.visuStreak || 0;
-          } else {
-            // Si le document n'existe VRAIMENT pas (cas rare maintenant)
-            console.log("Aucun profil trouvé.");
-            document.getElementById("display-pseudo").innerText = "Invité";
+          } catch (e) {
+            console.error("Erreur Firestore:", e);
+            pseudoEl.textContent = "Erreur chargement";
           }
         } else {
-          window.location.href = "/login/index.html";
+          window.location.href = "../../login/index.html";
         }
       });
 
-      document.getElementById("btn-logout").addEventListener("click", () => {
-        signOut(auth).then(() => (window.location.href = "/index.html"));
+      // Gestion de l'upload et déconnexion inchangée
+      const fileInput = document.getElementById("file-input");
+      fileInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const user = auth.currentUser;
+        if (!user) return;
+        picEl.style.opacity = "0.5";
+        try {
+          const storageRef = ref(storage, `avatars/${user.uid}`);
+          await uploadBytes(storageRef, file);
+          const photoURL = await getDownloadURL(storageRef);
+          await updateProfile(user, { photoURL: photoURL });
+          picEl.src = photoURL;
+          picEl.style.opacity = "1";
+        } catch (error) {
+          console.error(error);
+          picEl.style.opacity = "1";
+        }
       });
-    </script>
 
-    <script>
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
-      }
-      function hidesidebar() {
-        document.querySelector(".sidebar").style.display = "none";
-      }
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        signOut(auth).then(() => (window.location.href = "../../index.html"));
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+      window.toggleMenu = function () {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
+      };
     </script>
   </body>
 </html>
