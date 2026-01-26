@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess | Académie</title>
+    <title>Open Chess | Académie Stratégique</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
     />
     <link
@@ -16,8 +16,8 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
 
-    <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
@@ -53,153 +53,173 @@
       <section class="learn-hero">
         <div class="hero-content">
           <span class="subtitle">Bibliothèque Stratégique</span>
-          <h1>Académie <br /><em>Open Chess.</em></h1>
+          <h1>L'Art de la Guerre <br /><em>sur 64 cases.</em></h1>
+          <p class="hero-desc">
+            Ne jouez plus au hasard. De l'ouverture à la finale, maîtrisez les
+            concepts qui séparent les amateurs des maîtres.
+          </p>
 
-          <div class="sub-nav">
-            <a href="./Opening.html" class="sub-link">Ouvertures</a>
-            <span class="dot-sep">•</span>
-            <a href="./Midgame.html" class="sub-link">Milieu de Jeu</a>
-            <span class="dot-sep">•</span>
-            <a href="./Endgame.html" class="sub-link">Finales</a>
+          <div class="hero-nav-pill">
+            <a href="./Opening.html" class="pill-link">Ouvertures</a>
+            <span class="pill-sep">•</span>
+            <a href="./Midgame.html" class="pill-link">Milieu</a>
+            <span class="pill-sep">•</span>
+            <a href="./Endgame.html" class="pill-link">Finales</a>
           </div>
         </div>
       </section>
 
       <section class="featured-container">
         <div class="featured-card">
-          <div class="featured-badge">🔥 Focus de la semaine</div>
-          <div class="featured-text">
-            <h3>Le Gambit Dame</h3>
+          <div class="featured-content">
+            <div class="featured-badge">🔥 Leçon de la Semaine</div>
+            <h3>Comprendre "L'Espagnole"</h3>
             <p>
-              Une ouverture agressive pour contrôler le centre. Kasparov
-              l'adore, et vous devriez aussi.
+              Pourquoi Ruy Lopez est-elle l'ouverture des champions depuis 150
+              ans ? Découvrez le secret de la pression durable.
             </p>
+            <div class="featured-actions">
+              <a
+                href="./openings/jeu_ouvert.html#tab-espagnole"
+                class="btn-primary"
+              >
+                <i class="fas fa-play"></i> Étudier maintenant
+              </a>
+              <span class="time-tag"><i class="far fa-clock"></i> 15 min</span>
+            </div>
           </div>
-          <a href="./Openings/jeu_ferme.html" class="btn-primary">
-            <i class="fas fa-play"></i> Lancer le cours
-          </a>
+          <div class="featured-visual">
+            <i class="fa-solid fa-chess-bishop big-icon"></i>
+          </div>
         </div>
       </section>
 
       <section class="modules-grid">
-        <div class="module-card">
+        <div id="ouvertures" class="module-card">
           <div class="card-header">
-            <span class="module-icon">🏛️</span>
+            <div class="icon-box">🏛️</div>
             <h3>Les Ouvertures</h3>
           </div>
           <div class="card-body">
-            <p class="intro">Les 3 principes d'or à respecter :</p>
+            <p class="intro">Posez les fondations de votre victoire.</p>
             <ul class="principles-list">
               <li>
-                <strong>Le Centre</strong>
-                <span>Contrôler e4/d4 avec vos pions.</span>
+                <span class="check-icon">✓</span>
+                <div>
+                  <strong>Contrôle du Centre</strong>
+                  <span>Dominez e4/d4 dès le début.</span>
+                </div>
               </li>
               <li>
-                <strong>Développement</strong>
-                <span>Sortir Cavaliers et Fous rapidement.</span>
-              </li>
-              <li>
-                <strong>Sécurité</strong>
-                <span>Roquer tôt pour protéger votre Roi.</span>
+                <span class="check-icon">✓</span>
+                <div>
+                  <strong>Développement Actif</strong>
+                  <span>Sortez vos pièces, ne les laissez pas dormir.</span>
+                </div>
               </li>
             </ul>
-            <div class="card-action">
-              <a href="./Opening.html" class="btn-secondary full-width"
-                >Commencer le cours</a
-              >
-            </div>
-            <div class="card-footer">Un début solide assure l'avenir</div>
+            <a href="./Opening.html" class="btn-card"
+              >Explorer le Catalogue <i class="fas fa-arrow-right"></i
+            ></a>
           </div>
         </div>
 
-        <div class="module-card">
+        <div id="milieu" class="module-card highlight">
           <div class="card-header">
-            <span class="module-icon">⚔️</span>
+            <div class="icon-box">⚔️</div>
             <h3>Milieu de Jeu</h3>
           </div>
           <div class="card-body">
-            <p class="intro">La phase de combat et de calcul :</p>
+            <p class="intro">Là où la créativité rencontre le calcul.</p>
             <ul class="principles-list">
               <li>
-                <strong>Tactique</strong>
-                <span>Repérer les motifs (clouages, fourchettes).</span>
+                <span class="check-icon">✓</span>
+                <div>
+                  <strong>Motifs Tactiques</strong>
+                  <span>Fourchettes, clouages, attaques à la découverte.</span>
+                </div>
               </li>
               <li>
-                <strong>Stratégie</strong>
-                <span>Élaborer un plan d'attaque cohérent.</span>
-              </li>
-              <li>
-                <strong>Coordination</strong>
-                <span>Faire jouer toutes vos pièces ensemble.</span>
+                <span class="check-icon">✓</span>
+                <div>
+                  <strong>Plans Stratégiques</strong>
+                  <span>Savoir quoi faire quand il n'y a rien à faire.</span>
+                </div>
               </li>
             </ul>
-            <div class="card-action">
-              <a href="./Midgame.html" class="btn-secondary full-width"
-                >Commencer le cours</a
-              >
-            </div>
-            <div class="card-footer">C'est ici que se gagne la partie</div>
+            <a href="./Midgame.html" class="btn-card"
+              >Aiguiser sa Vision <i class="fas fa-arrow-right"></i
+            ></a>
           </div>
         </div>
 
-        <div class="module-card">
+        <div id="finales" class="module-card">
           <div class="card-header">
-            <span class="module-icon">👑</span>
+            <div class="icon-box">👑</div>
             <h3>Les Finales</h3>
           </div>
           <div class="card-body">
-            <p class="intro">Convertir l'avantage en victoire :</p>
+            <p class="intro">La technique pure pour conclure.</p>
             <ul class="principles-list">
               <li>
-                <strong>Roi Actif</strong>
-                <span>Le Roi devient une pièce d'attaque majeure.</span>
+                <span class="check-icon">✓</span>
+                <div>
+                  <strong>Activité du Roi</strong>
+                  <span>En finale, le Roi devient un attaquant.</span>
+                </div>
               </li>
               <li>
-                <strong>Promotion</strong>
-                <span>Créer un pion passé pour faire une Dame.</span>
-              </li>
-              <li>
-                <strong>Précision</strong>
-                <span>Chaque coup compte (attention au Pat !).</span>
+                <span class="check-icon">✓</span>
+                <div>
+                  <strong>Promotion</strong>
+                  <span>L'art de transformer un pion en Dame.</span>
+                </div>
               </li>
             </ul>
-            <div class="card-action">
-              <a href="./Endgame.html" class="btn-secondary full-width"
-                >Commencer le cours</a
-              >
-            </div>
-            <div class="card-footer">La technique au service du gain</div>
+            <a href="./Endgame.html" class="btn-card"
+              >Maîtriser la Technique <i class="fas fa-arrow-right"></i
+            ></a>
           </div>
         </div>
       </section>
     </main>
 
     <footer>
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <h4>Open Chess<span class="dot">.</span></h4>
-          <p>L'excellence stratégique à portée de main.</p>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess<span style="color: var(--accent-gold)">.</span></h3>
+          <p>
+            L'excellence stratégique à portée de main. Progressez à votre
+            rythme.
+          </p>
         </div>
-        <div class="footer-nav-group">
-          <div class="footer-col">
-            <h5>Navigation</h5>
-            <ul>
-              <li><a href="../Play/index.html">Jouer</a></li>
-              <li><a href="../Puzzles/index.html">Puzzles</a></li>
-              <li><a href="../Analyze/index.html">Analyser</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h5>Support</h5>
-            <ul>
-              <li><a href="../support/index.html">Contact</a></li>
-              <li><a href="../rules/index.html">Règles</a></li>
-            </ul>
-          </div>
+
+        <div class="footer-section">
+          <h3>Rejoignez l'élite</h3>
+          <p style="margin-bottom: 1.5rem">
+            Créez un compte pour suivre votre progression et sauvegarder vos
+            cours favoris.
+          </p>
+          <a
+            href="../login/index.html"
+            class="btn-primary"
+            style="display: inline-block"
+          >
+            S'inscrire Gratuitement
+          </a>
         </div>
-        <div class="footer-copy">
-          &copy; <span id="year">2026</span> Open Chess.
+
+        <div class="footer-section">
+          <h3>Liens Utiles</h3>
+          <ul>
+            <li><a href="../support/index.html">Contact & Support</a></li>
+            <li><a href="../rules/index.html">Règles du Jeu</a></li>
+            <li><a href="../video/index.html">Créateur de contenue</a></li>
+          </ul>
         </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
       </div>
     </footer>
 

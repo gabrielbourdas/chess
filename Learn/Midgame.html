@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess | Le Milieu de Jeu</title>
+    <title>Open Chess | Maîtrise du Milieu de Jeu</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
     <link
@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/nav.css" />
     <link rel="stylesheet" href="./css/learn.css" />
+    <link rel="stylesheet" href="./css/midgame.css" />
   </head>
   <body>
     <header>
@@ -39,261 +40,162 @@
           <span></span><span></span>
         </div>
       </nav>
-      <div class="mobile-menu" id="mobileMenu">
-        <a href="../Play/index.html">Jouer</a>
-        <a href="../Puzzles/index.html">Défis</a>
-        <a href="../Analyze/index.html">Analyser</a>
-        <a href="./index.html">Apprendre</a>
-        <a href="../login/index.html">Connexion</a>
-      </div>
     </header>
 
-    <main>
-      <div class="floating-nav-wrapper">
-        <nav class="sub-nav">
-          <a href="./index.html" class="sub-link">🎓 Accueil</a>
-          <a href="./Opening.html" class="sub-link">📖 Ouvertures</a>
-          <a href="./Midgame.html" class="sub-link active">⚔️ Milieu</a>
-          <a href="./Endgame.html" class="sub-link">👑 Finales</a>
-        </nav>
+    <main class="app-container">
+      <div class="dock-nav">
+        <a href="./index.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-graduation-cap"></i></span>
+          <span class="label">Accueil</span>
+        </a>
+        <a href="./Opening.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-book-open"></i></span>
+          <span class="label">Ouvertures</span>
+        </a>
+        <a href="./Midgame.html" class="dock-item active">
+          <span class="icon"><i class="fa-solid fa-chess-knight"></i></span>
+          <span class="label">Milieu</span>
+        </a>
+        <a href="./Endgame.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-crown"></i></span>
+          <span class="label">Finales</span>
+        </a>
       </div>
 
-      <div class="course-wrapper" style="padding-top: 2rem">
-        <aside class="course-sidebar">
-          <h3 class="sidebar-title">Maîtrise du Jeu</h3>
-          <ul class="course-menu">
-            <li>
-              <a
-                href="#"
-                id="link-tactique"
-                class="active"
-                onclick="switchTab('tactique')"
-                >⚔️ Motifs Tactiques</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-strategie" onclick="switchTab('strategie')"
-                >🧠 Stratégie & Plans</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-attaque" onclick="switchTab('attaque')"
-                >🔥 Attaque & Calcul</a
-              >
-            </li>
-          </ul>
+      <div class="layout-grid">
+        <aside class="sidebar-pro">
+          <div class="sidebar-header">
+            <span class="chapter-label">CHAPITRE 2</span>
+            <h3>Milieu de Jeu</h3>
+          </div>
 
-          <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            Thèmes Avancés
-          </h3>
-          <ul class="course-menu">
-            <li>
-              <a
-                href="#"
-                id="link-prophylaxie"
-                onclick="switchTab('prophylaxie')"
-                >🛡️ La Prophylaxie</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-chaine" onclick="switchTab('chaine')"
-                >⛓️ La Chaîne de Pions</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-sacrifice" onclick="switchTab('sacrifice')"
-                >⚡ Le Sacrifice de Qualité</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-roque" onclick="switchTab('roque')"
-                >🏰 Attaques de Roque</a
-              >
-            </li>
-          </ul>
+          <div class="nav-group">
+            <h4>Fondamentaux</h4>
+            <button class="nav-btn active" onclick="switchContent('tactique')">
+              <i class="fa-solid fa-crosshairs"></i> Motifs Tactiques
+            </button>
+            <button class="nav-btn" onclick="switchContent('strategie')">
+              <i class="fa-regular fa-map"></i> Stratégie
+            </button>
+          </div>
+
+          <div class="nav-group">
+            <h4>Avancé</h4>
+            <button class="nav-btn" onclick="switchContent('attaque')">
+              <i class="fa-solid fa-fire-flame-curved"></i> L'Attaque
+            </button>
+            <button class="nav-btn" onclick="switchContent('prophylaxie')">
+              <i class="fa-solid fa-shield-cat"></i> Prophylaxie
+            </button>
+          </div>
         </aside>
 
-        <div class="course-content">
-          <div class="hub-card">
-            <div id="tab-tactique">
-              <div class="hub-header">
-                <h2>L'Arsenal Tactique</h2>
-                <p>
-                  "La stratégie consiste à savoir quoi faire quand il n'y a rien
-                  à faire. La tactique consiste à savoir quoi faire quand il y a
-                  quelque chose à faire." — Tartakower
-                </p>
-              </div>
-              <hr class="divider" />
+        <section class="content-area">
+          <div id="content-tactique" class="tab-content active">
+            <div class="content-hero">
+              <h1 class="gradient-text">L'Art de la Tactique</h1>
+              <p class="hero-desc">
+                Le milieu de jeu est le moment de vérité. C'est ici que le
+                calcul l'emporte sur la mémoire. Apprenez à repérer les motifs
+                géométriques qui font basculer la partie.
+              </p>
+            </div>
 
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>1. La Fourchette (The Fork)</h3>
+            <div class="cards-stack">
+              <article class="lesson-card">
+                <div class="card-content">
+                  <span class="tag">Motif #01</span>
+                  <h2>La Fourchette</h2>
                   <p>
-                    Une seule pièce attaque deux cibles ennemies en même temps.
-                    Le Cavalier est le roi de la fourchette.
+                    L'arme favorite du Cavalier. Une attaque simultanée sur deux
+                    pièces adverses. C'est l'illustration parfaite de la
+                    supériorité de la géométrie sur la force brute.
                   </p>
-                  <div class="move-box">
-                    <strong>🎯 Dans cette position :</strong>
-                    <span
-                      >Le Cavalier blanc en g6 fait une "fourchette royale",
-                      attaquant simultanément le Roi (f8) et la Dame (e7).</span
-                    >
+                  <div class="pro-tip">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <div>
+                      <strong>Le conseil du GM</strong>
+                      Cherchez toujours les "pièces en l'air" (non défendues).
+                      Ce sont les cibles des fourchettes.
+                    </div>
                   </div>
                 </div>
-                <div class="position-image-container">
-                  <img
-                    class="position-image"
-                    src="https://lichess1.org/export/fen.gif?fen=r2r1k2/1pp1q1p1/3p1pNp/p3p3/P3P3/2P1Q2P/1P3PP1/3RR1K1 b - - 0 1 1&color=white&theme=brown"
-                    alt="Fourchette"
-                  />
-                </div>
-              </article>
-
-              <hr class="divider" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>2. Le Clouage (The Pin)</h3>
-                  <p>
-                    Une pièce ennemie ne peut pas bouger car elle exposerait une
-                    pièce plus précieuse (souvent le Roi ou la Dame) située
-                    derrière elle.
-                  </p>
-                  <div class="move-box">
-                    <strong>⚠️ Dans cette position :</strong>
-                    <span
-                      >Le Fou blanc en a4 "cloue" le Cavalier c6 sur la Dame
-                      noir. Le Cavalier ne peut pas bouger.</span
-                    >
+                <div class="card-visual">
+                  <div class="board-wrapper">
+                    <img
+                      src="https://lichess1.org/export/fen.gif?fen=r2r1k2/1pp1q1p1/3p1pNp/p3p3/P3P3/2P1Q2P/1P3PP1/3RR1K1 b - - 0 1 1&color=white&theme=brown"
+                      alt="Fourchette aux échecs"
+                    />
+                    <div class="board-glow"></div>
                   </div>
                 </div>
-                <div class="position-image-container">
-                  <img
-                    class="position-image"
-                    src="https://lichess1.org/export/fen.gif?fen=1kr1q2r/1pp1npbp/p1n1p1p1/3pB3/B2P4/P1N1P3/1PP1QPP1/1K1R3R b - - 0 1 3&color=white&theme=brown"
-                    alt="Clouage"
-                  />
-                </div>
               </article>
 
-              <hr class="divider" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>3. L'Attaque à la Découverte</h3>
+              <article class="lesson-card reverse">
+                <div class="card-content">
+                  <span class="tag">Motif #02</span>
+                  <h2>Le Clouage</h2>
                   <p>
-                    Vous bougez une pièce, et ce mouvement révèle une attaque
-                    provenant d'une autre pièce située derrière (Tour, Fou ou
-                    Dame).
+                    Paralysie totale. Une pièce clouée est une pièce inutile. Le
+                    clouage peut être "absolu" (sur le Roi) ou "relatif" (sur
+                    une pièce majeure).
                   </p>
-                  <div class="move-box">
-                    <strong>👀 Le coup à jouer :</strong>
-                    <span
-                      >Les Blancs jouent fxb7!. La Dame attaque le Roi e8 tout
-                      en attaquant la Tour a8 avec le fou.</span
-                    >
+                  <div class="pro-tip warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <div>
+                      <strong>À retenir</strong>
+                      "On ne joue pas avec une pièce clouée." Augmentez la
+                      pression sur elle avec vos pions.
+                    </div>
                   </div>
                 </div>
-                <div class="position-image-container">
-                  <img
-                    class="position-image"
-                    src="https://lichess1.org/export/fen.gif?fen=rn2k2r/pppq1ppp/3p1n2/2b5/4B3/P1N2P1P/1PP2PP1/1K1R3R w kq - 0 1 6&color=white&theme=brown"
-                    alt="Découverte"
-                  />
+                <div class="card-visual">
+                  <div class="board-wrapper">
+                    <img
+                      src="https://lichess1.org/export/fen.gif?fen=1kr1q2r/1pp1npbp/p1n1p1p1/3pB3/B2P4/P1N1P3/1PP1QPP1/1K1R3R b - - 0 1 3&color=white&theme=brown"
+                      alt="Clouage aux échecs"
+                    />
+                    <div class="board-glow"></div>
+                  </div>
                 </div>
               </article>
-            </div>
-
-            <div id="tab-strategie" style="display: none">
-              <div class="hub-header">
-                <h2>La Stratégie Positionnelle</h2>
-                <p>
-                  Si la tactique est un combat de rue, la stratégie est la
-                  guerre des généraux.
-                </p>
-              </div>
-              <hr class="divider" />
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>1. Bons et Mauvais "Officiers"</h3>
-                  <ul>
-                    <li>
-                      <strong>L'Avant-Poste (Bon) :</strong> Regardez le
-                      Cavalier blanc en f3.
-                    </li>
-                    <li>
-                      <strong>Le Mauvais Fou (Mauvais) :</strong> Regardez le
-                      Fou noir en c8.
-                    </li>
-                  </ul>
-                </div>
-                <div class="position-image-container">
-                  <img
-                    class="position-image"
-                    src="https://lichess1.org/export/fen.gif?fen=r1b1k2r/pp3ppp/2n1pq2/3p4/3P4/2P2NP1/P3PP1P/R2QKB1R b KQkq - 1  11&color=white&theme=brown"
-                    alt="Strategie"
-                  />
-                </div>
-              </article>
-            </div>
-
-            <div id="tab-attaque" style="display: none">
-              <div class="hub-header"><h2>Attaque et Calcul</h2></div>
-              <p>Contenu à copier depuis l'ancien fichier...</p>
-            </div>
-
-            <div id="tab-prophylaxie" style="display: none">
-              <div class="hub-header"><h2>La Prophylaxie</h2></div>
-              <p>Contenu à copier depuis l'ancien fichier...</p>
-            </div>
-
-            <div id="tab-chaine" style="display: none">
-              <div class="hub-header"><h2>La Chaîne de Pions</h2></div>
-              <p>Contenu à copier depuis l'ancien fichier...</p>
-            </div>
-
-            <div id="tab-sacrifice" style="display: none">
-              <div class="hub-header"><h2>Le Sacrifice de Qualité</h2></div>
-              <p>Contenu à copier depuis l'ancien fichier...</p>
-            </div>
-
-            <div id="tab-roque" style="display: none">
-              <div class="hub-header"><h2>Attaques de Roque Opposé</h2></div>
-              <p>Contenu à copier depuis l'ancien fichier...</p>
             </div>
           </div>
-        </div>
+
+          <div id="content-strategie" class="tab-content" style="display: none">
+            <header class="content-hero">
+              <h1 class="gradient-text">Plans & Stratégie</h1>
+              <p class="hero-desc">
+                Quand il n'y a pas de tactique immédiate, il faut améliorer sa
+                position.
+              </p>
+            </header>
+          </div>
+        </section>
       </div>
     </main>
 
     <script>
-      function toggleMenu() {
-        document.getElementById("mobileMenu").classList.toggle("active");
-        document.querySelector(".hamburger").classList.toggle("active");
-      }
+      // Script simple pour basculer les onglets avec animation
+      function switchContent(id) {
+        // Gestion Menu
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        event.currentTarget.classList.add("active");
 
-      function switchTab(tabName) {
-        const allTabs = [
-          "tactique",
-          "strategie",
-          "attaque",
-          "prophylaxie",
-          "chaine",
-          "sacrifice",
-          "roque",
-        ];
-        allTabs.forEach((t) => {
-          const el = document.getElementById("tab-" + t);
-          if (el) el.style.display = "none";
-          const link = document.getElementById("link-" + t);
-          if (link) link.classList.remove("active");
+        // Gestion Contenu
+        const contents = document.querySelectorAll(".tab-content");
+        contents.forEach((c) => {
+          c.style.opacity = "0";
+          setTimeout(() => (c.style.display = "none"), 300);
         });
 
-        const target = document.getElementById("tab-" + tabName);
-        if (target) target.style.display = "block";
-        const activeLink = document.getElementById("link-" + tabName);
-        if (activeLink) activeLink.classList.add("active");
+        const target = document.getElementById("content-" + id);
+        setTimeout(() => {
+          target.style.display = "block";
+          setTimeout(() => (target.style.opacity = "1"), 50);
+        }, 300);
       }
     </script>
   </body>

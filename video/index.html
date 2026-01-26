@@ -3,14 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess | Bibliothèque Vidéo</title>
+    <title>Open Chess | Médiathèque</title>
     <link rel="icon" href="/img/logo.svg" type="image/svg+xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
 
     <link rel="stylesheet" href="../css/style.css" />
@@ -20,17 +24,19 @@
   <body>
     <header>
       <nav class="navbar">
-        <a href="/" class="logo">OPEN CHESS<span class="dot">.</span></a>
+        <a href="../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
 
         <ul class="nav-links">
-          <li><a href="/Play/index.html">Jouer</a></li>
-          <li><a href="/Puzzles/index.html">Défis</a></li>
-          <li><a href="/Learn/index.html">Apprendre</a></li>
-          <li><a href="/Analyze/index.html">Analyser</a></li>
+          <li><a href="../Play/index.html">Jouer</a></li>
+          <li><a href="../Puzzles/index.html">Défis</a></li>
+          <li><a href="../Analyze/index.html">Analyser</a></li>
+          <li><a href="../Learn/index.html">Apprendre</a></li>
         </ul>
 
         <div class="nav-actions">
-          <a href="/login/index.html" class="btn-login">Connexion</a>
+          <a href="../login/index.html" class="btn-login">Connexion</a>
         </div>
 
         <div class="hamburger" onclick="toggleMenu()">
@@ -39,172 +45,196 @@
       </nav>
 
       <div class="mobile-menu" id="mobileMenu">
-        <a href="/Play/index.html">Jouer</a>
-        <a href="/Puzzles/index.html">Défis</a>
-        <a href="/Learn/index.html">Apprendre</a>
-        <a href="/login/index.html">Connexion</a>
+        <a href="../Play/index.html">Jouer</a>
+        <a href="../Puzzles/index.html">Défis</a>
+        <a href="../Analyze/index.html">Analyser</a>
+        <a href="../Learn/index.html">Apprendre</a>
+        <a href="../login/index.html">Connexion</a>
       </div>
     </header>
 
-    <main>
+    <main class="video-main">
       <section class="video-hero">
-        <div class="section-header">
-          <span class="subtitle">Ressources Externes</span>
-          <h2>La Bibliothèque des Maîtres</h2>
-          <p class="section-desc">
-            Sélection curée des meilleurs pédagogues mondiaux pour accélérer
-            votre progression.
+        <div class="hero-content">
+          <span class="subtitle">Bibliothèque Curée</span>
+          <h1>L'Excellence par <br /><em>l'Observation.</em></h1>
+          <p class="hero-desc">
+            Pour progresser, il faut s'inspirer des meilleurs. Nous avons
+            sélectionné pour vous les pédagogues les plus clairs et les plus
+            divertissants du monde échiquéen.
           </p>
-          <div class="separator"></div>
         </div>
       </section>
 
-      <div class="creators-grid">
-        <div class="creator-card">
-          <div class="card-header">
-            <div class="avatar-frame">
-              <img
-                src="/img/song.jpg"
-                alt="Julien Song"
-                onerror="
-                  this.src =
-                    'https://ui-avatars.com/api/?name=Julien+Song&background=1a1a1a&color=D4AF37&size=128'
-                "
-              />
-            </div>
-            <h3>Julien Song</h3>
-            <span class="role-label">Le Pédagogue</span>
-          </div>
-
-          <div class="card-content">
-            <p class="description">
-              La référence francophone. Une capacité unique à expliquer les
-              concepts complexes avec une simplicité déconcertante et beaucoup
-              d'humour.
-            </p>
-
-            <div class="tags-container">
-              <span class="tag">🇫🇷 Français</span>
-              <span class="tag">Débutant</span>
-              <span class="tag">Stratégie</span>
-            </div>
-
-            <a
-              href="https://www.youtube.com/@JulienSong"
-              target="_blank"
-              class="btn-primary full-width"
-            >
-              Explorer la chaîne
-            </a>
-          </div>
+      <section class="content-section">
+        <div class="section-header-small">
+          <h3>Les Piliers de la Communauté</h3>
+          <div class="line"></div>
         </div>
 
-        <div class="creator-card featured">
-          <div class="card-header">
-            <div class="avatar-frame">
-              <img
-                src="/img/gotham.jpg"
-                alt="GothamChess"
-                onerror="
-                  this.src =
-                    'https://ui-avatars.com/api/?name=Gotham+Chess&background=1a1a1a&color=D4AF37&size=128'
-                "
-              />
+        <div class="creators-grid">
+          <div class="creator-card">
+            <div class="card-header">
+              <div class="avatar-frame">
+                <img
+                  src="/img/song.jpg"
+                  alt="Julien Song"
+                  onerror="
+                    this.src =
+                      'https://ui-avatars.com/api/?name=Julien+Song&background=1a1a1a&color=D4AF37&size=128'
+                  "
+                />
+              </div>
+              <div class="header-text">
+                <h3>Julien Song</h3>
+                <span class="role-label">Le Pédagogue</span>
+              </div>
             </div>
-            <h3>GothamChess</h3>
-            <span class="role-label">Le Showman</span>
+
+            <div class="card-content">
+              <p class="description">
+                La référence francophone absolue. Une capacité unique à
+                expliquer les concepts complexes avec simplicité et humour.
+              </p>
+
+              <div class="tags-container">
+                <span class="tag"><i class="fas fa-flag"></i> FR</span>
+                <span class="tag">Stratégie</span>
+                <span class="tag">Débutant</span>
+              </div>
+
+              <a
+                href="https://www.youtube.com/@JulienSong"
+                target="_blank"
+                class="btn-primary full-width"
+              >
+                <span>Voir la chaîne</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
           </div>
 
-          <div class="card-content">
-            <p class="description">
-              Levy Rozman transforme les échecs en spectacle. Idéal pour
-              découvrir des ouvertures agressives et suivre l'actualité des
-              tournois majeurs.
-            </p>
-
-            <div class="tags-container">
-              <span class="tag">🇺🇸 Anglais</span>
-              <span class="tag">Ouvertures</span>
-              <span class="tag">Divertissement</span>
+          <div class="creator-card featured-creator">
+            <div class="featured-badge">🔥 Tendance</div>
+            <div class="card-header">
+              <div class="avatar-frame">
+                <img
+                  src="/img/gotham.jpg"
+                  alt="GothamChess"
+                  onerror="
+                    this.src =
+                      'https://ui-avatars.com/api/?name=Gotham+Chess&background=1a1a1a&color=D4AF37&size=128'
+                  "
+                />
+              </div>
+              <div class="header-text">
+                <h3>GothamChess</h3>
+                <span class="role-label">Le Showman</span>
+              </div>
             </div>
 
-            <a
-              href="https://www.youtube.com/@GothamChess"
-              target="_blank"
-              class="btn-primary full-width"
-            >
-              Explorer la chaîne
-            </a>
+            <div class="card-content">
+              <p class="description">
+                Levy Rozman transforme les échecs en spectacle. Idéal pour
+                découvrir des ouvertures agressives et suivre l'actualité.
+              </p>
+
+              <div class="tags-container">
+                <span class="tag"><i class="fas fa-flag"></i> EN</span>
+                <span class="tag">Ouvertures</span>
+                <span class="tag">Analyse</span>
+              </div>
+
+              <a
+                href="https://www.youtube.com/@GothamChess"
+                target="_blank"
+                class="btn-primary full-width"
+              >
+                <span>Voir la chaîne</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="creator-card">
+            <div class="card-header">
+              <div class="avatar-frame">
+                <img
+                  src="/img/hikaru.jpg"
+                  alt="Hikaru"
+                  onerror="
+                    this.src =
+                      'https://ui-avatars.com/api/?name=Hikaru+N&background=1a1a1a&color=D4AF37&size=128'
+                  "
+                />
+              </div>
+              <div class="header-text">
+                <h3>GM Hikaru</h3>
+                <span class="role-label">Le Grand Maître</span>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <p class="description">
+                L'élite mondiale. Regardez ses vidéos pour être témoin d'une
+                vitesse de calcul surhumaine et d'une intuition légendaire.
+              </p>
+
+              <div class="tags-container">
+                <span class="tag"><i class="fas fa-flag"></i> EN</span>
+                <span class="tag">Blitz</span>
+                <span class="tag">Haut Niveau</span>
+              </div>
+
+              <a
+                href="https://www.youtube.com/@GMHikaru"
+                target="_blank"
+                class="btn-primary full-width"
+              >
+                <span>Voir la chaîne</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
           </div>
         </div>
-
-        <div class="creator-card">
-          <div class="card-header">
-            <div class="avatar-frame">
-              <img
-                src="/img/hikaru.jpg"
-                alt="Hikaru"
-                onerror="
-                  this.src =
-                    'https://ui-avatars.com/api/?name=Hikaru+N&background=1a1a1a&color=D4AF37&size=128'
-                "
-              />
-            </div>
-            <h3>GM Hikaru</h3>
-            <span class="role-label">Le Grand Maître</span>
-          </div>
-
-          <div class="card-content">
-            <p class="description">
-              L'élite mondiale. Regardez ses vidéos pour être témoin d'une
-              vitesse de calcul surhumaine et d'une intuition tactique
-              légendaire.
-            </p>
-
-            <div class="tags-container">
-              <span class="tag">🇺🇸 Anglais</span>
-              <span class="tag">Expert</span>
-              <span class="tag">Blitz</span>
-            </div>
-
-            <a
-              href="https://www.youtube.com/@GMHikaru"
-              target="_blank"
-              class="btn-primary full-width"
-            >
-              Explorer la chaîne
-            </a>
-          </div>
-        </div>
-      </div>
+      </section>
     </main>
 
     <footer>
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <h4>Open Chess<span class="dot">.</span></h4>
-          <p>L'excellence stratégique à portée de main.</p>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess<span style="color: var(--accent-gold)">.</span></h3>
+          <p>
+            Une plateforme conçue par des passionnés, pour des passionnés.
+            Apprenez, jouez, analysez.
+          </p>
         </div>
-        <div class="footer-nav-group">
-          <div class="footer-col">
-            <h5>Navigation</h5>
-            <ul>
-              <li><a href="/Play/index.html">Jouer</a></li>
-              <li><a href="/Puzzles/index.html">Puzzles</a></li>
-              <li><a href="/Learn/index.html">Apprendre</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h5>Support</h5>
-            <ul>
-              <li><a href="/support/index.html">Contact</a></li>
-              <li><a href="/rules/index.html">Règles</a></li>
-            </ul>
-          </div>
+
+        <div class="footer-section">
+          <h3>Navigation</h3>
+          <ul>
+            <li><a href="../Play/index.html">Jouer</a></li>
+            <li><a href="../Learn/index.html">Apprendre</a></li>
+            <li><a href="../Analyze/index.html">Analyser</a></li>
+          </ul>
         </div>
-        <div class="footer-copy">
-          &copy; <span id="year">2026</span> Open Chess.
+
+        <div class="footer-section">
+          <h3>Ressources</h3>
+          <ul>
+            <li>
+              <a href="./index.html" class="active-footer-link"
+                >Créateurs de Contenu</a
+              >
+            </li>
+            <li><a href="../rules/index.html">Règles du Jeu</a></li>
+            <li><a href="../support/index.html">Support & Aide</a></li>
+          </ul>
         </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
       </div>
     </footer>
 

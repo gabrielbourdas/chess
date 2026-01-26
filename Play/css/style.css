@@ -1,12 +1,12 @@
 /* =========================================
-   STYLE MENU PLAY (CHOIX DU MODE)
+   STYLE MENU PLAY (THEME GOLD/GLASS)
    ========================================= */
 
 .play-menu-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-  min-height: 80vh;
+  min-height: 85vh; /* Un peu plus haut pour centrer */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,15 +16,18 @@
 /* --- HEADER DU MENU --- */
 .play-header {
   text-align: center;
-  margin-top: 8rem; /* Espace sous la navbar */
-  margin-bottom: 4rem;
+  margin-top: 8rem;
+  margin-bottom: 5rem;
 }
 
 .play-header h1 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   margin-bottom: 1rem;
   color: #fff;
-  text-shadow: 0 0 20px rgba(0, 217, 246, 0.4);
+  /* Lueur dorée subtile au lieu du bleu */
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .play-header p {
@@ -32,6 +35,7 @@
   font-size: 1.2rem;
   max-width: 600px;
   margin: 0 auto;
+  line-height: 1.6;
 }
 
 /* --- GRILLE DES MODES --- */
@@ -44,36 +48,44 @@
   margin-bottom: 5rem;
 }
 
-/* --- CARTE GÉNÉRIQUE --- */
+/* --- CARTE GÉNÉRIQUE (GLASS EFFECT) --- */
 .mode-card {
   position: relative;
   flex: 1;
   min-width: 300px;
   max-width: 450px;
-  background: rgba(24, 25, 28, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* Fond vitré sombre */
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  /* Bordure subtile */
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-  padding: 3rem 2rem;
+
+  padding: 3.5rem 2.5rem;
   text-align: center;
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 400px;
+  min-height: 420px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .mode-card:hover {
-  transform: translateY(-10px);
-  background: rgba(30, 32, 36, 0.9);
+  transform: translateY(-8px);
+  background: rgba(40, 40, 40, 0.7);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
 }
 
 /* Contenu de la carte */
 .card-content {
   position: relative;
-  z-index: 2; /* Pour être au-dessus de la décoration */
+  z-index: 2;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -81,7 +93,7 @@
 }
 
 .icon-box {
-  font-size: 4rem;
+  font-size: 3.5rem;
   margin-bottom: 2rem;
   width: 100px;
   height: 100px;
@@ -89,104 +101,124 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  transition: 0.4s;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: 0.4s ease;
 }
 
 .mode-card h2 {
   color: #fff;
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-weight: 700;
 }
 
 .mode-card p {
-  color: #b9bbbe;
+  color: #aaa;
   line-height: 1.6;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
   flex-grow: 1;
 }
 
 /* BOUTON DANS LA CARTE */
 .btn-mode {
   display: inline-block;
-  padding: 12px 35px;
-  border-radius: 50px;
-  font-weight: bold;
+  padding: 16px 40px;
+  border-radius: 6px; /* Coins un peu plus carrés pour le style pro */
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
 }
 
-/* --- STYLE SPÉCIFIQUE : BOT --- */
+/* --- STYLE SPÉCIFIQUE : BOT (OR / GOLD) --- */
 .bot-mode:hover {
-  border-color: #00d9f6;
-  box-shadow: 0 0 30px rgba(0, 217, 246, 0.2);
+  border-color: rgba(212, 175, 55, 0.4);
 }
 
 .bot-mode .icon-box {
-  color: #00d9f6;
+  color: #d4af37; /* OR */
 }
 .bot-mode:hover .icon-box {
-  background: #00d9f6;
-  color: #18191c;
-  transform: scale(1.1);
+  background: rgba(212, 175, 55, 0.1);
+  color: #f0c43f;
+  border-color: #d4af37;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
 }
 
-.bot-mode .btn-mode {
-  background: transparent;
-  border: 2px solid #00d9f6;
-  color: #00d9f6;
+/* Bouton Primaire (Gold solide) */
+.bot-mode .btn-mode.primary {
+  background: #d4af37;
+  color: #1a1a1a;
+  border: none;
 }
 
-.bot-mode:hover .btn-mode {
-  background: #00d9f6;
-  color: #18191c;
+.bot-mode:hover .btn-mode.primary {
+  background: #f0c43f;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
 }
 
-/* --- STYLE SPÉCIFIQUE : ONLINE --- */
+/* --- STYLE SPÉCIFIQUE : ONLINE (ARGENT / PLATINE) --- */
+/* Pour différencier tout en restant "Premium" */
 .online-mode:hover {
-  border-color: #ff9f00; /* Orange pour différencier */
-  box-shadow: 0 0 30px rgba(255, 159, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .online-mode .icon-box {
-  color: #ff9f00;
+  color: #a0a0a0; /* Argent */
 }
 .online-mode:hover .icon-box {
-  background: #ff9f00;
-  color: #18191c;
-  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
-.online-mode .btn-mode {
+/* Bouton Secondaire (Outline) */
+.online-mode .btn-mode.secondary {
   background: transparent;
-  border: 2px solid #ff9f00;
-  color: #ff9f00;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ccc;
 }
 
-.online-mode:hover .btn-mode {
-  background: #ff9f00;
-  color: #18191c;
+.online-mode:hover .btn-mode.secondary {
+  border-color: #fff;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
 }
 
-/* --- DÉCORATION ARRIÈRE PLAN --- */
+/* --- DÉCORATION ARRIÈRE PLAN (Lueur de fond) --- */
 .bg-decoration {
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
+  /* Dégradé radial doré très subtil */
+  background: radial-gradient(
+    circle,
+    rgba(212, 175, 55, 0.05) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: 0.6s ease;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+.online-mode .bg-decoration {
+  /* Dégradé blanc pour le mode en ligne */
   background: radial-gradient(
     circle,
     rgba(255, 255, 255, 0.03) 0%,
     transparent 60%
   );
-  opacity: 0;
-  transition: 0.5s;
-  transform: scale(0.8);
-  pointer-events: none;
 }
 
 .mode-card:hover .bg-decoration {
@@ -199,28 +231,43 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 5px 12px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  color: #b9bbbe;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  color: #aaa;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-weight: 700;
+  backdrop-filter: blur(5px);
 }
 
 /* --- MOBILE --- */
 @media (max-width: 768px) {
+  .play-menu-container {
+    padding-top: 60px;
+    justify-content: flex-start;
+  }
+
   .modes-grid {
     flex-direction: column;
     align-items: center;
+    gap: 25px;
+  }
+
+  .mode-card {
+    width: 100%;
+    min-height: auto;
+    padding: 2.5rem 1.5rem;
   }
 
   .play-header {
-    margin-top: 6rem;
+    margin-top: 4rem;
+    margin-bottom: 3rem;
   }
 
   .play-header h1 {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
   }
 }

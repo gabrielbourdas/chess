@@ -56,7 +56,7 @@ var stockfish = null;
 var isEngineReady = false;
 
 try {
-  stockfish = new Worker("stockfish.js");
+  stockfish = new Worker("../../js/stockfish.js");
 
   stockfish.onmessage = function (event) {
     const message = event.data ? event.data : event;

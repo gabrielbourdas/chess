@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
     <link
@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/nav.css" />
     <link rel="stylesheet" href="./css/learn.css" />
+    <link rel="stylesheet" href="./css/opening.css" />
   </head>
   <body>
     <header>
@@ -39,215 +40,272 @@
           <span></span><span></span>
         </div>
       </nav>
-
-      <div class="mobile-menu" id="mobileMenu">
-        <a href="../Play/index.html">Jouer</a>
-        <a href="../Puzzles/index.html">Défis</a>
-        <a href="../Analyze/index.html">Analyser</a>
-        <a href="./index.html">Apprendre</a>
-        <a href="../login/index.html">Connexion</a>
-      </div>
     </header>
 
-    <main>
-      <div class="floating-nav-wrapper">
-        <nav class="sub-nav">
-          <a href="./index.html" class="sub-link">🎓 Accueil</a>
-          <a href="./Opening.html" class="sub-link active">📖 Ouvertures</a>
-          <a href="./Midgame.html" class="sub-link">⚔️ Milieu</a>
-          <a href="./Endgame.html" class="sub-link">👑 Finales</a>
-        </nav>
+    <main class="app-container">
+      <div class="dock-nav">
+        <a href="./index.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-graduation-cap"></i></span>
+          <span class="label">Accueil</span>
+        </a>
+        <a href="./Opening.html" class="dock-item active">
+          <span class="icon"><i class="fa-solid fa-book-open"></i></span>
+          <span class="label">Ouvertures</span>
+        </a>
+        <a href="./Midgame.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-chess-knight"></i></span>
+          <span class="label">Milieu</span>
+        </a>
+        <a href="./Endgame.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-crown"></i></span>
+          <span class="label">Finales</span>
+        </a>
       </div>
 
-      <div class="course-wrapper" style="padding-top: 2rem">
-        <aside class="course-sidebar">
-          <h3 class="sidebar-title">Bases & Théorie</h3>
-          <ul class="course-menu">
-            <li>
-              <a
-                href="#"
-                id="link-principes"
-                class="active"
-                onclick="switchTab('principes')"
-                >💡 Principes Généraux</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-notation" onclick="switchTab('notation')"
-                >📝 Notation Algébrique</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-valeur" onclick="switchTab('valeur')"
-                >⚖️ Valeur des Pièces</a
-              >
-            </li>
-          </ul>
+      <div class="layout-grid">
+        <aside class="sidebar-pro">
+          <div class="sidebar-header">
+            <span class="chapter-label">CHAPITRE 1</span>
+            <h3>Les Ouvertures</h3>
+          </div>
 
-          <div class="divider" style="margin: 1.5rem 0"></div>
+          <div class="nav-group">
+            <h4>Bases & Théorie</h4>
+            <button class="nav-btn active" onclick="switchContent('principes')">
+              <i class="fa-regular fa-lightbulb"></i> Principes Généraux
+            </button>
+            <button class="nav-btn" onclick="switchContent('notation')">
+              <i class="fa-solid fa-pen-fancy"></i> Notation Algébrique
+            </button>
+            <button class="nav-btn" onclick="switchContent('valeur')">
+              <i class="fa-solid fa-scale-balanced"></i> Valeur des Pièces
+            </button>
+          </div>
 
-          <h3 class="sidebar-title">
-            <a
-              href="openings/jeu_ouvert.html"
-              style="color: var(--accent-gold); text-decoration: none"
-              >Jeux Ouverts (1. e4 e5)</a
-            >
-          </h3>
-          <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            <a
-              href="openings/jeu_semi_ouvert.html"
-              style="color: var(--accent-gold); text-decoration: none"
-              >Jeux Semi-Ouverts</a
-            >
-          </h3>
-          <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            <a
-              href="openings/jeu_ferme.html"
-              style="color: var(--accent-gold); text-decoration: none"
-              >Jeux Fermés (1. d4)</a
-            >
-          </h3>
-          <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            <a
-              href="openings/ouverture_de_flanc.html"
-              style="color: var(--accent-gold); text-decoration: none"
-              >Ouvertures de Flanc</a
-            >
-          </h3>
+          <div class="nav-group">
+            <h4>Répertoire</h4>
+            <a href="openings/jeu_ouvert.html" class="nav-btn">
+              <i class="fa-solid fa-chess-pawn"></i> Jeux Ouverts (e4)
+            </a>
+            <a href="openings/jeu_ferme.html" class="nav-btn">
+              <i class="fa-solid fa-chess-rook"></i> Jeux Fermés (d4)
+            </a>
+          </div>
         </aside>
 
-        <div class="course-content">
-          <div class="hub-card">
-            <div id="tab-principes">
-              <div class="hub-header">
-                <h2>Les 3 Règles d'Or de l'Ouverture</h2>
-                <p>
-                  Avant d'apprendre des variantes par cœur, il faut comprendre
-                  la logique.
-                </p>
-              </div>
-              <hr class="divider" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>1. Contrôler le Centre</h3>
-                  <p>
-                    Le centre (cases e4, d4, e5, d5) est la colline stratégique.
-                  </p>
-                  <div class="move-box">
-                    <strong>✅ À faire :</strong>
-                    <span>Placer au moins un pion au centre (e4 ou d4).</span>
-                  </div>
-                </div>
-                <div class="principle-visual">
-                  <div class="board-mini">🎯</div>
-                </div>
-              </article>
-
-              <hr class="divider" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>2. Développer les Pièces</h3>
-                  <p>Sortez vos Cavaliers et Fous rapidement.</p>
-                  <div class="move-box">
-                    <strong>✅ Priorité :</strong>
-                    <span>Cavaliers avant les Fous.</span>
-                  </div>
-                </div>
-                <div class="principle-visual">
-                  <div class="board-mini">🚀</div>
-                </div>
-              </article>
-
-              <hr class="divider" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>3. Sécurité du Roi</h3>
-                  <p>Mettez votre Roi à l'abri avant d'attaquer.</p>
-                  <div class="move-box">
-                    <strong>✅ Objectif :</strong>
-                    <span>Roquer (0-0) avant le 10ème coup.</span>
-                  </div>
-                </div>
-                <div class="principle-visual">
-                  <div class="board-mini">🏰</div>
-                </div>
-              </article>
+        <section class="content-area">
+          <div id="content-principes" class="tab-content active">
+            <div class="content-hero">
+              <h1 class="gradient-text">Les Règles d'Or</h1>
+              <p class="hero-desc">
+                Avant d'apprendre des variantes par cœur, il faut comprendre la
+                logique. Une bonne ouverture respecte toujours ces trois
+                commandements.
+              </p>
             </div>
 
-            <div id="tab-notation" style="display: none">
-              <div class="hub-header">
-                <h2>La Langue des Échecs</h2>
-                <p>
-                  Pour lire les livres et analyser vos parties, vous devez
-                  maîtriser la notation algébrique.
-                </p>
-              </div>
-              <hr class="divider" />
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>1. Les Cases (Coordonnées)</h3>
+            <div class="cards-stack">
+              <article class="lesson-card">
+                <div class="card-content">
+                  <span class="tag">Règle #01</span>
+                  <h2>Contrôler le Centre</h2>
                   <p>
-                    Chaque case a un nom unique. On lit d'abord la
-                    <strong>Lettre</strong> puis le <strong>Chiffre</strong>.
+                    Le centre (cases e4, d4, e5, d5) est la colline stratégique
+                    de l'échiquier. Celui qui domine le centre contrôle la
+                    partie.
                   </p>
-                  <div class="move-box">
-                    <strong>Exemple :</strong>
-                    <span>e4, h7, a1</span>
+                  <div class="pro-tip">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <div>
+                      <strong>Action immédiate</strong>
+                      Placez au moins un pion au centre dès le premier coup (e4
+                      ou d4).
+                    </div>
                   </div>
                 </div>
-                <div class="principle-visual">
-                  <div class="board-mini" style="font-size: 2rem">e4</div>
+                <div class="card-visual">
+                  <div class="board-wrapper">
+                    <div
+                      style="
+                        background: #222;
+                        height: 300px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--accent-color);
+                        font-size: 5rem;
+                        border-radius: 12px;
+                      "
+                    >
+                      <i class="fa-solid fa-crosshairs"></i>
+                    </div>
+                    <div class="board-glow"></div>
+                  </div>
                 </div>
               </article>
-            </div>
 
-            <div id="tab-valeur" style="display: none">
-              <div class="hub-header">
-                <h2>Mathématiques du Jeu</h2>
-                <p>Savoir quelles pièces échanger est crucial.</p>
-              </div>
-              <hr class="divider" />
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>1. Les Pièces Légères</h3>
-                  <ul class="clean-list">
-                    <li>♟️ <strong>Pion :</strong> 1 point</li>
-                    <li>♘ <strong>Cavalier :</strong> 3 points</li>
-                    <li>♗ <strong>Fou :</strong> 3 points</li>
-                  </ul>
+              <article class="lesson-card reverse">
+                <div class="card-content">
+                  <span class="tag">Règle #02</span>
+                  <h2>Développer les Pièces</h2>
+                  <p>
+                    Ne jouez pas deux fois la même pièce dans l'ouverture.
+                    Sortez vos Cavaliers et vos Fous pour préparer le Roque.
+                  </p>
+                  <div class="pro-tip warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <div>
+                      <strong>Erreur Classique</strong>
+                      Ne sortez pas votre Dame trop tôt ! Elle se ferait
+                      attaquer par les pièces mineures adverses.
+                    </div>
+                  </div>
                 </div>
-                <div class="principle-visual">
-                  <div class="board-mini">3</div>
+                <div class="card-visual">
+                  <div class="board-wrapper">
+                    <div
+                      style="
+                        background: #222;
+                        height: 300px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--accent-color);
+                        font-size: 5rem;
+                        border-radius: 12px;
+                      "
+                    >
+                      <i class="fa-solid fa-chess-knight"></i>
+                    </div>
+                    <div class="board-glow"></div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="lesson-card">
+                <div class="card-content">
+                  <span class="tag">Règle #03</span>
+                  <h2>Sécurité du Roi</h2>
+                  <p>
+                    Un Roi au centre est un Roi mort. Votre priorité absolue est
+                    de le mettre à l'abri.
+                  </p>
+                  <div class="pro-tip">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                      <strong>L'Objectif</strong>
+                      Roquer (0-0 ou 0-0-0) avant le 10ème coup.
+                    </div>
+                  </div>
+                </div>
+                <div class="card-visual">
+                  <div class="board-wrapper">
+                    <div
+                      style="
+                        background: #222;
+                        height: 300px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--accent-color);
+                        font-size: 5rem;
+                        border-radius: 12px;
+                      "
+                    >
+                      <i class="fa-solid fa-chess-king"></i>
+                    </div>
+                    <div class="board-glow"></div>
+                  </div>
                 </div>
               </article>
             </div>
           </div>
-        </div>
+
+          <div id="content-notation" class="tab-content" style="display: none">
+            <header class="content-hero">
+              <h1 class="gradient-text">Le Langage des Échecs</h1>
+              <p class="hero-desc">
+                Pour lire les livres et analyser vos parties, la notation
+                algébrique est indispensable.
+              </p>
+            </header>
+
+            <div class="cards-stack">
+              <article class="lesson-card">
+                <div class="card-content">
+                  <span class="tag">Les Coordonnées</span>
+                  <h2>Lettre + Chiffre</h2>
+                  <p>
+                    Chaque case a un nom unique. On lit d'abord la lettre de la
+                    colonne (a-h), puis le chiffre de la rangée (1-8).
+                  </p>
+                  <div class="pgn-sequence">
+                    <span class="move-number">1.</span>
+                    <span class="move-white">e4</span>
+                    <span class="move-black">e5</span>
+                    <span class="move-number">2.</span>
+                    <span class="move-white">Nf3</span>
+                  </div>
+                </div>
+                <div class="card-visual">
+                  <div
+                    style="
+                      background: #222;
+                      height: 300px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      color: #fff;
+                      font-size: 8rem;
+                      font-family: serif;
+                      border-radius: 12px;
+                    "
+                  >
+                    e4
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div id="content-valeur" class="tab-content" style="display: none">
+            <header class="content-hero">
+              <h1 class="gradient-text">Mathématiques du Jeu</h1>
+            </header>
+          </div>
+        </section>
       </div>
     </main>
 
-    <script type="module" src="../js/auth.js"></script>
     <script>
       function toggleMenu() {
-        document.getElementById("mobileMenu").classList.toggle("active");
-        document.querySelector(".hamburger").classList.toggle("active");
+        document.querySelector(".navbar").classList.toggle("active");
       }
 
-      function switchTab(tabName) {
-        document.getElementById("tab-principes").style.display = "none";
-        document.getElementById("tab-notation").style.display = "none";
-        document.getElementById("tab-valeur").style.display = "none";
+      function switchContent(id) {
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        // Vérifie si l'élément cliqué est un bouton avant d'ajouter la classe active
+        // (pour éviter l'erreur sur les liens <a> de la sidebar)
+        if (
+          event.currentTarget.classList.contains("nav-btn") &&
+          event.currentTarget.tagName === "BUTTON"
+        ) {
+          event.currentTarget.classList.add("active");
+        }
 
-        document.getElementById("tab-" + tabName).style.display = "block";
+        const contents = document.querySelectorAll(".tab-content");
+        contents.forEach((c) => {
+          c.style.opacity = "0";
+          setTimeout(() => (c.style.display = "none"), 300);
+        });
 
-        document.getElementById("link-principes").classList.remove("active");
-        document.getElementById("link-notation").classList.remove("active");
-        document.getElementById("link-valeur").classList.remove("active");
-
-        document.getElementById("link-" + tabName).classList.add("active");
+        const target = document.getElementById("content-" + id);
+        setTimeout(() => {
+          target.style.display = "block";
+          setTimeout(() => (target.style.opacity = "1"), 50);
+        }, 300);
       }
     </script>
   </body>

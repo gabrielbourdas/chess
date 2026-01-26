@@ -1,4 +1,4 @@
-// game.js (PUZZLES - STOCKFISH LOCAL + ELO SYSTEM)
+// game.js (PUZZLES - STOCKFISH LOCAL + ELO SYSTEM) - VERSION FINALE CORRIGÉE
 
 // Importation des fonctions Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -11,7 +11,7 @@ import {
   limit,
   doc,
   getDoc,
-  setDoc, // <--- AJOUTÉ
+  setDoc,
   increment,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
@@ -39,7 +39,7 @@ var stockfish = null;
 var isEngineReady = false;
 
 try {
-  stockfish = new Worker("stockfish.js");
+  stockfish = new Worker("../../js/stockfish.js");
 
   stockfish.onmessage = function (event) {
     const message = event.data ? event.data : event;
@@ -60,17 +60,17 @@ try {
 
 // --- 3. DICTIONNAIRE DES THÈMES ---
 const THEMES_FR = {
-  mate: "Échec et Mat ! 🏁",
+  mate: "Échec et Mat ! 🏆",
   mateIn1: "Mat en 1 coup ! ⚡",
   mateIn2: "Mat en 2 coups ! 🧠",
   mateIn3: "Mat en 3 coups ! 🔥",
   fork: "Belle fourchette ! 🍴",
   pin: "Joli clouage ! 📌",
-  skewer: "Enfilade réussie ! 🍡",
+  skewer: "Enfilade réussie ! 🗡",
   discoveredAttack: "Attaque à la découverte ! 👁️",
   doubleCheck: "Échec double dévastateur ! ⚔️",
   sacrifice: "Magnifique sacrifice ! 🎁",
-  xRayAttack: "Attaque rayons X ! ☠️",
+  xRayAttack: "Attaque rayons X ! ☢️",
   promotion: "Promotion ! ♛",
   zugzwang: "Zugzwang !",
   deflection: "Déviation réussie !",
@@ -90,6 +90,8 @@ var isWrongMoveState = false;
 var currentStreak = 0;
 var selectedSquare = null;
 var draggedSource = null;
+// Variable pour empêcher le conflit Click vs Drag
+var lastSelectionTime = 0;
 
 // --- VARIABLES POUR FLÈCHES ---
 var arrowStartSquare = null;
@@ -115,9 +117,48 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialisation du système de flèches
   initArrowSystem();
 
-  $("#board").on("click", ".square-55d63", function () {
+  // Gestionnaire de clic pour toutes les cases
+  $("#board").on("click", ".square-55d63", function (e) {
+    // Ne rien faire si un drag est en cours
+    if (draggedSource !== null) return;
+
     var square = $(this).attr("data-square");
-    handleSquareInteraction(square);
+    var piece = game.get(square);
+
+    // Cas 1: Aucune pièce sélectionnée
+    if (selectedSquare === null) {
+      // Si la case contient une pièce de la bonne couleur, on la sélectionne
+      if (
+        piece &&
+        ((game.turn() === "w" && piece.color === "w") ||
+          (game.turn() === "b" && piece.color === "b"))
+      ) {
+        selectSquare(square);
+      }
+    }
+    // Cas 2: Une pièce est déjà sélectionnée
+    else {
+      // Si on clique sur la même case
+      if (square === selectedSquare) {
+        // CORRECTION CONFLIT : On ne désélectionne que si le clic n'est pas "frais" (plus de 200ms)
+        if (Date.now() - lastSelectionTime > 200) {
+          deselectSquare();
+        }
+      }
+      // Si on clique sur une autre pièce de notre couleur, on change la sélection
+      else if (
+        piece &&
+        ((game.turn() === "w" && piece.color === "w") ||
+          (game.turn() === "b" && piece.color === "b"))
+      ) {
+        deselectSquare();
+        selectSquare(square);
+      }
+      // Sinon, on tente de déplacer vers cette case
+      else {
+        handleSquareInteraction(square);
+      }
+    }
   });
 
   document
@@ -129,13 +170,12 @@ document.addEventListener("DOMContentLoaded", () => {
   loadRandomPuzzle();
 });
 
-// --- SYSTÈME DE FLÈCHES (VISUALISATION CORRIGÉE) ---
-
+// --- SYSTÈME DE FLÈCHES ---
 function initArrowSystem() {
-  // 1. Ajouter le SVG par-dessus le plateau
   const $board = $("#board");
+  // Important : pointer-events: none pour que les clics passent au travers du SVG
   const svgOverlay = `
-    <svg id="arrow-overlay" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+    <svg id="arrow-overlay" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" style="pointer-events: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100;">
       <defs>
         <marker id="arrowhead" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto">
           <polygon points="0 0, 4 2, 0 4" class="arrow-head" />
@@ -144,42 +184,32 @@ function initArrowSystem() {
       <g id="arrows-layer"></g>
     </svg>
   `;
+  $("#arrow-overlay").remove();
   $board.append(svgOverlay);
 
   const boardEl = document.getElementById("board");
+  boardEl.addEventListener("contextmenu", (e) => e.preventDefault());
 
-  // Empêcher le menu contextuel (clic droit navigateur)
-  boardEl.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-  });
-
-  // --- CORRECTION MAJEURE ICI ---
-  // On utilise { capture: true } pour intercepter l'événement AVANT chessboard.js
   boardEl.addEventListener(
     "mousedown",
     (e) => {
       if (e.button === 2) {
         // Clic Droit
-        // STOPPER LA PROPAGATION IMMÉDIATEMENT
-        // Cela empêche chessboard.js de recevoir le clic et de lancer le drag & drop de la pièce
         e.stopPropagation();
         e.stopImmediatePropagation();
-
         const square = getSquareFromEvent(e);
         if (square) arrowStartSquare = square;
       } else {
-        // Clic Gauche : On laisse passer l'événement pour jouer, mais on efface les flèches
+        // Clic Gauche
         clearArrows();
       }
     },
     { capture: true },
-  ); // <--- C'est ce paramètre qui donne la priorité
+  );
 
   boardEl.addEventListener("mouseup", (e) => {
     if (e.button === 2 && arrowStartSquare) {
-      // Pas besoin de stopper la propagation ici, le mal est évité au mousedown
       const arrowEndSquare = getSquareFromEvent(e);
-
       if (arrowEndSquare && arrowStartSquare !== arrowEndSquare) {
         toggleArrow(arrowStartSquare, arrowEndSquare);
       }
@@ -188,7 +218,6 @@ function initArrowSystem() {
   });
 }
 
-// Récupère la case (ex: "e4") sous la souris
 function getSquareFromEvent(e) {
   const el = document.elementFromPoint(e.clientX, e.clientY);
   const squareEl = $(el).closest(".square-55d63");
@@ -201,20 +230,16 @@ function toggleArrow(from, to) {
   else arrowsList.push({ from, to });
   renderArrows();
 }
-
 function clearArrows() {
   arrowsList = [];
   renderArrows();
 }
-
 function renderArrows() {
   const layer = document.getElementById("arrows-layer");
   if (!layer) return;
   layer.innerHTML = "";
-
   arrowsList.forEach((arrow) => {
     const coords = getArrowCoordinates(arrow.from, arrow.to);
-
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("x1", coords.x1);
     line.setAttribute("y1", coords.y1);
@@ -222,22 +247,17 @@ function renderArrows() {
     line.setAttribute("y2", coords.y2);
     line.setAttribute("class", "arrow-line");
     line.setAttribute("marker-end", "url(#arrowhead)");
-
     layer.appendChild(line);
   });
 }
-
 function getArrowCoordinates(from, to) {
   const files = "abcdefgh";
   const ranks = "12345678";
-
   let x1 = files.indexOf(from[0]);
   let y1 = ranks.indexOf(from[1]);
   let x2 = files.indexOf(to[0]);
   let y2 = ranks.indexOf(to[1]);
-
   const orientation = board.orientation();
-
   if (orientation === "white") {
     y1 = 7 - y1;
     y2 = 7 - y2;
@@ -245,13 +265,7 @@ function getArrowCoordinates(from, to) {
     x1 = 7 - x1;
     x2 = 7 - x2;
   }
-
-  return {
-    x1: x1 + 0.5,
-    y1: y1 + 0.5,
-    x2: x2 + 0.5,
-    y2: y2 + 0.5,
-  };
+  return { x1: x1 + 0.5, y1: y1 + 0.5, x2: x2 + 0.5, y2: y2 + 0.5 };
 }
 
 // --- FIREBASE USER ---
@@ -274,19 +288,15 @@ onAuthStateChanged(auth, async (user) => {
 async function loadRandomPuzzle() {
   updateStatus("Recherche...", false);
   deselectSquare();
-
   $("#board .square-55d63").removeClass("last-move-highlight");
   clearArrows();
-
   isPuzzleLocked = false;
   isWrongMoveState = false;
   moveIndex = 0;
   toggleRetryButton(false);
-
   const feedbackEl = document.getElementById("feedback-area");
   feedbackEl.className = "feedback";
   feedbackEl.innerHTML = "";
-
   document.getElementById("move-history").innerHTML =
     '<span class="empty-history">Chargement...</span>';
 
@@ -295,7 +305,6 @@ async function loadRandomPuzzle() {
     const puzzlesRef = collection(db, "puzzles");
     const q = query(puzzlesRef, where("__name__", ">=", randomId), limit(1));
     const snapshot = await getDocs(q);
-
     if (!snapshot.empty) setupPuzzle(snapshot.docs[0].data());
     else loadRandomPuzzle();
   } catch (error) {
@@ -333,16 +342,12 @@ function setupPuzzle(data) {
 
   game.load(data.fen);
   board.position(data.fen, false);
-
-  setTimeout(() => {
-    renderArrows();
-  }, 100);
+  setTimeout(() => renderArrows(), 100);
 
   let movesList = Array.isArray(data.moves)
     ? data.moves
     : data.moves.split(" ");
   currentPuzzle.movesList = movesList;
-
   setTimeout(() => {
     makeMoveOnBoard(movesList[0]);
     moveIndex = 1;
@@ -350,17 +355,33 @@ function setupPuzzle(data) {
   }, 500);
 }
 
-function attemptMove(source, target) {
+// Tentative de mouvement général (appelé par clic ou drop)
+function attemptMove(source, target, shouldAnimate = true) {
   if (isWrongMoveState) return null;
 
   var move = game.move({ from: source, to: target, promotion: "q" });
   if (move === null) return null;
 
-  clearArrows(); // Effacer les flèches après un coup valide
+  clearArrows();
 
-  board.position(game.fen());
-  updateMoveHistory();
-  highlightLastMove();
+  if (shouldAnimate) {
+    // CAS CLIC : Animation explicite "glissée"
+    board.move(source + "-" + target);
+
+    // CORRECTION : Délai augmenté à 350ms (vitesse move = 200ms)
+    // Pour s'assurer que l'animation est finie avant le rafraîchissement
+    setTimeout(() => {
+      board.position(game.fen(), false);
+      updateMoveHistory();
+      highlightLastMove();
+    }, 350);
+  } else {
+    // CAS DRAG : Instantané
+    board.position(game.fen(), false);
+    updateMoveHistory();
+    highlightLastMove();
+  }
+
   checkPuzzleProgress(source, target, move);
   return move;
 }
@@ -375,7 +396,6 @@ function checkPuzzleProgress(source, target, moveObj) {
     if (moveIndex >= currentPuzzle.movesList.length) {
       currentStreak++;
       document.getElementById("streak-display").innerText = currentStreak;
-
       let successMessage = "Puzzle Réussi ! 🎉";
       if (currentPuzzle.themes) {
         const themes = currentPuzzle.themes.split(" ");
@@ -386,7 +406,7 @@ function checkPuzzleProgress(source, target, moveObj) {
           }
       }
       showFeedback(true, successMessage);
-      updateClassicStats(true); // <--- Appel de la fonction corrigée
+      updateClassicStats(true);
       isPuzzleLocked = true;
       toggleRetryButton(false);
     } else {
@@ -394,7 +414,7 @@ function checkPuzzleProgress(source, target, moveObj) {
     }
   } else {
     currentStreak = 0;
-    updateClassicStats(false); // <--- Appel de la fonction corrigée
+    updateClassicStats(false);
     document.getElementById("streak-display").innerText = currentStreak;
     askStockfishRefutation();
     isWrongMoveState = true;
@@ -408,13 +428,10 @@ function askStockfishRefutation() {
     showFeedback(false, "Mauvais coup.");
     return;
   }
-
   feedbackEl.innerHTML = `<span class="error-title">Mauvais coup !</span><span class="analysis-text analyzing">🧠 Analyse en cours...</span>`;
   feedbackEl.className = "feedback error visible";
-
   const fenAfterBadMove = game.fen();
   const originalHandler = stockfish.onmessage;
-
   stockfish.onmessage = function (event) {
     const message = event.data ? event.data : event;
     if (typeof message === "string" && message.startsWith("bestmove")) {
@@ -427,9 +444,9 @@ function askStockfishRefutation() {
           to: bestReply.substring(2, 4),
           promotion: bestReply.length > 4 ? bestReply[4] : undefined,
         });
-        if (moveDetails) {
+        if (moveDetails)
           feedbackEl.innerHTML = `<span class="error-title">Mauvais coup !</span><div class="stockfish-response"><span class="stockfish-icon">🤖</span><span class="analysis-text">L'adversaire répond <strong>${moveDetails.san}</strong> et gagne.</span></div>`;
-        } else
+        else
           feedbackEl.innerHTML = `<span class="error-title">Mauvais coup !</span>`;
       } else
         feedbackEl.innerHTML = `<span class="error-title">Mauvais coup (Mat ou Pat).</span>`;
@@ -447,16 +464,74 @@ function retryLastMove() {
   updateMoveHistory();
   highlightLastMove();
   clearArrows();
-
   isWrongMoveState = false;
   toggleRetryButton(false);
-  const feedbackEl = document.getElementById("feedback-area");
-  feedbackEl.className = "feedback";
-  feedbackEl.innerHTML = "";
+  document.getElementById("feedback-area").innerHTML = "";
   updateStatusWithTurn();
 }
 
-// --- FONCTIONS VISUELLES ---
+// --- LOGIQUE D'INTERACTION CRITIQUE (DRAG & CLICK) ---
+
+// 1. Début de l'interaction (Drag uniquement)
+function onDragStart(source, piece) {
+  if (isPuzzleLocked || game.game_over() || isWrongMoveState) return false;
+
+  // Vérifier si on a le droit de toucher cette pièce
+  if (
+    (game.turn() === "w" && piece.search(/^b/) !== -1) ||
+    (game.turn() === "b" && piece.search(/^w/) !== -1)
+  ) {
+    return false;
+  }
+
+  // Marquer qu'un drag est en cours
+  draggedSource = source;
+  clearArrows();
+
+  // Sélectionner visuellement la pièce
+  selectSquare(source);
+
+  return true;
+}
+
+// 2. Fin de l'interaction (Relâchement souris après drag)
+function onDrop(source, target) {
+  // Réinitialiser l'état de drag
+  draggedSource = null;
+
+  // CORRECTION FLICKERING : Si source === target, c'est un clic.
+  if (source === target) {
+    return "snapback";
+  }
+
+  removeHighlights();
+
+  // CAS DRAG & DROP : On désactive l'animation (false) car la pièce est déjà là
+  var move = attemptMove(source, target, false);
+
+  if (move === null) {
+    return "snapback";
+  } else {
+    deselectSquare(); // Le mouvement a réussi, on enlève la sélection
+  }
+}
+
+// 3. Interaction Clic sur cases vides ou adverses
+function handleSquareInteraction(square) {
+  if (selectedSquare !== null) {
+    // CAS CLIC : On active l'animation (true) pour que la pièce glisse
+    var move = attemptMove(selectedSquare, square, true);
+
+    if (move !== null) {
+      deselectSquare();
+    } else {
+      // Clic invalide -> on désélectionne
+      deselectSquare();
+    }
+  }
+}
+
+// --- FIN LOGIQUE INTERACTION ---
 
 function highlightLastMove() {
   $("#board .square-55d63").removeClass("last-move-highlight");
@@ -467,7 +542,6 @@ function highlightLastMove() {
     $("#board .square-" + lastMove.to).addClass("last-move-highlight");
   }
 }
-
 function showHint() {
   if (isPuzzleLocked || isWrongMoveState) return;
   const nextMove = currentPuzzle.movesList[moveIndex];
@@ -481,59 +555,11 @@ function showHint() {
     $("#board .square-" + fromSquare).removeClass("highlight1-32417");
   }, 3000);
 }
-
-function handleSquareInteraction(square) {
-  if (isPuzzleLocked || game.game_over() || isWrongMoveState) return;
-  clearArrows();
-
-  if (selectedSquare !== null) {
-    if (square === selectedSquare) {
-      deselectSquare();
-      return;
-    }
-    var move = attemptMove(selectedSquare, square);
-    if (move === null) {
-      var piece = game.get(square);
-      if (piece && piece.color === game.turn()) selectSquare(square);
-      else deselectSquare();
-    } else deselectSquare();
-  } else {
-    var piece = game.get(square);
-    if (piece && piece.color === game.turn()) selectSquare(square);
-  }
-}
-
-function onDragStart(source, piece) {
-  if (isPuzzleLocked || game.game_over() || isWrongMoveState) return false;
-  if (
-    (game.turn() === "w" && piece.search(/^b/) !== -1) ||
-    (game.turn() === "b" && piece.search(/^w/) !== -1)
-  )
-    return false;
-
-  draggedSource = source;
-  clearArrows();
-  if (selectedSquare && selectedSquare !== source) deselectSquare();
-  highlightLegalMoves(source);
-}
-
-function onDrop(source, target) {
-  draggedSource = null;
-  removeHighlights();
-  if (source === target) {
-    handleSquareInteraction(source);
-    return "snapback";
-  }
-  var move = attemptMove(source, target);
-  if (move === null) return "snapback";
-}
-
 function onSnapEnd() {
   board.position(game.fen());
 }
 function toggleRetryButton(show) {
-  const btn = document.getElementById("btn-retry");
-  btn.style.display = show ? "block" : "none";
+  document.getElementById("btn-retry").style.display = show ? "block" : "none";
   document.getElementById("btn-hint").style.display = show ? "none" : "block";
 }
 function playComputerReply() {
@@ -583,8 +609,14 @@ function showFeedback(success, message) {
     : "feedback error visible";
 }
 function selectSquare(square) {
-  deselectSquare();
+  if (selectedSquare)
+    $("#board .square-" + selectedSquare).removeClass("selected-square");
+
   selectedSquare = square;
+
+  // Enregistrer l'heure de la sélection pour éviter le conflit Drag/Click
+  lastSelectionTime = Date.now();
+
   $("#board .square-" + square).addClass("selected-square");
   highlightLegalMoves(square);
 }
@@ -594,6 +626,7 @@ function deselectSquare() {
   removeHighlights();
 }
 function highlightLegalMoves(square) {
+  removeHighlights();
   var moves = game.moves({ square: square, verbose: true });
   for (var i = 0; i < moves.length; i++) {
     var target = moves[i].to;
@@ -603,14 +636,9 @@ function highlightLegalMoves(square) {
   }
 }
 function onMouseoverSquare(square) {
-  if (!draggedSource) return;
-  var moves = game.moves({ square: draggedSource, verbose: true });
-  if (moves.find((m) => m.to === square))
-    $("#board .square-" + square).addClass("legal-hover");
+  if (!draggedSource && !selectedSquare) return;
 }
-function onMouseoutSquare(square) {
-  $("#board .square-" + square).removeClass("legal-hover");
-}
+function onMouseoutSquare(square) {}
 function removeHighlights() {
   $("#board .square-55d63").removeClass("legal-move legal-capture legal-hover");
 }
@@ -623,53 +651,28 @@ function generateRandomId() {
   return result;
 }
 
-// --- SAUVEGARDE STATS (CORRIGÉE AVEC ELO & SETDOC) ---
+// --- SAUVEGARDE STATS ---
 async function updateClassicStats(isWin) {
   const user = auth.currentUser;
   if (!user) return;
-
   const userRef = doc(db, "users", user.uid);
-
   try {
-    // 1. On récupère les données actuelles
     const docSnap = await getDoc(userRef);
     const userData = docSnap.exists() ? docSnap.data() : {};
-
-    // 2. On récupère l'Elo actuel (ou 1200 par défaut)
     let currentElo = userData.currentPuzzleElo || 1200;
     const bestElo = userData.bestPuzzleElo || 1200;
-
-    // 3. Calcul simple (+10 / -10)
-    // (Tu pourras faire un calcul plus complexe plus tard basé sur la difficulté du puzzle)
-    if (isWin) {
-      currentElo += 10;
-    } else {
-      currentElo = Math.max(100, currentElo - 10);
-    }
-
-    // 4. Préparation des mises à jour
-    const updates = {
-      currentPuzzleElo: currentElo, // Sauvegarde du niveau actuel
-    };
-
+    if (isWin) currentElo += 10;
+    else currentElo = Math.max(100, currentElo - 10);
+    const updates = { currentPuzzleElo: currentElo };
     if (isWin) {
       updates.puzzlesSolved = increment(1);
       updates.puzzleStreak = increment(1);
-
-      // Mise à jour du record personnel
-      if (currentElo > bestElo) {
-        updates.bestPuzzleElo = currentElo;
-      }
+      if (currentElo > bestElo) updates.bestPuzzleElo = currentElo;
     } else {
       updates.puzzleStreak = 0;
     }
-
-    // 5. Sauvegarde
-    // On utilise setDoc avec merge: true au lieu de updateDoc
     await setDoc(userRef, updates, { merge: true });
-
-    console.log(`Niveau Puzzle mis à jour : ${currentElo}`);
   } catch (error) {
-    console.error("Erreur sauvegarde stats classiques:", error);
+    console.error("Erreur sauvegarde stats:", error);
   }
 }

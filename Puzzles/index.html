@@ -3,88 +3,152 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess - Puzzles</title>
+    <title>Open Chess | Entraînement Tactique</title>
     <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
 
     <link rel="stylesheet" href="../css/nav.css" />
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/media.css" />
-
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="/img/close.svg" alt="close" /></a>
-          </li>
-          <li class="sidebar-logo"><span>MENU</span></li>
-          <li><a href="/Play/index.html">Play</a></li>
-          <li><a href="/Puzzles/index.html">Puzzles</a></li>
-          <li><a href="/Analyze/index.html">Analyze</a></li>
-          <li><a href="/Learn/index.html">Learn</a></li>
-          <li><a href="/profile/index.html">Profile</a></li>
+      <nav class="navbar">
+        <a href="../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
+        <ul class="nav-links">
+          <li><a href="../Play/index.html">Jouer</a></li>
+          <li><a href="./index.html" class="active">Défis</a></li>
+          <li><a href="../Analyze/index.html">Analyser</a></li>
+          <li><a href="../Learn/index.html">Apprendre</a></li>
         </ul>
-
-        <ul>
-          <li class="logo-container">
-            <a href="/index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Play/index.html">Play <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Puzzles/index.html">Puzzles <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Analyze/index.html">Analyze <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Learn/index.html">Learn <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/profile/index.html">Profile <span></span></a>
-          </li>
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="../login/index.html" class="btn-login">Connexion</a>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="../Play/index.html">Jouer</a>
+        <a href="./index.html">Défis</a>
+        <a href="../Analyze/index.html">Analyser</a>
+        <a href="../Learn/index.html">Apprendre</a>
+        <a href="../login/index.html">Connexion</a>
+      </div>
     </header>
 
-    <main class="puzzle-main">
-      <div class="intro-text">
-        <h2>Entraînement Tactique</h2>
-        <p>Choisis ta méthode de progression.</p>
+    <main class="landing-main">
+      <section class="hero-section">
+        <div class="hero-content">
+          <span class="hero-tag">Zone d'Entraînement</span>
+          <h1>Maîtrisez l'Art de la <span class="text-gold">Tactique</span></h1>
+          <p class="hero-subtitle">
+            99% des parties d'échecs se jouent sur une erreur tactique. Aiguisez
+            votre vision, calculez plus loin et ne manquez plus jamais une
+            opportunité.
+          </p>
+          <div class="hero-buttons">
+            <a href="#modes" class="btn-primary">Commencer l'Entraînement</a>
+            <a href="../Learn/index.html" class="btn-secondary"
+              >Voir les Cours</a
+            >
+          </div>
+        </div>
+        <div class="hero-visual">
+          <i class="fa-solid fa-chess-knight float-icon icon-1"></i>
+          <i class="fa-solid fa-chess-queen float-icon icon-2"></i>
+        </div>
+      </section>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-number">10k+</span>
+          <span class="stat-label">Puzzles Uniques</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">2</span>
+          <span class="stat-label">Modes de Jeu</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">Elo</span>
+          <span class="stat-label">Adaptatif</span>
+        </div>
       </div>
 
-      <section class="split-container">
-        <a href="tactics/index.html" class="split-card interactive">
-          <div class="card-content">
-            <div class="icon-wrapper">⚡</div>
-            <h3>Tactique Rapide</h3>
-            <p>
-              Déplace les pièces, trouve le mat ou le gain matériel. Idéal pour
-              travailler les réflexes.
-            </p>
-            <span class="mode-tag">Interactif</span>
-          </div>
-        </a>
+      <section id="modes" class="features-section">
+        <div class="section-header">
+          <h2>Choisissez votre discipline</h2>
+          <div class="header-line"></div>
+        </div>
 
-        <a href="visualization/index.html" class="split-card visualization">
-          <div class="card-content">
-            <div class="icon-wrapper">🧠</div>
-            <h3>Visualisation Pure</h3>
-            <p>
-              Interdit de toucher ! Calcule toute la variante dans ta tête et
-              écris la solution.
-            </p>
-            <span class="mode-tag">Saisie de coups</span>
+        <div class="cards-grid">
+          <a href="tactics/index.html" class="feature-card interactive">
+            <div class="card-image">
+              <div class="icon-circle gold">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>Tactique Rapide</h3>
+              <p>
+                Reconnaissance de motifs et calcul rapide. Trouvez le mat ou le
+                gain matériel en temps limité.
+              </p>
+              <span class="link-arrow"
+                >Lancer le module <i class="fa-solid fa-arrow-right"></i
+              ></span>
+            </div>
+          </a>
+
+          <a href="visualization/index.html" class="feature-card visualization">
+            <div class="card-image">
+              <div class="icon-circle blue">
+                <i class="fa-solid fa-eye"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>Visualisation Pure</h3>
+              <p>
+                L'entraînement ultime. Calculez des variantes profondes sans
+                déplacer les pièces sur l'échiquier.
+              </p>
+              <span class="link-arrow"
+                >Lancer le module <i class="fa-solid fa-arrow-right"></i
+              ></span>
+            </div>
+          </a>
+
+          <div class="feature-card locked">
+            <div class="card-image">
+              <div class="icon-circle gray">
+                <i class="fa-solid fa-stopwatch"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>Puzzle Rush</h3>
+              <p>
+                Mode survie contre la montre. Combien de problèmes pourrez-vous
+                résoudre avant la fin du temps ?
+              </p>
+              <span class="coming-soon">Bientôt disponible</span>
+            </div>
           </div>
-        </a>
+        </div>
       </section>
     </main>
 
@@ -92,42 +156,32 @@
       <div class="footer-content">
         <div class="footer-section">
           <h3>Open Chess</h3>
-          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+          <p>La plateforme d'excellence pour les passionnés du noble jeu.</p>
         </div>
         <div class="footer-section">
-          <h3>Commencez l'aventure</h3>
-          <a href="/login/index.html" class="btn-register"
-            >S'inscrire Gratuitement</a
-          >
-        </div>
-        <div class="footer-section">
-          <h3>Liens Utiles</h3>
+          <h3>Liens Rapides</h3>
           <ul>
-            <li><a href="/rules/index.html">Règles Simplifiées</a></li>
-            <li><a href="/video/index.html">Chaîne YouTube</a></li>
-            <li><a href="/support/index.html">Support</a></li>
+            <li><a href="../Play/index.html">Jouer</a></li>
+            <li><a href="../Learn/index.html">Apprendre</a></li>
+            <li><a href="../Analyze/index.html">Analyser</a></li>
           </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Compte</h3>
+          <a href="/login/index.html" class="btn-footer"
+            >Connexion / Inscription</a
+          >
         </div>
       </div>
       <div class="footer-bottom">
-        <p>
-          &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
-        </p>
+        <p>&copy; <span id="year">2026</span> Open Chess. Design by Gemini.</p>
       </div>
     </footer>
 
     <script>
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
-        setTimeout(() => {
-          document.querySelector(".sidebar").classList.add("active");
-        }, 10);
-      }
-      function hidesidebar() {
-        document.querySelector(".sidebar").classList.remove("active");
-        setTimeout(() => {
-          document.querySelector(".sidebar").style.display = "none";
-        }, 300);
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
       }
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>

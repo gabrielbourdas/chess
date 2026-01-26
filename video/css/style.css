@@ -1,80 +1,179 @@
 /* =========================================
-   PAGE VIDÉO - STYLE "GRANDMASTER"
+   VARIABLES & GLOBALS
    ========================================= */
-
-/* Ajustement Section Hero */
-.video-hero {
-  padding: 4rem 2rem 2rem 2rem;
-  text-align: center;
+:root {
+  --bg-main: #161512; /* Noir profond */
+  --bg-secondary: #262421; /* Gris carte */
+  --bg-tertiary: #302e2c; /* Gris survol */
+  --accent-gold: #d4af37; /* Or */
+  --accent-gold-dim: rgba(212, 175, 55, 0.15);
+  --text-primary: #ffffff;
+  --text-secondary: #bababa;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
 }
 
-.section-desc {
-  max-width: 600px;
-  margin: 0 auto 2rem auto;
-  color: var(--text-secondary);
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* =========================================
+   HERO SECTION
+   ========================================= */
+.video-main {
+  flex: 1;
+  background: radial-gradient(circle at 50% 0%, #2a251a 0%, var(--bg-main) 70%);
+}
+
+.video-hero {
+  padding: 6rem 2rem 3rem 2rem;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.subtitle {
+  display: block;
+  color: var(--accent-gold);
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.video-hero h1 {
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.video-hero h1 em {
+  font-style: italic;
+  color: var(--accent-gold);
   font-weight: 300;
 }
 
-/* Grille */
-.creators-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2.5rem;
-  padding: 2rem;
+.hero-desc {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   CREATORS GRID
+   ========================================= */
+.content-section {
+  padding: 2rem 2rem 6rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Carte Créateur */
+.section-header-small {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-header-small h3 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  width: 40px;
+  height: 2px;
+  background: var(--accent-gold);
+  margin: 0 auto;
+  opacity: 0.5;
+}
+
+.creators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+/* CARTE CRÉATEUR */
 .creator-card {
-  flex: 1 1 320px;
-  max-width: 380px;
-  background-color: var(--bg-secondary);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
-  border-radius: 4px; /* Coins plus nets pour style pro */
+  border-radius: 8px;
   overflow: hidden;
-  transition:
-    transform 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .creator-card:hover {
   transform: translateY(-5px);
-  border-color: var(--accent-gold);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* En-tête de Carte (Avatar + Nom) */
+/* Badge Tendance */
+.featured-creator {
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.featured-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--accent-gold);
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+/* Header Carte (Avatar + Nom) */
 .card-header {
-  padding: 2.5rem 1.5rem 1rem 1.5rem;
+  padding: 2rem 1.5rem 1rem 1.5rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0.02),
     transparent
   );
-  border-bottom: 1px solid var(--border-subtle);
 }
 
 .avatar-frame {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  padding: 3px;
-  border: 1px solid var(--accent-gold-dim);
-  margin-bottom: 1rem;
-  transition: border-color 0.3s ease;
+  padding: 2px;
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
 }
 
 .creator-card:hover .avatar-frame {
   border-color: var(--accent-gold);
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
 }
 
 .avatar-frame img {
@@ -82,50 +181,47 @@
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  filter: grayscale(20%); /* Légère désaturation pour le style sombre */
+  filter: grayscale(30%);
   transition: filter 0.3s;
 }
 
 .creator-card:hover .avatar-frame img {
-  filter: grayscale(0%); /* Retour couleur au survol */
+  filter: grayscale(0%);
 }
 
-.card-header h3 {
+.header-text h3 {
   font-family: var(--font-heading);
-  color: var(--text-primary);
-  font-size: 1.4rem;
-  margin-bottom: 0.2rem;
+  font-size: 1.3rem;
+  margin: 0 0 0.3rem 0;
+  color: #fff;
 }
 
 .role-label {
   font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   color: var(--accent-gold);
-  font-weight: 600;
 }
 
-/* Contenu de la Carte */
+/* Corps Carte */
 .card-content {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  text-align: center;
+  flex: 1;
 }
 
 .description {
-  font-size: 0.95rem;
   color: var(--text-secondary);
+  font-size: 0.95rem;
   line-height: 1.6;
   margin-bottom: 1.5rem;
-  flex-grow: 1;
+  flex: 1; /* Pousse les tags et bouton vers le bas */
 }
 
-/* Tags / Badges */
+/* Tags */
 .tags-container {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 2rem;
@@ -133,33 +229,104 @@
 
 .tag {
   font-size: 0.75rem;
-  padding: 0.3rem 0.8rem;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-subtle);
   border-radius: 50px;
-  color: #ccc;
-  background: rgba(255, 255, 255, 0.03);
-  transition: 0.3s;
+  color: #aaa;
 }
 
-.creator-card:hover .tag {
-  border-color: rgba(212, 175, 55, 0.3);
-  color: #fff;
-}
-
-/* Bouton Spécifique */
-.full-width {
-  width: 100%;
+/* Bouton */
+.btn-primary {
+  background: var(--accent-gold);
+  color: #000 !important; /* Force le noir */
+  padding: 0.8rem;
+  border-radius: 4px;
   text-align: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box; /* Pour que le padding ne dépasse pas */
+}
+
+.btn-primary:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================
+   FOOTER (Standardisé)
+   ========================================= */
+footer {
+  background: #0f0f0f;
+  border-top: 1px solid var(--border-subtle);
+  padding: 4rem 2rem 2rem;
   margin-top: auto;
 }
 
-/* Responsive */
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-section h3 {
+  font-family: var(--font-heading);
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-section p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+.footer-section ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-section a {
+  color: var(--text-secondary);
+  transition: color 0.3s;
+}
+.footer-section a:hover {
+  color: var(--accent-gold);
+}
+
+/* Lien actif dans le footer */
+.active-footer-link {
+  color: var(--accent-gold) !important;
+  font-weight: 500;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+  color: #555;
+  font-size: 0.85rem;
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .video-hero {
-    padding-top: 2rem;
+  .video-hero h1 {
+    font-size: 2.5rem;
   }
   .creators-grid {
-    gap: 2rem;
-    padding: 1rem;
+    grid-template-columns: 1fr;
   }
 }

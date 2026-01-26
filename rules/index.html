@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Open Chess | Les Règles</title>
-    <link rel="icon" href="/img/logo.png" />
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
     />
     <link
@@ -31,8 +31,8 @@
         <ul class="nav-links">
           <li><a href="../Play/index.html">Jouer</a></li>
           <li><a href="../Puzzles/index.html">Défis</a></li>
-          <li><a href="../Learn/index.html">Apprendre</a></li>
           <li><a href="../Analyze/index.html">Analyser</a></li>
+          <li><a href="../Learn/index.html">Apprendre</a></li>
         </ul>
 
         <div class="nav-actions">
@@ -47,21 +47,21 @@
       <div class="mobile-menu" id="mobileMenu">
         <a href="../Play/index.html">Jouer</a>
         <a href="../Puzzles/index.html">Défis</a>
+        <a href="../Analyze/index.html">Analyser</a>
         <a href="../Learn/index.html">Apprendre</a>
         <a href="../login/index.html">Connexion</a>
       </div>
     </header>
 
-    <main>
+    <main class="rules-main">
       <section class="rules-hero">
-        <div class="section-header">
+        <div class="hero-content">
           <span class="subtitle">Le Manuel du Stratège</span>
-          <h2>Les Lois de l'Échiquier</h2>
-          <p class="section-desc">
+          <h1>Les Lois de <br /><em>l'Échiquier.</em></h1>
+          <p class="hero-desc">
             Le but ultime est simple : piéger le Roi adverse ("Échec et Mat").
             Voici les fondamentaux pour commencer votre ascension.
           </p>
-          <div class="separator"></div>
         </div>
       </section>
 
@@ -186,16 +186,16 @@
             <div class="endgame-box win">
               <h4>Échec et Mat</h4>
               <p>
-                Le Roi est attaqué et n'a aucune case de fuite. C'est la
-                victoire.
+                Le Roi est attaqué et n'a aucune case de fuite. La partie est
+                gagnée immédiatement.
               </p>
             </div>
 
             <div class="endgame-box draw">
               <h4>Le Pat (Match Nul)</h4>
               <p>
-                Le Roi n'est PAS attaqué, mais le joueur ne peut bouger aucune
-                pièce. La partie est nulle.
+                Le Roi n'est PAS attaqué, mais le joueur au trait ne peut bouger
+                aucune pièce légalement. La partie est nulle.
               </p>
             </div>
           </div>
@@ -204,31 +204,39 @@
     </main>
 
     <footer>
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <h4>Open Chess<span class="dot">.</span></h4>
-          <p>L'excellence stratégique à portée de main.</p>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess<span style="color: var(--accent-gold)">.</span></h3>
+          <p>
+            Les bases sont posées. À vous d'écrire l'histoire sur l'échiquier.
+          </p>
         </div>
-        <div class="footer-nav-group">
-          <div class="footer-col">
-            <h5>Navigation</h5>
-            <ul>
-              <li><a href="../Play/index.html">Jouer</a></li>
-              <li><a href="../Puzzles/index.html">Puzzles</a></li>
-              <li><a href="../Learn/index.html">Apprendre</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h5>Support</h5>
-            <ul>
-              <li><a href="../support/index.html">Contact</a></li>
-              <li><a href="../rules/index.html">Règles</a></li>
-            </ul>
-          </div>
+
+        <div class="footer-section">
+          <h3>Navigation</h3>
+          <ul>
+            <li><a href="../Play/index.html">Jouer</a></li>
+            <li><a href="../Learn/index.html">Apprendre</a></li>
+            <li><a href="../Puzzles/index.html">Défis</a></li>
+          </ul>
         </div>
-        <div class="footer-copy">
-          &copy; <span id="year">2026</span> Open Chess.
+
+        <div class="footer-section">
+          <h3>Ressources</h3>
+          <ul>
+            <li>
+              <a href="./index.html" class="active-footer-link"
+                >Règles du Jeu</a
+              >
+            </li>
+            <li><a href="../support/index.html">Support & Aide</a></li>
+            <li><a href="../video/index.html">Créateurs de Contenu</a></li>
+          </ul>
         </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
       </div>
     </footer>
 

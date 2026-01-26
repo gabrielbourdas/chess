@@ -1,192 +1,425 @@
-/* --- 1. RESET COMPLET DU MAIN --- */
-/* On cible précisément pour écraser toutes les règles globales */
-body > main.puzzle-main {
-  /* POSITIONNEMENT : On transforme le main en une boîte flexible centrée */
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important; /* Centre horizontalement (Gauche/Droite) */
-  justify-content: center !important; /* Centre verticalement (Haut/Bas) */
-
-  /* TAILLE : On force le plein écran */
-  width: 100% !important;
-  max-width: 100% !important;
-  min-height: 100vh !important; /* Toute la hauteur de l'écran */
-
-  /* NETTOYAGE : On vire les marges parasites */
-  margin: 0 !important;
-  padding: 80px 20px !important; /* Juste de l'espace pour le header en haut */
-  box-sizing: border-box !important; /* Empêche le padding d'agrandir la boîte */
+/* =========================================
+   VARIABLES & GLOBALS
+   ========================================= */
+:root {
+  --bg-main: #121212; /* Noir profond */
+  --bg-surface: #1e1e1e; /* Gris très sombre pour les cartes */
+  --accent-gold: #d4af37; /* Or Luxe */
+  --accent-blue: #5d9cec; /* Bleu doux */
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+  --card-border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* --- 2. LE TITRE --- */
-.intro-text {
-  text-align: center !important;
-  margin-bottom: 2rem !important;
-  width: 100%; /* S'assure que le texte prend toute la largeur pour se centrer */
-}
-
-.intro-text h2 {
-  color: #fff;
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-/* --- 3. LA GROSSE BOÎTE (SPLIT CONTAINER) --- */
-.split-container {
-  /* TAILLE */
-  width: 100% !important;
-  max-width: 1400px !important; /* Largeur max imposante */
-  height: 60vh !important; /* Hauteur relative à l'écran (60%) */
-  min-height: 500px !important; /* Sécurité pour petits écrans */
-
-  /* STYLE */
-  display: flex;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-
-  /* On s'assure qu'elle ne déborde pas */
-  margin: 0 !important;
-}
-
-/* ... La suite (à partir de .split-card) ne change pas ... */
-
-/* ... La suite (à partir de .split-card) ne change pas ... */
-
-/* ... Le reste du CSS (à partir de .split-card) reste identique ... */
-
-/* --- LES DEUX BLOCS --- */
-.split-card {
-  position: relative;
-  flex: 1; /* 50% chacun au départ */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  margin: 0;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+main.landing-main {
+  flex: 1;
+  width: 100%;
+}
+
+/* =========================================
+   1. HERO SECTION (L'En-tête)
+   ========================================= */
+.hero-section {
+  position: relative;
+  padding: 8rem 2rem 6rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+  overflow: hidden;
+  /* Fond subtil (Lumière au centre) */
+  background: radial-gradient(
+    circle at center,
+    rgba(212, 175, 55, 0.08) 0%,
+    transparent 70%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 6px 16px;
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.hero-section h1 {
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.text-gold {
+  color: var(--accent-gold);
+  font-style: italic;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 3rem;
+  font-weight: 300;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Boutons Pro */
+.btn-primary {
+  background-color: var(--accent-gold);
+  color: #000;
+  padding: 1rem 2.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+  background-color: #b59020;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1rem 2.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Éléments Flottants (Déco) */
+.hero-visual .float-icon {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.03);
+  z-index: 1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.icon-1 {
+  font-size: 15rem;
+  top: 10%;
+  left: -5%;
+  transform: rotate(-15deg);
+}
+.icon-2 {
+  font-size: 10rem;
+  bottom: 10%;
+  right: -5%;
+  transform: rotate(15deg);
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-20px) rotate(var(--r, 0deg));
+  }
+}
+
+/* =========================================
+   2. STATS BAR
+   ========================================= */
+.stats-bar {
+  display: flex;
   justify-content: center;
   align-items: center;
-  text-decoration: none;
-  transition:
-    flex 0.4s ease,
-    background 0.4s ease; /* Animation fluide */
-  padding: 2rem;
+  gap: 4rem;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 4rem;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.stat-item {
   text-align: center;
 }
 
-/* --- BLOC GAUCHE : INTERACTIF --- */
-.split-card.interactive {
-  background: linear-gradient(180deg, #1e2024 0%, #18191c 100%);
-
-  /* C'est CETTE ligne qu'on change : */
-  /* On passe du gris (#383c44) au bleu cyan du thème (#00d9f6) */
-  /* J'ai mis 2px pour que la séparation soit bien nette */
-  border-right: 2px solid #00d9f6;
+.stat-number {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: #fff;
 }
 
-.split-card.interactive:hover {
-  flex: 1.3; /* S'agrandit un peu */
-  background: linear-gradient(180deg, #24272e 0%, #1e2024 100%);
+.stat-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
 }
 
-.split-card.interactive .icon-wrapper {
-  background: rgba(0, 217, 246, 0.1);
-  color: #00d9f6;
-  box-shadow: 0 0 15px rgba(0, 217, 246, 0.1);
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.split-card.interactive:hover .icon-wrapper {
-  transform: scale(1.1) rotate(-5deg);
-  background: rgba(0, 217, 246, 0.2);
+/* =========================================
+   3. FEATURES GRID (Les Cartes)
+   ========================================= */
+.features-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem 2rem;
 }
 
-/* --- BLOC DROITE : VISUALISATION --- */
-.split-card.visualization {
-  background: linear-gradient(180deg, #1e2024 0%, #18191c 100%);
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
 }
 
-.split-card.visualization:hover {
-  flex: 1.3; /* S'agrandit un peu */
-  background: linear-gradient(180deg, #24272e 0%, #1e2024 100%);
+.section-header h2 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
 }
 
-/* Pour le bloc de droite, on utilise une couleur différente (ex: Orange ou Violet) */
-.split-card.visualization .icon-wrapper {
-  background: rgba(255, 159, 0, 0.1);
-  color: #ff9f00; /* Orange du thème */
-  box-shadow: 0 0 15px rgba(255, 159, 0, 0.1);
+.header-line {
+  width: 60px;
+  height: 3px;
+  background: var(--accent-gold);
+  margin: 0 auto;
 }
 
-.split-card.visualization:hover .icon-wrapper {
-  transform: scale(1.1) rotate(5deg);
-  background: rgba(255, 159, 0, 0.2);
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
 }
 
-/* --- ÉLÉMENTS INTERNES --- */
-.icon-wrapper {
-  width: 80px;
-  height: 80px;
+.feature-card {
+  background: var(--bg-surface);
+  border: var(--card-border);
+  border-radius: 8px;
+  padding: 3rem 2rem;
+  text-decoration: none;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alignement gauche "Pro" */
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.card-image {
+  margin-bottom: 2rem;
+}
+
+.icon-circle {
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.split-card h3 {
-  color: #fff;
+.icon-circle.gold {
+  color: var(--accent-gold);
+}
+.icon-circle.blue {
+  color: var(--accent-blue);
+}
+.icon-circle.gray {
+  color: #666;
+}
+
+.card-body h3 {
+  font-family: var(--font-heading);
   font-size: 1.8rem;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  color: #fff;
+  margin: 0 0 1rem 0;
 }
 
-.split-card p {
-  color: #b9bbbe;
-  max-width: 350px;
+.card-body p {
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 2rem;
+  font-size: 1rem;
 }
 
-.mode-tag {
-  display: inline-block;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.05);
+.link-arrow {
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: 0.3s;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: gap 0.2s ease;
 }
 
-.split-card:hover .mode-tag {
-  background: #fff;
+.interactive .link-arrow {
+  color: var(--accent-gold);
+}
+.visualization .link-arrow {
+  color: var(--accent-blue);
+}
+
+.feature-card:hover .link-arrow {
+  gap: 1rem;
+}
+
+/* Style "Locked" */
+.feature-card.locked {
+  opacity: 0.6;
+  cursor: default;
+  border-style: dashed;
+}
+
+.feature-card.locked:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.coming-soon {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #666;
+  border: 1px solid #444;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+/* =========================================
+   FOOTER (Standardisé)
+   ========================================= */
+footer {
+  background: #0a0a0a;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 4rem 2rem 2rem;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-section h3 {
+  font-family: var(--font-heading);
+  color: var(--accent-gold);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-section p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+.footer-section ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-section a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.footer-section a:hover {
+  color: #fff;
+}
+
+.btn-footer {
+  display: inline-block;
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+.btn-footer:hover {
+  background: var(--accent-gold);
   color: #000;
 }
 
-/* --- RESPONSIVE MOBILE --- */
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .split-container {
+  .hero-section h1 {
+    font-size: 2.5rem;
+  }
+  .stats-bar {
     flex-direction: column;
-    height: auto;
+    gap: 1.5rem;
   }
-
-  .split-card {
-    padding: 3rem 1rem;
-    border-right: none;
-    border-bottom: 1px solid #383c44;
+  .stat-divider {
+    width: 40px;
+    height: 1px;
   }
-
-  .split-card:last-child {
-    border-bottom: none;
-  }
-
-  /* On désactive l'effet d'agrandissement sur mobile */
-  .split-card:hover {
-    flex: 1;
+  .cards-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,49 +1,87 @@
 /* =========================================
-   PAGE SUPPORT - STYLE "GRANDMASTER"
+   VARIABLES & GLOBALS
    ========================================= */
+:root {
+  --bg-main: #161512; /* Noir profond */
+  --bg-secondary: #262421; /* Gris carte */
+  --accent-gold: #d4af37; /* Or */
+  --accent-gold-dim: rgba(212, 175, 55, 0.15);
+  --text-primary: #ffffff;
+  --text-secondary: #bababa;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+}
 
-/* --- HERO SUPPORT --- */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* =========================================
+   HERO SECTION
+   ========================================= */
+.support-main {
+  flex: 1;
+  background: radial-gradient(circle at 50% 0%, #2a251a 0%, var(--bg-main) 70%);
+}
+
 .support-hero {
-  padding: 4rem 2rem 1rem 2rem;
+  padding: 6rem 2rem 2rem 2rem;
   text-align: center;
-}
-
-.support-hero h2 {
-  font-family: var(--font-heading);
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-.support-hero h2 em {
-  color: var(--text-secondary);
-  font-weight: 300;
-  font-style: italic;
-}
-
-.section-desc {
-  max-width: 600px;
-  margin: 0 auto 2rem auto;
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-  font-weight: 300;
-}
-
-.separator {
-  width: 50px;
-  height: 2px;
-  background: var(--accent-gold);
+  max-width: 900px;
   margin: 0 auto;
-  opacity: 0.7;
 }
 
-/* --- CONTACT SECTION (CARTE) --- */
-.contact-section {
+.subtitle {
+  display: block;
+  color: var(--accent-gold);
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.support-hero h1 {
+  font-family: var(--font-heading);
+  font-size: 3.5rem; /* Taille adaptée */
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.support-hero h1 em {
+  font-style: italic;
+  color: var(--accent-gold);
+  font-weight: 300;
+}
+
+.hero-desc {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   CONTACT CARD
+   ========================================= */
+.contact-wrapper {
+  padding: 3rem 1rem;
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin: 4rem 0;
-  padding: 0 1rem;
 }
 
 .support-card {
@@ -53,63 +91,93 @@
   padding: 3.5rem 2rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
-  border-radius: 4px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .support-card:hover {
-  border-color: var(--accent-gold);
+  border-color: rgba(212, 175, 55, 0.4);
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.icon-box {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--accent-gold);
+  margin-bottom: 2rem;
 }
 
 .support-card h3 {
-  margin-bottom: 1rem;
   font-family: var(--font-heading);
-  font-size: 1.8rem;
-  color: var(--text-primary);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #fff;
 }
 
 .support-card p {
   color: var(--text-secondary);
+  line-height: 1.6;
   margin-bottom: 2.5rem;
-  font-size: 1rem;
-  line-height: 1.7;
   max-width: 500px;
 }
 
-/* Icône */
-.icon-box {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
-  color: var(--accent-gold);
-  /* Optionnel: effet de cercle autour */
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border-subtle);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.02);
+/* Bouton (Correction Noir sur Or) */
+.btn-primary {
+  background: var(--accent-gold);
+  color: #000 !important; /* Force le texte noir */
+  padding: 1rem 2.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
 }
 
-/* --- FAQ SECTION --- */
+.btn-primary:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================
+   FAQ SECTION
+   ========================================= */
 .faq-container {
   max-width: 800px;
   margin: 0 auto 6rem auto;
-  padding: 0 1rem;
+  padding: 0 2rem;
 }
 
-.faq-container h3 {
+.section-header-small {
   text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-header-small h3 {
   font-family: var(--font-heading);
   font-size: 2rem;
-  color: var(--text-primary);
-  margin-bottom: 3rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  width: 40px;
+  height: 2px;
+  background: var(--accent-gold);
+  margin: 0 auto;
+  opacity: 0.5;
 }
 
 .faq-wrapper {
@@ -128,7 +196,7 @@ details {
 
 details[open] {
   border-color: var(--accent-gold);
-  background: rgba(212, 175, 55, 0.02); /* Très légère teinte or */
+  background: rgba(212, 175, 55, 0.03);
 }
 
 summary {
@@ -147,7 +215,7 @@ summary:hover {
   color: var(--accent-gold);
 }
 
-/* La croix / le plus */
+/* Croix d'ouverture */
 summary::after {
   content: "+";
   position: absolute;
@@ -161,10 +229,9 @@ summary::after {
 }
 
 details[open] summary::after {
-  transform: translateY(-50%) rotate(45deg); /* Devient une croix */
+  transform: translateY(-50%) rotate(45deg);
 }
 
-/* Masquer la flèche par défaut des navigateurs */
 summary::-webkit-details-marker {
   display: none;
 }
@@ -178,7 +245,6 @@ summary::-webkit-details-marker {
   animation: fadeIn 0.4s ease;
 }
 
-/* Animation douce */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -190,15 +256,74 @@ summary::-webkit-details-marker {
   }
 }
 
-/* Responsive */
+/* =========================================
+   FOOTER
+   ========================================= */
+footer {
+  background: #0f0f0f;
+  border-top: 1px solid var(--border-subtle);
+  padding: 4rem 2rem 2rem;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-section h3 {
+  font-family: var(--font-heading);
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-section p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+.footer-section ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-section a {
+  color: var(--text-secondary);
+  transition: color 0.3s;
+}
+.footer-section a:hover {
+  color: var(--accent-gold);
+}
+
+/* Lien actif footer */
+.active-footer-link {
+  color: var(--accent-gold) !important;
+  font-weight: 500;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+  color: #555;
+  font-size: 0.85rem;
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .support-hero h2 {
-    font-size: 2.2rem;
+  .support-hero h1 {
+    font-size: 2.5rem;
   }
   .support-card {
     padding: 2rem 1.5rem;
-  }
-  .faq-container h3 {
-    font-size: 1.8rem;
   }
 }

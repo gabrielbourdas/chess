@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess | Les Finales</title>
+    <title>Open Chess | Maîtrise des Finales</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
     <link
@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/nav.css" />
     <link rel="stylesheet" href="./css/learn.css" />
+    <link rel="stylesheet" href="./css/endgame.css" />
   </head>
   <body>
     <header>
@@ -39,195 +40,209 @@
           <span></span><span></span>
         </div>
       </nav>
-      <div class="mobile-menu" id="mobileMenu">
-        <a href="../Play/index.html">Jouer</a>
-        <a href="../Puzzles/index.html">Défis</a>
-        <a href="../Analyze/index.html">Analyser</a>
-        <a href="./index.html">Apprendre</a>
-        <a href="../login/index.html">Connexion</a>
-      </div>
     </header>
 
-    <main>
-      <div class="floating-nav-wrapper">
-        <nav class="sub-nav">
-          <a href="./index.html" class="sub-link">🎓 Accueil</a>
-          <a href="./Opening.html" class="sub-link">📖 Ouvertures</a>
-          <a href="./Midgame.html" class="sub-link">⚔️ Milieu</a>
-          <a href="./Endgame.html" class="sub-link active">👑 Finales</a>
-        </nav>
+    <main class="app-container">
+      <div class="dock-nav">
+        <a href="./index.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-graduation-cap"></i></span>
+          <span class="label">Accueil</span>
+        </a>
+        <a href="./Opening.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-book-open"></i></span>
+          <span class="label">Ouvertures</span>
+        </a>
+        <a href="./Midgame.html" class="dock-item">
+          <span class="icon"><i class="fa-solid fa-chess-knight"></i></span>
+          <span class="label">Milieu</span>
+        </a>
+        <a href="./Endgame.html" class="dock-item active">
+          <span class="icon"><i class="fa-solid fa-crown"></i></span>
+          <span class="label">Finales</span>
+        </a>
       </div>
 
-      <div class="course-wrapper" style="padding-top: 2rem">
-        <aside class="course-sidebar">
-          <h3 class="sidebar-title">Technique Pure</h3>
-          <ul class="course-menu">
-            <li>
-              <a
-                href="#"
-                id="link-mats"
-                class="active"
-                onclick="switchTab('mats')"
-                >🏁 Mats Élémentaires</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-pions" onclick="switchTab('pions')"
-                >♟️ Finales de Pions</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-tours" onclick="switchTab('tours')"
-                >🏰 Finales de Tours</a
-              >
-            </li>
-          </ul>
+      <div class="layout-grid">
+        <aside class="sidebar-pro">
+          <div class="sidebar-header">
+            <span class="chapter-label">CHAPITRE 3</span>
+            <h3>Les Finales</h3>
+          </div>
 
-          <h3 class="sidebar-title" style="margin-top: 1.5rem">
-            Principes Clés
-          </h3>
-          <ul class="course-menu">
-            <li>
-              <a href="#" id="link-roi" onclick="switchTab('roi')"
-                >🤴 L'Activité du Roi</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-zugzwang" onclick="switchTab('zugzwang')"
-                >⛔ Le Zugzwang</a
-              >
-            </li>
-            <li>
-              <a href="#" id="link-pont" onclick="switchTab('pont')"
-                >🪜 La construction de Pont</a
-              >
-            </li>
-          </ul>
+          <div class="nav-group">
+            <h4>Technique Pure</h4>
+            <button class="nav-btn active" onclick="switchContent('mats')">
+              <i class="fa-solid fa-flag-checkered"></i> Mats Élémentaires
+            </button>
+            <button class="nav-btn" onclick="switchContent('pions')">
+              <i class="fa-solid fa-chess-pawn"></i> Finales de Pions
+            </button>
+            <button class="nav-btn" onclick="switchContent('tours')">
+              <i class="fa-solid fa-chess-rook"></i> Finales de Tours
+            </button>
+          </div>
+
+          <div class="nav-group">
+            <h4>Principes Clés</h4>
+            <button class="nav-btn" onclick="switchContent('roi')">
+              <i class="fa-solid fa-crown"></i> Activité du Roi
+            </button>
+            <button class="nav-btn" onclick="switchContent('zugzwang')">
+              <i class="fa-solid fa-hand"></i> Le Zugzwang
+            </button>
+          </div>
         </aside>
 
-        <div class="course-content">
-          <div class="hub-card">
-            <div id="tab-mats">
-              <div class="hub-header">
-                <h2>Finir la Partie</h2>
-                <p>
-                  Avoir l'avantage ne suffit pas. Il faut savoir porter
-                  l'estocade finale sans laisser de chance de "Pat".
-                </p>
-              </div>
-              <hr class="divider" />
+        <section class="content-area">
+          <div id="content-mats" class="tab-content active">
+            <div class="content-hero">
+              <h1 class="gradient-text">Finir la Partie</h1>
+              <p class="hero-desc">
+                Avoir l'avantage ne suffit pas. Il faut savoir porter l'estocade
+                finale avec précision, sans laisser la moindre chance de "Pat" à
+                votre adversaire.
+              </p>
+            </div>
 
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>1. Roi + Dame vs Roi</h3>
+            <div class="cards-stack">
+              <article class="lesson-card">
+                <div class="card-content">
+                  <span class="tag">Essentiel #01</span>
+                  <h2>Roi + Dame vs Roi</h2>
                   <p>
-                    La méthode de la "Boîte". Forcez le Roi adverse vers le bord
-                    en réduisant l'espace petit à petit avec votre Dame.
+                    Aussi appelé "Le Baiser de la Mort". La méthode consiste à
+                    enfermer le Roi adverse dans une boîte de plus en plus
+                    petite, jusqu'à le forcer au bord de l'échiquier.
                   </p>
-                  <div class="move-box">
-                    <strong>⚠️ Attention au Pat :</strong>
-                    <span
-                      >Laissez toujours une case de fuite au Roi adverse
-                      jusqu'au moment du Mat.</span
-                    >
+                  <div class="pro-tip warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <div>
+                      <strong>Attention au Pat !</strong>
+                      Laissez toujours une case de fuite (respiration) au Roi
+                      adverse tant que vous n'êtes pas prêt à mater.
+                    </div>
                   </div>
                 </div>
-                <div class="position-image-container">
-                  <img
-                    class="position-image"
-                    src="https://lichess1.org/export/fen.gif?fen=8/8/4k3/8/3Q4/8/3K4/8 w - - 0 1&color=white&theme=brown"
-                    alt="Roi Dame"
-                  />
-                </div>
-              </article>
-
-              <hr class="divider" />
-
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>2. Roi + Tour vs Roi</h3>
-                  <p>
-                    Plus difficile. La Tour seule ne suffit pas, vous devez
-                    utiliser votre Roi pour couper la retraite de l'ennemi.
-                  </p>
-                </div>
-                <div class="position-image-container">
-                  <img
-                    class="position-image"
-                    src="https://lichess1.org/export/fen.gif?fen=1k6/6R1/1K6/8/8/8/8/8 w - - 0 1&color=white&theme=brown"
-                    alt="Roi Tour"
-                  />
-                </div>
-              </article>
-            </div>
-
-            <div id="tab-pions" style="display: none">
-              <div class="hub-header">
-                <h2>La Guerre des Pions</h2>
-                <p>C'est ici que le calcul pur est roi.</p>
-              </div>
-              <hr class="divider" />
-              <article class="principle-section">
-                <div class="principle-text">
-                  <h3>1. La Règle du Carré</h3>
-                  <div class="move-box">
-                    <strong>📏 La Règle :</strong>
-                    <span
-                      >Tracez un carré imaginaire depuis le pion jusqu'à la case
-                      de promotion.</span
-                    >
+                <div class="card-visual">
+                  <div class="board-wrapper">
+                    <img
+                      src="https://lichess1.org/export/fen.gif?fen=8/8/4k3/8/3Q4/8/3K4/8 w - - 0 1&color=white&theme=brown"
+                      alt="Finale Dame contre Roi"
+                    />
+                    <div class="board-glow"></div>
                   </div>
                 </div>
-                <div class="position-image-container">
-                  <img
-                    class="position-image"
-                    src="https://lichess1.org/export/fen.gif?fen=8/8/3k4/1P5p/6pP/4K1P1/8/8%20w%20-%20-%200%201&color=white&theme=brown"
-                    alt="Regle Carré"
-                  />
+              </article>
+
+              <article class="lesson-card reverse">
+                <div class="card-content">
+                  <span class="tag">Essentiel #02</span>
+                  <h2>Roi + Tour vs Roi</h2>
+                  <p>
+                    Plus technique que la Dame. La Tour seule ne peut pas mater
+                    ; vous devez utiliser votre propre Roi pour couper la
+                    retraite de l'ennemi ("L'opposition").
+                  </p>
+                  <div class="pro-tip">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <div>
+                      <strong>Le principe clé</strong>
+                      Votre Roi doit être face au Roi adverse pour forcer ce
+                      dernier à reculer quand la Tour donne échec.
+                    </div>
+                  </div>
+                </div>
+                <div class="card-visual">
+                  <div class="board-wrapper">
+                    <img
+                      src="https://lichess1.org/export/fen.gif?fen=1k6/6R1/1K6/8/8/8/8/8 w - - 0 1&color=white&theme=brown"
+                      alt="Finale Tour contre Roi"
+                    />
+                    <div class="board-glow"></div>
+                  </div>
                 </div>
               </article>
-            </div>
-
-            <div id="tab-tours" style="display: none">
-              <div class="hub-header"><h2>Finales de Tours</h2></div>
-              <p>Contenu original...</p>
-            </div>
-            <div id="tab-roi" style="display: none">
-              <div class="hub-header"><h2>Activité du Roi</h2></div>
-              <p>Contenu original...</p>
-            </div>
-            <div id="tab-zugzwang" style="display: none">
-              <div class="hub-header"><h2>Le Zugzwang</h2></div>
-              <p>Contenu original...</p>
-            </div>
-            <div id="tab-pont" style="display: none">
-              <div class="hub-header"><h2>Le Pont</h2></div>
-              <p>Contenu original...</p>
             </div>
           </div>
-        </div>
+
+          <div id="content-pions" class="tab-content" style="display: none">
+            <header class="content-hero">
+              <h1 class="gradient-text">La Guerre des Pions</h1>
+              <p class="hero-desc">
+                C'est ici que le calcul pur est roi. Chaque temps compte pour la
+                promotion.
+              </p>
+            </header>
+
+            <div class="cards-stack">
+              <article class="lesson-card">
+                <div class="card-content">
+                  <span class="tag">Géométrie</span>
+                  <h2>La Règle du Carré</h2>
+                  <p>
+                    Comment savoir instantanément si votre pion peut aller à
+                    Dame sans être rattrapé par le Roi adverse ? Tracez un carré
+                    imaginaire !
+                  </p>
+                  <div class="pro-tip">
+                    <i class="fa-solid fa-ruler-combined"></i>
+                    <div>
+                      <strong>Astuce Visuelle</strong>
+                      Si le Roi adverse peut entrer dans le carré du pion, il
+                      peut l'arrêter. Sinon, le pion file à Dame.
+                    </div>
+                  </div>
+                </div>
+                <div class="card-visual">
+                  <div class="board-wrapper">
+                    <img
+                      src="https://lichess1.org/export/fen.gif?fen=8/8/3k4/1P5p/6pP/4K1P1/8/8%20w%20-%20-%200%201&color=white&theme=brown"
+                      alt="Règle du Carré"
+                    />
+                    <div class="board-glow"></div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div id="content-tours" class="tab-content" style="display: none">
+            <div class="hub-header"><h2>Finales de Tours</h2></div>
+          </div>
+          <div id="content-roi" class="tab-content" style="display: none">
+            <div class="hub-header"><h2>Activité du Roi</h2></div>
+          </div>
+          <div id="content-zugzwang" class="tab-content" style="display: none">
+            <div class="hub-header"><h2>Le Zugzwang</h2></div>
+          </div>
+        </section>
       </div>
     </main>
 
     <script>
       function toggleMenu() {
-        document.getElementById("mobileMenu").classList.toggle("active");
-        document.querySelector(".hamburger").classList.toggle("active");
+        document.querySelector(".navbar").classList.toggle("active"); // Ajuster selon votre JS global
       }
 
-      function switchTab(tabName) {
-        const tabs = ["mats", "pions", "tours", "roi", "zugzwang", "pont"];
-        tabs.forEach((t) => {
-          const el = document.getElementById("tab-" + t);
-          if (el) el.style.display = "none";
-          const link = document.getElementById("link-" + t);
-          if (link) link.classList.remove("active");
+      function switchContent(id) {
+        // Active le bouton sidebar
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        event.currentTarget.classList.add("active");
+
+        // Masque/Affiche le contenu avec fade-in
+        const contents = document.querySelectorAll(".tab-content");
+        contents.forEach((c) => {
+          c.style.opacity = "0";
+          setTimeout(() => (c.style.display = "none"), 300);
         });
 
-        const target = document.getElementById("tab-" + tabName);
-        if (target) target.style.display = "block";
-        const activeLink = document.getElementById("link-" + tabName);
-        if (activeLink) activeLink.classList.add("active");
+        const target = document.getElementById("content-" + id);
+        setTimeout(() => {
+          target.style.display = "block";
+          setTimeout(() => (target.style.opacity = "1"), 50);
+        }, 300);
       }
     </script>
   </body>

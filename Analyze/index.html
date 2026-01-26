@@ -3,8 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jouer - Open Chess</title>
+    <title>Analyse Stockfish - Open Chess</title>
     <link rel="icon" href="/img/logo.png" type="image/x-icon" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+    />
 
     <link rel="stylesheet" href="../css/nav.css" />
     <link rel="stylesheet" href="../css/style.css" />
@@ -31,9 +36,6 @@
           <a href="/login/index.html" class="btn-login" id="nav-login-btn"
             >Connexion</a
           >
-          <a href="/Play/index.html" class="btn-primary small"
-            >Lancer un défi</a
-          >
         </div>
         <div class="hamburger" onclick="toggleMenu()">
           <span></span><span></span>
@@ -47,49 +49,62 @@
       </div>
     </header>
 
-    <main class="play-menu-container">
-      <div class="play-header">
-        <h1>Choisissez votre mode</h1>
-        <p>
-          Affrontez l'intelligence artificielle ou défiez des joueurs du monde
-          entier dans une interface premium.
-        </p>
+    <main class="analysis-container">
+      <div class="board-wrapper">
+        <div class="board-container">
+          <div class="board-glow-effect"></div>
+          <div id="board"></div>
+        </div>
       </div>
 
-      <div class="modes-grid">
-        <a href="bot/index.html" class="mode-card bot-mode">
-          <div class="card-content">
-            <div class="icon-box">
-              <i class="fas fa-chess-knight"></i>
-            </div>
-            <h2>Contre l'Ordinateur</h2>
-            <p>
-              Défiez Stockfish à différents niveaux de difficulté. Idéal pour
-              s'entraîner sans pression.
-            </p>
-            <span class="btn-mode primary">Jouer Solo</span>
-          </div>
-          <div class="bg-decoration"></div>
-        </a>
+      <div class="analysis-sidebar">
+        <div class="analysis-header">
+          <h2><i class="fas fa-microchip"></i> Analyse</h2>
+          <div id="engine-status" class="status-badge">Chargement...</div>
+        </div>
 
-        <a href="#" class="mode-card online-mode">
-          <div class="card-content">
-            <div class="icon-box">
-              <i class="fas fa-globe-americas"></i>
-            </div>
-            <h2>Jouer en Ligne</h2>
-            <p>
-              Rejoignez l'arène et affrontez d'autres passionnés en temps réel.
-              Grimpez au classement !
-            </p>
-            <span class="btn-mode secondary">Trouver un adversaire</span>
+        <div class="eval-box">
+          <span class="eval-label">Évaluation</span>
+          <span id="eval-score" class="eval-score">0.00</span>
+        </div>
+
+        <div class="best-move-box">
+          <span class="label">Meilleur coup :</span>
+          <span id="best-move-san" class="move-text">...</span>
+        </div>
+
+        <div class="control-group">
+          <label>Position FEN</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="fen-input"
+              placeholder="Collez une position FEN..."
+            />
+            <button id="btn-load-fen" title="Charger">
+              <i class="fas fa-upload"></i>
+            </button>
+            <button id="btn-copy-fen" title="Copier">
+              <i class="fas fa-copy"></i>
+            </button>
           </div>
-          <div class="badge-soon">Bientôt</div>
-          <div class="bg-decoration"></div>
-        </a>
+        </div>
+
+        <div class="actions-group">
+          <button id="btn-flip" class="btn-action secondary">
+            <i class="fas fa-retweet"></i> Retourner
+          </button>
+          <button id="btn-reset" class="btn-action secondary">
+            <i class="fas fa-trash-alt"></i> Réinitialiser
+          </button>
+        </div>
+
+        <div class="history-container">
+          <h4>Historique</h4>
+          <div id="pgn-display" class="pgn-text">Début de partie.</div>
+        </div>
       </div>
     </main>
-
     <footer>
       <div class="footer-inner">
         <div class="footer-brand">
@@ -122,21 +137,19 @@
         </div>
       </div>
     </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+
+    <script type="module" src="analysis.js"></script>
 
     <script>
       function showsidebar() {
         document.querySelector(".sidebar").style.display = "flex";
-        setTimeout(() => {
-          document.querySelector(".sidebar").classList.add("active");
-        }, 10);
       }
       function hidesidebar() {
-        document.querySelector(".sidebar").classList.remove("active");
-        setTimeout(() => {
-          document.querySelector(".sidebar").style.display = "none";
-        }, 300);
+        document.querySelector(".sidebar").style.display = "none";
       }
-      document.getElementById("year").textContent = new Date().getFullYear();
     </script>
   </body>
 </html>

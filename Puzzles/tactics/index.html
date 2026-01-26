@@ -6,10 +6,18 @@
     <title>Open Chess - Tactique</title>
     <link rel="icon" href="/img/logo.png" type="image/x-icon" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
     />
+
     <link rel="stylesheet" href="../../css/nav.css" />
     <link rel="stylesheet" href="../../css/style.css" />
     <link rel="stylesheet" href="../../css/media.css" />
@@ -17,57 +25,48 @@
   </head>
   <body>
     <header>
-      <nav>
-        <ul class="sidebar">
-          <li class="close-btn" onclick="hidesidebar()">
-            <a href="#"><img src="/img/close.svg" alt="close" /></a>
-          </li>
-          <li class="sidebar-logo"><span>MENU</span></li>
-          <li><a href="/Play/index.html">Play</a></li>
-          <li><a href="/Puzzles/index.html">Puzzles</a></li>
-          <li><a href="/Analyze/index.html">Analyze</a></li>
-          <li><a href="/Learn/index.html">Learn</a></li>
-          <li><a href="/profile/index.html">Profile</a></li>
+      <nav class="navbar">
+        <a href="../../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
+
+        <ul class="nav-links">
+          <li><a href="../../Play/index.html">Jouer</a></li>
+          <li><a href="../../Puzzles/index.html" class="active">Défis</a></li>
+          <li><a href="../../Analyze/index.html">Analyser</a></li>
+          <li><a href="../../Learn/index.html">Apprendre</a></li>
         </ul>
 
-        <ul>
-          <li class="logo-container">
-            <a href="/index.html" style="text-decoration: none">
-              <h1 id="site-name">Open Chess</h1>
-            </a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Play/index.html">Play <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Puzzles/index.html">Puzzles <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Analyze/index.html">Analyze <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/Learn/index.html">Learn <span></span></a>
-          </li>
-          <li class="hideOnMobile">
-            <a href="/profile/index.html">Profile <span></span></a>
-          </li>
-          <li class="menu-button" onclick="showsidebar()">
-            <a href="#"><img src="/img/menu.svg" alt="menu" /></a>
-          </li>
-        </ul>
+        <div class="nav-actions">
+          <a href="../../login/index.html" class="btn-login">Connexion</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span><span></span>
+        </div>
       </nav>
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="../../Play/index.html">Jouer</a>
+        <a href="../../Puzzles/index.html">Défis</a>
+        <a href="../../Analyze/index.html">Analyser</a>
+        <a href="../../Learn/index.html">Apprendre</a>
+        <a href="../../login/index.html">Connexion</a>
+      </div>
     </header>
 
     <main class="game-main">
       <div class="game-area">
         <div class="board-wrapper">
+          <div class="board-glow-effect"></div>
+
           <div id="board" class="board-container"></div>
 
           <div class="player-info">
             <div id="user-avatar" class="avatar"></div>
             <div class="details">
               <span id="user-name" class="name">Joueur</span>
-              <span id="puzzle-rating" class="rating">Note du puzzle: ...</span>
+              <span id="puzzle-rating" class="rating">Chargement...</span>
             </div>
           </div>
         </div>
@@ -84,7 +83,7 @@
 
           <div class="turn-indicator white-turn">
             <div class="turn-icon"></div>
-            <h3 id="status-text">Chargement...</h3>
+            <h3 id="status-text">Initialisation...</h3>
           </div>
 
           <div class="history-container">
@@ -119,45 +118,66 @@
         </div>
       </div>
     </main>
+
     <footer>
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>Open Chess</h3>
-          <p>La plateforme ultime pour maîtriser le jeu des rois.</p>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <h4>Open Chess<span class="dot">.</span></h4>
+          <p>
+            La plateforme ultime pour maîtriser le jeu des rois. Apprenez, jouez
+            et progressez.
+          </p>
         </div>
-        <div class="footer-section">
-          <h3>Commencez l'aventure</h3>
-          <a href="/login/index.html" class="btn-register"
-            >S'inscrire Gratuitement</a
-          >
-        </div>
-        <div class="footer-section">
-          <h3>Liens Utiles</h3>
-          <ul>
-            <li><a href="/rules/index.html">Règles Simplifiées</a></li>
-            <li><a href="/video/index.html">Chaîne YouTube</a></li>
-            <li><a href="/support/index.html">Support</a></li>
-          </ul>
+
+        <div class="footer-nav-group">
+          <div class="footer-col">
+            <h5>Liens Rapides</h5>
+            <ul>
+              <li><a href="../../Play/index.html">Jouer</a></li>
+              <li><a href="../../Puzzles/index.html">Défis</a></li>
+              <li><a href="../../Analyze/index.html">Analyser</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h5>Ressources</h5>
+            <ul>
+              <li><a href="../../Learn/index.html">Apprendre</a></li>
+              <li><a href="../../rules/index.html">Règles</a></li>
+              <li><a href="../../support/index.html">Support</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h5>Compte</h5>
+            <ul>
+              <li><a href="../../login/index.html">Connexion</a></li>
+              <li><a href="../../profile/index.html">Profil</a></li>
+            </ul>
+          </div>
         </div>
       </div>
-      <div class="footer-bottom">
+
+      <div class="footer-copy">
         <p>
           &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
         </p>
       </div>
     </footer>
+
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script type="module" src="game.js"></script>
 
     <script>
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
       }
-      function hidesidebar() {
-        document.querySelector(".sidebar").style.display = "none";
-      }
+      // Date dynamique footer
+      const yearEl = document.getElementById("year");
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
     </script>
   </body>
 </html>

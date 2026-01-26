@@ -1,45 +1,91 @@
 /* =========================================
-   PAGE RÈGLES - STYLE "GRANDMASTER"
+   VARIABLES & GLOBALS
    ========================================= */
-
-/* --- HERO SECTION --- */
-.rules-hero {
-  padding: 4rem 2rem 1rem 2rem;
-  text-align: center;
+:root {
+  --bg-main: #161512; /* Noir profond */
+  --bg-secondary: #262421; /* Gris carte */
+  --accent-gold: #d4af37; /* Or */
+  --accent-gold-dim: rgba(212, 175, 55, 0.15);
+  --text-primary: #ffffff;
+  --text-secondary: #bababa;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
 }
 
-.section-header h2 {
-  font-family: var(--font-heading);
-  font-size: 3rem;
-  margin-bottom: 1rem;
+body {
+  background-color: var(--bg-main);
   color: var(--text-primary);
+  font-family: var(--font-body);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.section-desc {
-  max-width: 600px;
-  margin: 0 auto 2rem auto;
-  color: var(--text-secondary);
-  font-size: 1.05rem;
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* =========================================
+   HERO SECTION
+   ========================================= */
+.rules-main {
+  flex: 1;
+  background: radial-gradient(circle at 50% 0%, #2a251a 0%, var(--bg-main) 70%);
+}
+
+.rules-hero {
+  padding: 6rem 2rem 2rem 2rem;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.subtitle {
+  display: block;
+  color: var(--accent-gold);
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.rules-hero h1 {
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.rules-hero h1 em {
+  font-style: italic;
+  color: var(--accent-gold);
   font-weight: 300;
 }
 
-.separator {
-  width: 60px;
-  height: 2px;
-  background: var(--accent-gold);
+.hero-desc {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 600px;
   margin: 0 auto;
-  opacity: 0.8;
 }
 
-/* --- MAIN CONTAINER --- */
+/* =========================================
+   MAIN CONTAINER
+   ========================================= */
 .rules-container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto 6rem auto;
   padding: 0 1.5rem;
 }
 
 .rules-section {
-  margin-bottom: 5rem;
+  margin-bottom: 6rem;
 }
 
 .rules-section h3 {
@@ -59,7 +105,9 @@
   font-size: 1.4rem;
 }
 
-/* --- GRID PIÈCES --- */
+/* =========================================
+   GRID PIÈCES
+   ========================================= */
 .pieces-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -78,14 +126,18 @@
 
 .piece-card:hover {
   transform: translateY(-5px);
-  border-color: var(--accent-gold-dim);
+  border-color: rgba(212, 175, 55, 0.4);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Style spécial pour le Roi */
+/* Style spécial pour le Roi (Effet Royal) */
 .piece-card.royal {
   border: 1px solid rgba(212, 175, 55, 0.3);
-  background: linear-gradient(145deg, rgba(212, 175, 55, 0.05), transparent);
+  background: linear-gradient(
+    145deg,
+    rgba(212, 175, 55, 0.08),
+    var(--bg-secondary)
+  );
 }
 
 .card-top {
@@ -98,23 +150,32 @@
 .piece-icon {
   font-size: 2.5rem;
   line-height: 1;
-  /* Optionnel: effet d'ombre dorée légère */
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+  /* Légère ombre dorée sur l'icône */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.piece-card.royal .piece-icon {
+  color: var(--accent-gold);
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
 }
 
 .card-top h4 {
   font-family: var(--font-heading);
   font-size: 1.4rem;
   color: var(--text-primary);
+  margin: 0;
 }
 
 .piece-card p {
   color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.6;
+  margin: 0;
 }
 
-/* --- SPECIAL MOVES (GRID) --- */
+/* =========================================
+   SPECIAL MOVES (GRID)
+   ========================================= */
 .special-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -124,45 +185,56 @@
 .special-card {
   background: rgba(255, 255, 255, 0.02);
   border-left: 2px solid var(--accent-gold);
-  padding: 1.5rem;
+  padding: 2rem;
   border-radius: 0 4px 4px 0;
+  transition: background 0.3s;
+}
+
+.special-card:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .special-header {
   display: flex;
   align-items: baseline;
-  gap: 0.8rem;
-  margin-bottom: 0.8rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .special-header .num {
   font-family: var(--font-heading);
-  font-size: 2rem;
-  color: rgba(255, 255, 255, 0.1);
+  font-size: 2.5rem;
+  color: rgba(255, 255, 255, 0.05);
   font-weight: 700;
   line-height: 1;
 }
 
 .special-header h4 {
   font-family: var(--font-heading);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   color: var(--accent-gold);
+  margin: 0;
 }
 
 .special-card p {
   color: var(--text-secondary);
   font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .special-card em {
   display: block;
-  margin-top: 0.5rem;
+  margin-top: 0.8rem;
   font-size: 0.85rem;
-  color: #777;
+  color: #888;
   font-style: italic;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.5rem;
 }
 
-/* --- FIN DE PARTIE --- */
+/* =========================================
+   FIN DE PARTIE
+   ========================================= */
 .endgame-wrapper {
   display: flex;
   gap: 2rem;
@@ -171,29 +243,36 @@
 
 .endgame-box {
   flex: 1 1 300px;
-  padding: 2.5rem;
+  padding: 3rem 2rem;
   border-radius: 4px;
   text-align: center;
   border: 1px solid var(--border-subtle);
   background: var(--bg-secondary);
+  transition: transform 0.3s;
+}
+
+.endgame-box:hover {
+  transform: translateY(-5px);
 }
 
 .endgame-box h4 {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+  margin-top: 0;
 }
 
 .endgame-box p {
   color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 /* Victoire (Or) */
 .endgame-box.win {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.05);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.05);
 }
 .endgame-box.win h4 {
   color: var(--accent-gold);
@@ -201,16 +280,78 @@
 
 /* Nul (Argent/Gris) */
 .endgame-box.draw {
-  border-color: #666;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 .endgame-box.draw h4 {
   color: #aaa;
 }
 
-/* --- RESPONSIVE --- */
+/* =========================================
+   FOOTER (Standardisé)
+   ========================================= */
+footer {
+  background: #0f0f0f;
+  border-top: 1px solid var(--border-subtle);
+  padding: 4rem 2rem 2rem;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-section h3 {
+  font-family: var(--font-heading);
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-section p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+.footer-section ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-section a {
+  color: var(--text-secondary);
+  transition: color 0.3s;
+}
+.footer-section a:hover {
+  color: var(--accent-gold);
+}
+
+/* Lien actif footer */
+.active-footer-link {
+  color: var(--accent-gold) !important;
+  font-weight: 500;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+  color: #555;
+  font-size: 0.85rem;
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .section-header h2 {
-    font-size: 2.2rem;
+  .rules-hero h1 {
+    font-size: 3rem;
   }
   .rules-container {
     padding: 0 1rem;

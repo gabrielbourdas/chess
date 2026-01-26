@@ -9,8 +9,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
 
     <link rel="stylesheet" href="../css/style.css" />
@@ -20,17 +24,19 @@
   <body>
     <header>
       <nav class="navbar">
-        <a href="/" class="logo">OPEN CHESS<span class="dot">.</span></a>
+        <a href="../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
 
         <ul class="nav-links">
-          <li><a href="/Play/index.html">Jouer</a></li>
-          <li><a href="/Puzzles/index.html">Défis</a></li>
-          <li><a href="/Learn/index.html">Apprendre</a></li>
-          <li><a href="/Analyze/index.html">Analyser</a></li>
+          <li><a href="../Play/index.html">Jouer</a></li>
+          <li><a href="../Puzzles/index.html">Défis</a></li>
+          <li><a href="../Analyze/index.html">Analyser</a></li>
+          <li><a href="../Learn/index.html">Apprendre</a></li>
         </ul>
 
         <div class="nav-actions">
-          <a href="/login/index.html" class="btn-login">Connexion</a>
+          <a href="../login/index.html" class="btn-login">Connexion</a>
         </div>
 
         <div class="hamburger" onclick="toggleMenu()">
@@ -39,47 +45,48 @@
       </nav>
 
       <div class="mobile-menu" id="mobileMenu">
-        <a href="/Play/index.html">Jouer</a>
-        <a href="/Puzzles/index.html">Défis</a>
-        <a href="/Learn/index.html">Apprendre</a>
-        <a href="/login/index.html">Connexion</a>
+        <a href="../Play/index.html">Jouer</a>
+        <a href="../Puzzles/index.html">Défis</a>
+        <a href="../Analyze/index.html">Analyser</a>
+        <a href="../Learn/index.html">Apprendre</a>
+        <a href="../login/index.html">Connexion</a>
       </div>
     </header>
 
-    <main>
+    <main class="support-main">
       <section class="support-hero">
-        <div class="section-header">
+        <div class="hero-content">
           <span class="subtitle">Centre d'Aide</span>
-          <h2>Comment pouvons-nous <br /><em>vous assister ?</em></h2>
-          <p class="section-desc">
-            Une question sur les règles ou un problème technique ? Nous sommes
-            là pour garantir la fluidité de votre expérience.
+          <h1>Comment pouvons-nous <br /><em>vous assister ?</em></h1>
+          <p class="hero-desc">
+            Une question sur les règles, un problème technique ou une suggestion
+            ? Nous sommes là pour garantir la fluidité de votre expérience.
           </p>
-          <div class="separator"></div>
         </div>
       </section>
 
-      <div class="contact-section">
+      <section class="contact-wrapper">
         <div class="support-card">
-          <div class="icon-box">✉️</div>
+          <div class="icon-box">
+            <i class="fas fa-paper-plane"></i>
+          </div>
           <h3>Contact Direct</h3>
           <p>
             Le site est en constante évolution. Si vous rencontrez une anomalie
-            ou si vous avez une suggestion pour améliorer le jeu, votre retour
-            est précieux.
+            ou si vous avez une idée pour améliorer le jeu, votre retour est
+            précieux.
           </p>
-          <a
-            href="https://mail.google.com/mail/?view=cm&fs=1&to=gabrielbourdas@gmail.com"
-            target="_blank"
-            class="btn-primary"
-          >
-            Envoyer un message
+          <a href="mailto:gabrielbourdas@gmail.com" class="btn-primary">
+            <span>Envoyer un message</span>
           </a>
         </div>
-      </div>
+      </section>
 
-      <div class="faq-container">
-        <h3>Questions Fréquentes</h3>
+      <section class="faq-container">
+        <div class="section-header-small">
+          <h3>Questions Fréquentes</h3>
+          <div class="line"></div>
+        </div>
 
         <div class="faq-wrapper">
           <details>
@@ -131,35 +138,44 @@
             </div>
           </details>
         </div>
-      </div>
+      </section>
     </main>
 
     <footer>
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <h4>Open Chess<span class="dot">.</span></h4>
-          <p>L'excellence stratégique à portée de main.</p>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Open Chess<span style="color: var(--accent-gold)">.</span></h3>
+          <p>
+            Une plateforme conçue par des passionnés. Jouez, apprenez et
+            progressez.
+          </p>
         </div>
-        <div class="footer-nav-group">
-          <div class="footer-col">
-            <h5>Navigation</h5>
-            <ul>
-              <li><a href="/Play/index.html">Jouer</a></li>
-              <li><a href="/Puzzles/index.html">Puzzles</a></li>
-              <li><a href="/Learn/index.html">Apprendre</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h5>Support</h5>
-            <ul>
-              <li><a href="/support/index.html">Contact</a></li>
-              <li><a href="/rules/index.html">Règles</a></li>
-            </ul>
-          </div>
+
+        <div class="footer-section">
+          <h3>Navigation</h3>
+          <ul>
+            <li><a href="../Play/index.html">Jouer</a></li>
+            <li><a href="../Learn/index.html">Apprendre</a></li>
+            <li><a href="../Puzzles/index.html">Défis</a></li>
+          </ul>
         </div>
-        <div class="footer-copy">
-          &copy; <span id="year">2026</span> Open Chess.
+
+        <div class="footer-section">
+          <h3>Ressources</h3>
+          <ul>
+            <li>
+              <a href="./index.html" class="active-footer-link"
+                >Support & Aide</a
+              >
+            </li>
+            <li><a href="../rules/index.html">Règles du Jeu</a></li>
+            <li><a href="../video/index.html">Créateurs de Contenu</a></li>
+          </ul>
         </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
       </div>
     </footer>
 
