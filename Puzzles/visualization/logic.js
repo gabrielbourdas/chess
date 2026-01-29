@@ -1,5 +1,3 @@
-// logic.js (VISUALISATION - STOCKFISH LOCAL CORRIGÉ & UX AMÉLIORÉE + FLÈCHES + PROGRESSION ELO)
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -10,7 +8,7 @@ import {
   limit,
   doc,
   getDoc,
-  setDoc, // <--- AJOUTÉ
+  setDoc,
   increment,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
@@ -18,7 +16,9 @@ import {
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// --- 1. CONFIGURATION FIREBASE ---
+console.log("--- 1. Scripts chargés, début initialisation ---");
+
+// --- CONFIGURATION FIREBASE ---
 const firebaseConfig = {
   apiKey: "AIzaSyBNBUO3JupohDCYAMs7Xf6kKgxnnFgPpVM",
   authDomain: "open-chess-2f3cf.firebaseapp.com",
@@ -33,454 +33,560 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// --- 2. CONFIGURATION SONS ---
-const audioUrls = {
-  move: "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Move.mp3",
-  capture:
-    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Capture.mp3",
-  notify:
-    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Victory.mp3",
-  error:
-    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Error.mp3",
-};
-
+// --- SONS ---
 const sounds = {
-  move: new Audio(audioUrls.move),
-  capture: new Audio(audioUrls.capture),
-  notify: new Audio(audioUrls.notify),
-  error: new Audio(audioUrls.error),
+  move: new Audio(
+    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Move.mp3",
+  ),
+  capture: new Audio(
+    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Capture.mp3",
+  ),
+  notify: new Audio(
+    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Victory.mp3",
+  ),
+  error: new Audio(
+    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Error.mp3",
+  ),
 };
 
-// --- 3. CONFIGURATION STOCKFISH (LOCAL CORRIGÉ) ---
-var stockfish = null;
-var isEngineReady = false;
-
-try {
-  stockfish = new Worker("../../js/stockfish.js");
-
-  stockfish.onmessage = function (event) {
-    const message = event.data ? event.data : event;
-
-    // Stockfish répond à uci avec uciok
-    if (message === "uciok") {
-      stockfish.postMessage("isready");
-      console.log("📡 Stockfish UCI initialisé");
-    }
-
-    // Puis répond readyok
-    if (message === "readyok") {
-      isEngineReady = true;
-      console.log("✅ Stockfish est prêt !");
-    }
-  };
-
-  stockfish.onerror = function (e) {
-    console.error(
-      "❌ Erreur Stockfish : Vérifiez que stockfish.js et stockfish.wasm sont dans le bon dossier",
-      e,
-    );
-    isEngineReady = false;
-  };
-
-  // Initialisation UCI
-  stockfish.postMessage("uci");
-} catch (e) {
-  console.warn("⚠️ Impossible de charger Stockfish. Vérifiez les fichiers.", e);
-}
-
-// Variables Globales
+// --- GLOBALES ---
 var board = null;
+if (typeof Chess === "undefined") {
+  console.error("ERREUR CRITIQUE : chess.js n'est pas chargé !");
+}
 var game = new Chess();
 var currentPuzzle = null;
 var moveIndex = 0;
 var currentStreak = 0;
-var isPuzzleLocked = false;
+var isPuzzleActive = false;
+var isWaitingForRetry = false;
+var stockfish = null;
+var selectedSquare = null;
 
-// --- AJOUT : Variables pour les flèches ---
-var arrowStartSquare = null;
-var arrowsList = [];
-// -----------------------------------------
+// Variables Clic Droit
+var rightClickStart = null;
+var arrows = [];
+var boardOrientation = "white";
 
-var config = {
-  draggable: false, // Visualisation : on ne bouge pas les pièces à la main
-  position: "start",
-  pieceTheme: "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
-};
+// Variables Batch
+var planningMoves = [];
+var initialFen = "";
 
+// --- INITIALISATION ---
 document.addEventListener("DOMContentLoaded", () => {
-  board = Chessboard("board", config);
-  window.addEventListener("resize", board.resize);
+  console.log("--- 2. DOM Ready ---");
+  initBoard("start", "white");
+  initStockfish();
+  initArrows();
 
-  // --- AJOUT : Initialiser le système de flèches ---
-  initArrowSystem();
-  // ------------------------------------------------
+  const boardEl = document.getElementById("board");
+  if (!boardEl) {
+    console.error("ERREUR : Élément #board introuvable dans le HTML");
+  } else {
+    // --- GESTION CLICK GAUCHE ---
+    boardEl.addEventListener("click", (e) => {
+      clearArrows();
+      if (!isPuzzleActive || isWaitingForRetry) return;
 
-  // Débloquer l'audio au premier clic
-  document.body.addEventListener("click", unlockAudio, { once: true });
+      const square = getSquareFromEvent(e);
+      if (square) {
+        const piece = game.get(square);
+        const isPiece = piece !== null;
 
-  const inputEl = document.getElementById("move-input");
-  if (inputEl) {
-    inputEl.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") checkUserAnswer();
+        if (isPiece) {
+          if (!selectedSquare) {
+            if (piece.color === game.turn()) {
+              selectSquare(square);
+            }
+          } else {
+            if (selectedSquare === square) {
+              removeSelection();
+            } else {
+              const moveResult = handleUserMove(selectedSquare, square);
+              if (!moveResult) {
+                if (piece.color === game.turn()) {
+                  selectSquare(square);
+                }
+              } else {
+                removeSelection();
+              }
+            }
+          }
+        } else if (selectedSquare) {
+          handleUserMove(selectedSquare, square);
+          removeSelection();
+        }
+      } else {
+        removeSelection();
+      }
     });
 
-    // --- AJOUT : Effacer le feedback quand l'utilisateur réagit ---
-    const clearFeedback = () => {
-      const feedbackEl = document.getElementById("feedback-area");
-      if (feedbackEl) {
-        // On retire les classes pour le rendre invisible et on vide le texte
-        feedbackEl.className = "feedback";
-        feedbackEl.innerHTML = "";
-      }
-    };
-
-    // Déclenche le nettoyage au focus (clic dedans) ou à la saisie (input)
-    inputEl.addEventListener("input", clearFeedback);
-    inputEl.addEventListener("focus", clearFeedback);
-    // -------------------------------------------------------------
+    // --- GESTION CLICK DROIT ---
+    boardEl.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      return false;
+    });
+    boardEl.addEventListener(
+      "mousedown",
+      (e) => {
+        if (e.button === 2) {
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          const square = getSquareFromEvent(e);
+          if (square) rightClickStart = square;
+        }
+      },
+      { capture: true },
+    );
+    boardEl.addEventListener(
+      "mouseup",
+      (e) => {
+        if (e.button === 2) {
+          e.stopPropagation();
+          if (rightClickStart) {
+            const square = getSquareFromEvent(e);
+            if (square) handleRightClickAction(rightClickStart, square);
+          }
+          rightClickStart = null;
+        }
+      },
+      { capture: true },
+    );
   }
 
-  document
-    .getElementById("btn-submit")
-    .addEventListener("click", checkUserAnswer);
-  document
-    .getElementById("btn-next")
-    .addEventListener("click", loadRandomPuzzle);
-  document.getElementById("btn-hint").addEventListener("click", showHint);
+  // Listeners Boutons
+  setupButton("btn-next", loadRandomPuzzle);
+  setupButton("btn-retry", retryPuzzle);
+  setupButton("btn-hint", useHint);
+  setupButton("btn-validate-plan", validatePlanning);
+  setupButton("btn-undo-plan", undoLastPlan);
 
-  setTimeout(loadRandomPuzzle, 200);
+  // Hack Audio Mobile
+  document.body.addEventListener(
+    "click",
+    () => {
+      if (sounds.move) {
+        sounds.move
+          .play()
+          .then(() => {
+            sounds.move.pause();
+            sounds.move.currentTime = 0;
+          })
+          .catch(() => {});
+      }
+    },
+    { once: true },
+  );
+
+  console.log("--- 3. Lancement du premier puzzle ---");
+  setTimeout(loadRandomPuzzle, 500);
 });
 
-function unlockAudio() {
-  sounds.move
-    .play()
-    .then(() => {
-      sounds.move.pause();
-      sounds.move.currentTime = 0;
-    })
-    .catch(() => {});
+function setupButton(id, func) {
+  const btn = document.getElementById(id);
+  if (btn) btn.addEventListener("click", func);
 }
 
-// --- FIREBASE USER ---
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const docRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      const pseudo = data.pseudo || "Joueur";
-      document.getElementById("user-name").textContent = pseudo;
-      document.getElementById("user-avatar").innerHTML =
-        `<img src="https://api.dicebear.com/9.x/adventurer/svg?seed=${pseudo}" alt="Avatar" style="width:100%; height:100%;">`;
+function selectSquare(square) {
+  removeSelection();
+  selectedSquare = square;
+  highlightSquare(square);
+  showMoveHints(square);
+}
+
+// --- UTILITAIRES DOM ---
+function getSquareFromEvent(e) {
+  let target = e.target;
+  if (target.tagName === "IMG" && target.parentElement)
+    target = target.parentElement;
+  const squareEl = target.closest('div[class*="square-"]');
+  if (!squareEl) return null;
+  const classes = squareEl.className;
+  const match = classes.match(/square-([a-h][1-8])/);
+  return match ? match[1] : null;
+}
+
+function highlightSquare(square) {
+  const $board = $("#board");
+  $board.find(`.square-${square}`).addClass("selected-square");
+}
+
+function showMoveHints(square) {
+  const moves = game.moves({ square: square, verbose: true });
+  moves.forEach((move) => {
+    const $board = $("#board");
+    const $targetSquare = $board.find(`.square-${move.to}`);
+    if (move.flags.includes("c") || move.flags.includes("e")) {
+      $targetSquare.addClass("capture-hint");
+    } else {
+      $targetSquare.addClass("move-hint");
+    }
+  });
+}
+
+function removeSelection() {
+  selectedSquare = null;
+  const $board = $("#board");
+  $board.find(".selected-square").removeClass("selected-square");
+  $board.find(".move-hint").removeClass("move-hint");
+  $board.find(".capture-hint").removeClass("capture-hint");
+}
+
+// --- LOGIQUE BATCH / PLANIFICATION (CORRIGÉE) ---
+
+function updatePlanningUI() {
+  const listEl = document.getElementById("planning-list");
+  if (!listEl) return;
+
+  if (planningMoves.length === 0) {
+    listEl.innerHTML =
+      '<span class="empty-plan">Jouez les coups des deux camps...</span>';
+    updateStatusWithTurn();
+    return;
+  }
+
+  let html = "";
+  planningMoves.forEach((pm, index) => {
+    const isMyMove = index % 2 === 0;
+    const style = isMyMove
+      ? "border-color: #ffd700;"
+      : "border-color: #666; color: #aaa;";
+    html += `<span class="planned-move-item" style="${style}">${pm.san}</span>`;
+  });
+  listEl.innerHTML = html;
+
+  const statusText = document.getElementById("status-text");
+  if (statusText) {
+    if (game.turn() === boardOrientation.charAt(0)) {
+      statusText.innerText = "Planifiez VOTRE coup";
+      statusText.style.color = "#ffd700";
+    } else {
+      statusText.innerText = "Planifiez la RÉPONSE adverse";
+      statusText.style.color = "#aaa";
     }
   }
-});
+}
 
-// --- CHARGEMENT ---
+function undoLastPlan() {
+  if (planningMoves.length === 0) return;
+  game.undo();
+  planningMoves.pop();
+  board.position(game.fen());
+  updatePlanningUI();
+  playSound("move");
+}
+
+function validatePlanning() {
+  console.log("Validation de la séquence...");
+  if (planningMoves.length === 0) return;
+
+  // 1. Reset visuel au début du challenge
+  game.load(initialFen);
+  board.position(initialFen);
+  isPuzzleActive = false;
+
+  let step = 0;
+
+  function playNextStep() {
+    if (step >= planningMoves.length) {
+      // Fin de la séquence utilisateur
+      // On vérifie si on est allé au bout du puzzle
+      // step+1 car puzzle contient coup ordi initial
+      if (step + 1 >= currentPuzzle.movesList.length) {
+        // Puzzle fini
+      } else {
+        updateEngineText("Séquence correcte mais incomplète.");
+        isPuzzleActive = true;
+      }
+      return;
+    }
+
+    const plannedMove = planningMoves[step];
+
+    // CORRECTION DE L'INDEX : +1 pour sauter le coup initial de l'ordi
+    const puzzleIndexToCheck = step + 1;
+    const expectedMoveUCI = currentPuzzle.movesList[puzzleIndexToCheck];
+
+    if (!expectedMoveUCI) {
+      handleFailureBatch(step);
+      return;
+    }
+
+    const moveAttemptUCI = plannedMove.from + plannedMove.to;
+
+    // Comparaison
+    if (moveAttemptUCI === expectedMoveUCI.substring(0, 4)) {
+      game.move(plannedMove);
+      board.position(game.fen());
+
+      if (plannedMove.flags.includes("c")) playSound("capture");
+      else playSound("move");
+
+      moveIndex = puzzleIndexToCheck + 1; // Update global index
+      step++;
+
+      if (moveIndex >= currentPuzzle.movesList.length) {
+        currentStreak++;
+        const streakEl = document.getElementById("streak-display");
+        if (streakEl) streakEl.innerText = currentStreak;
+
+        updateStats(true);
+        updateEngineText("");
+        const fb = document.getElementById("feedback-area");
+        if (fb) {
+          fb.innerHTML = "Calcul correct ! 🎉";
+          fb.className = "feedback success visible";
+        }
+        playSound("notify");
+
+        planningMoves = [];
+        updatePlanningUI();
+      } else {
+        setTimeout(playNextStep, 600);
+      }
+    } else {
+      handleFailureBatch(step);
+    }
+  }
+  playNextStep();
+}
+
+function handleFailureBatch(stepIndex) {
+  playSound("error");
+  currentStreak = 0;
+  const streakEl = document.getElementById("streak-display");
+  if (streakEl) streakEl.innerText = 0;
+  updateStats(false);
+
+  const fb = document.getElementById("feedback-area");
+  if (fb) {
+    if (stepIndex % 2 === 0) {
+      fb.innerHTML = "Erreur de calcul sur VOTRE coup 🚫";
+    } else {
+      fb.innerHTML = "Mauvaise anticipation de la défense 🚫";
+    }
+    fb.className = "feedback error visible";
+  }
+
+  isWaitingForRetry = true;
+  document.getElementById("btn-retry").style.display = "block";
+  document.getElementById("btn-hint").style.display = "none";
+  updateEngineText("Analysez la séquence...");
+}
+
+// --- LOGIQUE UNIFIÉE ---
+function handleUserMove(source, target) {
+  // Mode Batch : On joue le coup "virtuellement"
+  const move = game.move({ from: source, to: target, promotion: "q" });
+  if (move === null) return false;
+
+  board.move(source + "-" + target);
+  planningMoves.push(move);
+  updatePlanningUI();
+
+  if (move.flags.includes("c")) playSound("capture");
+  else playSound("move");
+
+  return true;
+}
+
+// --- DRAG & DROP HANDLERS ---
+function onDragStart(source, piece, position, orientation) {
+  clearArrows();
+  if (!isPuzzleActive) return false;
+  if (isWaitingForRetry) return false;
+  if (game.game_over()) return false;
+
+  if (game.turn() === "w" && piece.search(/^b/) !== -1) return false;
+  if (game.turn() === "b" && piece.search(/^w/) !== -1) return false;
+}
+
+function onDrop(source, target) {
+  if (source === target) return;
+  const result = handleUserMove(source, target);
+  if (!result) return "snapback";
+  removeSelection();
+}
+
+// --- JEU & SETUP ---
+function retryPuzzle() {
+  game.load(initialFen);
+  board.position(initialFen);
+  planningMoves = [];
+  updatePlanningUI();
+
+  // CORRECTION : On reset à 1 (après coup ordi)
+  moveIndex = 1;
+
+  removeSelection();
+  clearArrows();
+
+  isWaitingForRetry = false;
+  isPuzzleActive = true;
+  document.getElementById("btn-retry").style.display = "none";
+  document.getElementById("btn-hint").style.display = "block";
+  updateEngineText("");
+
+  const fb = document.getElementById("feedback-area");
+  if (fb) {
+    fb.className = "feedback";
+    fb.innerHTML = "";
+  }
+}
 
 async function loadRandomPuzzle() {
-  document.getElementById("move-input").value = "";
-  document.getElementById("move-input").disabled = false;
-  document.getElementById("move-input").focus();
-  document.getElementById("feedback-area").className = "feedback";
-  document.getElementById("feedback-area").innerText = "";
+  console.log("Chargement d'un nouveau puzzle...");
+  const fb = document.getElementById("feedback-area");
+  if (fb) {
+    fb.className = "feedback";
+    fb.innerHTML = "";
+  }
 
-  // --- AJOUT : Nettoyer les flèches au nouveau puzzle ---
-  clearArrows();
-  // -----------------------------------------------------
+  document.getElementById("btn-retry").style.display = "none";
+  document.getElementById("btn-hint").style.display = "block";
+  updateEngineText("");
 
-  isPuzzleLocked = false;
+  isPuzzleActive = false;
+  isWaitingForRetry = false;
   moveIndex = 0;
+  selectedSquare = null;
+  clearArrows();
+  game.clear();
+  planningMoves = [];
+  updatePlanningUI();
 
-  if (board) board.resize();
+  const historyEl = document.getElementById("move-history");
+  if (historyEl)
+    historyEl.innerHTML =
+      '<span style="color:#666; font-style:italic;">Début de partie</span>';
 
   const randomId = generateRandomId();
-
   try {
     const puzzlesRef = collection(db, "puzzles");
     const q = query(puzzlesRef, where("__name__", ">=", randomId), limit(1));
     const snapshot = await getDocs(q);
 
     if (!snapshot.empty) {
+      console.log("Puzzle trouvé ! ID:", snapshot.docs[0].id);
       setupPuzzle(snapshot.docs[0].data());
     } else {
+      console.log("Pas de puzzle trouvé, nouvelle tentative...");
       loadRandomPuzzle();
     }
   } catch (error) {
-    console.error("Erreur Firebase", error);
+    console.error("Erreur chargement puzzle:", error);
+    updateEngineText("Erreur connexion puzzle.");
   }
 }
 
 function setupPuzzle(data) {
   currentPuzzle = data;
-  updateSidebarUI(data.rating);
+  const streakEl = document.getElementById("streak-display");
+  if (streakEl) streakEl.innerText = currentStreak;
+  removeSelection();
+  clearArrows();
 
+  const themeEl = document.getElementById("theme-display");
+  if (themeEl && data.themes) {
+    themeEl.innerText = data.themes
+      .split(" ")
+      .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+      .join(", ");
+  }
+
+  const elo = data.rating ? data.rating : 1200;
   const ratingEl = document.getElementById("puzzle-rating");
-  if (ratingEl) ratingEl.innerText = (data.rating || "1200") + " Elo";
+  if (ratingEl) ratingEl.innerText = `Puzzle: ${elo}`;
 
-  game.load(data.fen);
-  board.position(data.fen, false);
+  const badgeEl = document.getElementById("difficulty-badge");
+  if (badgeEl) {
+    let label = "Moyen",
+      cssClass = "medium";
+    if (elo < 1000) {
+      label = "Débutant";
+      cssClass = "easy";
+    } else if (elo < 1600) {
+      label = "Moyen";
+      cssClass = "medium";
+    } else {
+      label = "Difficile";
+      cssClass = "hard";
+    }
+    badgeEl.innerText = label;
+    badgeEl.className = `difficulty-badge ${cssClass}`;
+  }
+
+  const loadResult = game.load(data.fen);
+  if (!loadResult) return;
+
+  const initialTurn = game.turn();
+  const playerColor = initialTurn === "w" ? "black" : "white";
+  boardOrientation = playerColor;
+  initBoard(data.fen, playerColor);
+
+  updateStatusWithTurn();
 
   let movesList = Array.isArray(data.moves)
     ? data.moves
     : data.moves.split(" ");
   currentPuzzle.movesList = movesList;
 
-  // Jouer le 1er coup
+  console.log("Puzzle prêt. Coups à trouver :", movesList);
+
   setTimeout(() => {
-    makeMoveOnBoard(movesList[0]);
+    const computerMoveStr = movesList[0];
+    makeComputerMove(computerMoveStr);
+    initialFen = game.fen();
+
+    // CORRECTION : Début à 1
     moveIndex = 1;
+
     updateStatusWithTurn();
+    isPuzzleActive = true;
   }, 500);
 }
 
-// --- VERIFICATION ---
-
-window.checkUserAnswer = function () {
-  if (isPuzzleLocked) return;
-
-  const inputEl = document.getElementById("move-input");
-  let userText = inputEl.value.trim();
-  if (!userText) return;
-
-  const englishMove = translateToEnglish(userText);
-  const moveObj = game.move(englishMove);
-
-  if (moveObj === null) {
-    playSound("error");
-    showFeedback(false, "Format invalide (ex: Cf3, e5).");
-    return;
-  }
-
-  game.undo();
-
-  const playedMoveUCI = moveObj.from + moveObj.to;
-  const finalUCI = moveObj.promotion
-    ? playedMoveUCI + moveObj.promotion
-    : playedMoveUCI;
-  const expectedMove = currentPuzzle.movesList[moveIndex];
-
-  if (finalUCI === expectedMove) {
-    handleSuccess(moveObj.san, moveObj.flags.includes("c"));
-  } else {
-    handleFailure(playedMoveUCI);
-  }
-};
-
-function handleSuccess(sanMove, isCapture) {
-  if (isCapture) playSound("capture");
-  else playSound("move");
-
-  showFeedback(true, `Bien joué ! ${sanMove} est correct.`);
-
-  makeMoveOnBoard(currentPuzzle.movesList[moveIndex]);
-  moveIndex++;
-
-  if (moveIndex >= currentPuzzle.movesList.length) {
-    playSound("notify");
-    currentStreak++;
-    document.getElementById("streak-display").innerText = currentStreak;
-    document.getElementById("move-input").disabled = true;
-    showFeedback(true, "Visualisation réussie ! 🎉");
-    updateVisuStats(true); // <--- Appel de la nouvelle fonction
-    isPuzzleLocked = true;
-  } else {
-    setTimeout(() => {
-      const computerMove = currentPuzzle.movesList[moveIndex];
-
-      const tempGame = new Chess(game.fen());
-      const moveDetails = tempGame.move({
-        from: computerMove.substring(0, 2),
-        to: computerMove.substring(2, 4),
-        promotion: "q",
-      });
-      if (moveDetails && moveDetails.flags.includes("c")) playSound("capture");
-      else playSound("move");
-
-      makeMoveOnBoard(computerMove);
-      moveIndex++;
-      updateStatusWithTurn();
-      document.getElementById("move-input").value = "";
-      showFeedback(true, "Correct ! Quel est le coup suivant ?");
-    }, 500);
-  }
-}
-
-function handleFailure(badMoveUCI) {
-  playSound("error");
-  currentStreak = 0;
-  document.getElementById("streak-display").innerText = 0;
-
-  showFeedback(false, "Mauvais coup.");
-  updateVisuStats(false); // <--- Appel de la nouvelle fonction
-  // Analyse Stockfish
-  askStockfishRefutation(badMoveUCI);
-}
-
-// --- STOCKFISH ANALYSE (CORRIGÉ) ---
-
-function askStockfishRefutation(badMoveUCI) {
-  const feedbackEl = document.getElementById("feedback-area");
-
-  if (!isEngineReady || !stockfish) {
-    feedbackEl.innerHTML = `
-      <span class="error-title">Mauvais coup !</span>
-      <span class="analysis-text">Analyse non disponible - Vérifiez stockfish.js</span>
-    `;
-    return;
-  }
-
-  feedbackEl.innerHTML = `
-    <span class="error-title">Mauvais coup !</span>
-    <span class="analysis-text analyzing">🧠 Analyse en cours...</span>
-  `;
-
-  // 1. Simuler le mauvais coup
-  const moveResult = game.move({
-    from: badMoveUCI.substring(0, 2),
-    to: badMoveUCI.substring(2, 4),
-    promotion: badMoveUCI.length > 4 ? badMoveUCI[4] : "q",
-  });
-
-  if (!moveResult) {
-    feedbackEl.innerHTML = `<span class="error-title">Mauvais coup !</span>`;
-    return;
-  }
-
-  const fenAfterBadMove = game.fen();
-  game.undo();
-
-  // 2. Sauvegarder le handler original
-  const originalHandler = stockfish.onmessage;
-
-  // 3. Créer un handler temporaire pour cette analyse
-  stockfish.onmessage = function (event) {
-    const message = event.data ? event.data : event;
-
-    // Afficher tous les messages pour debug
-    if (typeof message === "string" && !message.startsWith("info")) {
-      console.log("Stockfish:", message);
-    }
-
-    // Traiter la meilleure réponse
-    if (typeof message === "string" && message.startsWith("bestmove")) {
-      const parts = message.split(" ");
-      const bestReply = parts[1];
-
-      if (bestReply && bestReply !== "(none)" && bestReply.length >= 4) {
-        const tempGame = new Chess(fenAfterBadMove);
-        const moveDetails = tempGame.move({
-          from: bestReply.substring(0, 2),
-          to: bestReply.substring(2, 4),
-          promotion: bestReply.length > 4 ? bestReply[4] : undefined,
-        });
-
-        if (moveDetails) {
-          const sanReply = moveDetails.san;
-          feedbackEl.innerHTML = `
-            <span class="error-title">Mauvais coup !</span>
-            <div class="stockfish-response">
-              <span class="stockfish-icon">🤖</span>
-              <span class="analysis-text">L'adversaire répond <strong>${sanReply}</strong> et obtient un avantage décisif.</span>
-            </div>
-          `;
-        } else {
-          feedbackEl.innerHTML = `
-            <span class="error-title">Ce coup est une erreur tactique.</span>
-            <span class="analysis-text">Essayez un autre coup.</span>
-          `;
-        }
-      } else {
-        feedbackEl.innerHTML = `
-          <span class="error-title">Mauvais coup détecté.</span>
-          <span class="analysis-text">Ce coup n'est pas optimal dans cette position.</span>
-        `;
-      }
-
-      // Restaurer le handler original
-      stockfish.onmessage = originalHandler;
-    }
-  };
-
-  // 4. Envoyer la position à analyser
-  stockfish.postMessage("position fen " + fenAfterBadMove);
-  stockfish.postMessage("go depth 15");
-}
-
-// --- UTILITAIRES ---
-
-function playSound(type) {
-  if (sounds[type]) {
-    const soundClone = sounds[type].cloneNode();
-    soundClone
-      .play()
-      .catch((e) => console.warn("Son bloqué par le navigateur", e));
-  }
-}
-
-function translateToEnglish(text) {
-  let s = text;
-  s = s.replace(/R/g, "K");
-  s = s.replace(/D/g, "Q");
-  s = s.replace(/T/g, "R");
-  s = s.replace(/F/g, "B");
-  s = s.replace(/C/g, "N");
-  return s;
-}
-
-function makeMoveOnBoard(moveStr) {
+function makeComputerMove(moveStr) {
+  if (!moveStr) return;
   const from = moveStr.substring(0, 2);
   const to = moveStr.substring(2, 4);
   const promotion = moveStr.length > 4 ? moveStr[4] : "q";
-  game.move({ from: from, to: to, promotion: promotion });
-  board.position(game.fen());
-  // --- AJOUT : Redessiner les flèches si l'orientation change ou autre ---
-  // (Pas strictement nécessaire ici car board.position ne casse pas le SVG overlay)
-}
 
-function updateStatusWithTurn() {
-  const turn = game.turn() === "w" ? "Aux Blancs" : "Aux Noirs";
-  document.getElementById("status-text").innerText = `${turn}`;
-}
+  const move = game.move({ from: from, to: to, promotion: promotion });
 
-function updateSidebarUI(elo) {
-  document.getElementById("streak-display").innerText = currentStreak;
-  const badge = document.getElementById("difficulty-badge");
-  if (badge) {
-    let text = "Moyen",
-      cssClass = "medium";
-    if (elo < 1200) {
-      text = "Facile";
-      cssClass = "easy";
-    } else if (elo > 1400) {
-      text = "Difficile";
-      cssClass = "hard";
-    }
-    badge.innerText = text;
-    badge.className = `difficulty-badge ${cssClass}`;
+  if (move) {
+    board.move(from + "-" + to);
+    const historyEl = document.getElementById("move-history");
+    if (historyEl)
+      historyEl.innerHTML = `<span style="color:#eee;">Dernier coup : ${move.san}</span>`;
+    if (move.flags.includes("c")) playSound("capture");
+    else playSound("move");
   }
 }
 
-function showFeedback(isSuccess, message) {
-  const el = document.getElementById("feedback-area");
-  el.innerHTML = message;
-  el.className = isSuccess
-    ? "feedback success visible"
-    : "feedback error visible";
+function updateStatusWithTurn() {
+  const turn = game.turn() === "w" ? "Trait aux Blancs" : "Trait aux Noirs";
+  const statusText = document.getElementById("status-text");
+  const indicator = document.querySelector(".turn-indicator");
+
+  if (statusText) statusText.innerText = turn;
+
+  if (indicator) {
+    if (game.turn() === "w") {
+      indicator.classList.remove("black-turn");
+      indicator.classList.add("white-turn");
+    } else {
+      indicator.classList.remove("white-turn");
+      indicator.classList.add("black-turn");
+    }
+  }
 }
 
-function showHint() {
-  const expectedMove = currentPuzzle.movesList[moveIndex];
-  const piece = game.get(expectedMove.substring(0, 2));
-  const pieceName = piece.type === "p" ? "Pion" : piece.type.toUpperCase();
-
-  const bubble = document.getElementById("hint-bubble");
-  if (bubble) {
-    bubble.innerText = `💡 Indice : ${pieceName} en ${expectedMove.substring(0, 2)}...`;
-    bubble.classList.add("visible");
-    setTimeout(() => {
-      bubble.classList.remove("visible");
-    }, 3000);
+function playSound(type) {
+  if (sounds[type]) {
+    const s = sounds[type].cloneNode();
+    s.volume = 0.5;
+    s.play().catch(() => {});
   }
 }
 
@@ -493,203 +599,230 @@ function generateRandomId() {
   return result;
 }
 
-// =======================================================
-// SYSTEME DE FLÈCHES ET CERCLES (VISUALISATION / LOGIC.JS)
-// =======================================================
+function useHint() {
+  if (!isPuzzleActive || isWaitingForRetry) return;
+  // Calcul indice basé sur avancement + longueur plan
+  // +1 car moveIndex est décalé
+  // Si planning vide, on veut moveIndex (ex: 1)
+  // Si planning a 1 coup, on veut moveIndex + 1 (ex: 2)
+  const hintIndex = moveIndex + planningMoves.length;
 
-function initArrowSystem() {
+  if (hintIndex >= currentPuzzle.movesList.length) return;
+
+  const correctMoveStr = currentPuzzle.movesList[hintIndex];
+  const source = correctMoveStr.substring(0, 2);
+  const target = correctMoveStr.substring(2, 4);
+
   const $board = $("#board");
+  $board.find(".square-" + source).addClass("hint-square");
+  $board.find(".square-" + target).addClass("hint-square");
+  setTimeout(() => {
+    $board.find(".square-" + source).removeClass("hint-square");
+    $board.find(".square-" + target).removeClass("hint-square");
+  }, 1500);
+}
 
-  // 1. Création du SVG Overlay
-  const svgOverlay = `
-    <svg id="arrow-overlay" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <marker id="arrowhead" markerWidth="3" markerHeight="3" refX="2" refY="1.5" orient="auto">
-          <polygon points="0 0, 3 1.5, 0 3" class="arrow-head" />
-        </marker>
-      </defs>
-      <g id="arrows-layer"></g>
-    </svg>
-  `;
-  $board.append(svgOverlay);
-
+// --- FLÈCHES & SVG ---
+function initArrows() {
   const boardEl = document.getElementById("board");
-
-  // 2. Bloquer le menu contextuel par défaut
-  boardEl.addEventListener("contextmenu", (e) => e.preventDefault());
-
-  // 3. Mouse Down (Début du tracé - Clic Droit uniquement)
-  boardEl.addEventListener(
-    "mousedown",
-    (e) => {
-      if (e.button === 2) {
-        e.stopPropagation(); // On empêche la propagation
-
-        const square = getSquareFromEvent(e);
-        if (square) arrowStartSquare = square;
-      } else {
-        // Clic Gauche : On efface tout
-        clearArrows();
-      }
-    },
-    { capture: true }, // Capture obligatoire pour prendre le dessus
-  );
-
-  // 4. Mouse Up (Fin du tracé)
-  boardEl.addEventListener("mouseup", (e) => {
-    if (e.button === 2 && arrowStartSquare) {
-      const arrowEndSquare = getSquareFromEvent(e);
-
-      // Si on relâche sur une case valide (même si c'est la même)
-      if (arrowEndSquare) {
-        toggleArrow(arrowStartSquare, arrowEndSquare);
-      }
-      arrowStartSquare = null;
-    }
-  });
-}
-
-// Récupère la case sous la souris (ex: "e4")
-function getSquareFromEvent(e) {
-  const el = document.elementFromPoint(e.clientX, e.clientY);
-  const squareEl = $(el).closest(".square-55d63");
-  return squareEl.length ? squareEl.attr("data-square") : null;
-}
-
-// Ajoute ou enlève une flèche/cercle de la liste
-function toggleArrow(from, to) {
-  const index = arrowsList.findIndex((a) => a.from === from && a.to === to);
-
-  if (index !== -1) {
-    // Si elle existe, on l'enlève
-    arrowsList.splice(index, 1);
-  } else {
-    // Sinon on l'ajoute
-    arrowsList.push({ from, to });
+  if (!boardEl) return;
+  if (!document.getElementById("arrow-overlay")) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("id", "arrow-overlay");
+    svg.setAttribute("class", "arrow-canvas");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const marker = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "marker",
+    );
+    marker.setAttribute("id", "arrowhead");
+    marker.setAttribute("markerWidth", "4");
+    marker.setAttribute("markerHeight", "4");
+    marker.setAttribute("refX", "2");
+    marker.setAttribute("refY", "2");
+    marker.setAttribute("orient", "auto");
+    const polygon = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "polygon",
+    );
+    polygon.setAttribute("points", "0 0, 4 2, 0 4");
+    polygon.setAttribute("fill", "#ffa500");
+    marker.appendChild(polygon);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+    boardEl.appendChild(svg);
   }
+}
+function handleRightClickAction(start, end) {
+  const existingIndex = arrows.findIndex(
+    (a) => a.start === start && a.end === end,
+  );
+  if (existingIndex !== -1) arrows.splice(existingIndex, 1);
+  else arrows.push({ start, end });
   renderArrows();
 }
-
 function clearArrows() {
-  arrowsList = [];
+  arrows = [];
   renderArrows();
 }
-
-// Dessine les formes SVG
 function renderArrows() {
-  const layer = document.getElementById("arrows-layer");
-  if (!layer) return;
-  layer.innerHTML = ""; // Reset du calque
-
-  arrowsList.forEach((arrow) => {
-    const coords = getArrowCoordinates(arrow.from, arrow.to);
-
-    // CAS 1 : CERCLE (Départ == Arrivée)
-    if (arrow.from === arrow.to) {
-      const circle = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "circle",
-      );
-      circle.setAttribute("cx", coords.x1);
-      circle.setAttribute("cy", coords.y1);
-      circle.setAttribute("r", "0.42");
-      circle.setAttribute("class", "arrow-circle");
-      layer.appendChild(circle);
-    }
-    // CAS 2 : FLÈCHE (Départ != Arrivée)
-    else {
-      const line = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "line",
-      );
-      line.setAttribute("x1", coords.x1);
-      line.setAttribute("y1", coords.y1);
-      line.setAttribute("x2", coords.x2);
-      line.setAttribute("y2", coords.y2);
-      line.setAttribute("class", "arrow-line");
-      line.setAttribute("marker-end", "url(#arrowhead)");
-      layer.appendChild(line);
-    }
+  const svg = document.getElementById("arrow-overlay");
+  if (!svg) return;
+  while (svg.lastChild && svg.lastChild.tagName !== "defs")
+    svg.removeChild(svg.lastChild);
+  arrows.forEach((arrow) => {
+    if (arrow.start === arrow.end) drawCircle(svg, arrow.start);
+    else drawArrow(svg, arrow.start, arrow.end);
   });
 }
-
-// Calcule les coordonnées SVG (0 à 8) en fonction de l'orientation du plateau
-function getArrowCoordinates(from, to) {
+function getSquareCenter(square) {
   const files = "abcdefgh";
   const ranks = "12345678";
-
-  let x1, y1, x2, y2;
-
-  // On vérifie l'orientation actuelle du plateau
-  const orientation = board.orientation(); // 'white' ou 'black'
-
-  if (orientation === "white") {
-    y1 = 7 - ranks.indexOf(from[1]);
-    y2 = 7 - ranks.indexOf(to[1]);
-    x1 = files.indexOf(from[0]);
-    x2 = files.indexOf(to[0]);
+  let f = files.indexOf(square[0]);
+  let r = ranks.indexOf(square[1]);
+  const cellSize = 12.5;
+  const half = 6.25;
+  let x, y;
+  if (boardOrientation === "white") {
+    x = f * cellSize + half;
+    y = 100 - (r * cellSize + half);
   } else {
-    // Si on est Noir, le plateau est tourné : h8 est en bas à gauche (0,7 en SVG)
-    y1 = ranks.indexOf(from[1]);
-    y2 = ranks.indexOf(to[1]);
-    x1 = 7 - files.indexOf(from[0]);
-    x2 = 7 - files.indexOf(to[0]);
+    x = (7 - f) * cellSize + half;
+    y = r * cellSize + half;
   }
-
-  return {
-    x1: x1 + 0.5, // +0.5 pour centrer dans la case
-    y1: y1 + 0.5,
-    x2: x2 + 0.5,
-    y2: y2 + 0.5,
-  };
+  return { x, y };
+}
+function drawCircle(svg, square) {
+  const { x, y } = getSquareCenter(square);
+  const circle = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "circle",
+  );
+  circle.setAttribute("cx", x);
+  circle.setAttribute("cy", y);
+  circle.setAttribute("r", "6");
+  circle.setAttribute("fill", "#ffa500");
+  circle.setAttribute("opacity", "0.5");
+  svg.appendChild(circle);
+}
+function drawArrow(svg, start, end) {
+  const s = getSquareCenter(start);
+  const e = getSquareCenter(end);
+  const angle = Math.atan2(e.y - s.y, e.x - s.x);
+  const dist = Math.sqrt(Math.pow(e.x - s.x, 2) + Math.pow(e.y - s.y, 2));
+  const offset = 4.5;
+  const newEndX = s.x + Math.cos(angle) * (dist - offset);
+  const newEndY = s.y + Math.sin(angle) * (dist - offset);
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("x1", s.x);
+  line.setAttribute("y1", s.y);
+  line.setAttribute("x2", newEndX);
+  line.setAttribute("y2", newEndY);
+  line.setAttribute("stroke", "#ffa500");
+  line.setAttribute("stroke-width", "2.2");
+  line.setAttribute("opacity", "0.8");
+  line.setAttribute("marker-end", "url(#arrowhead)");
+  svg.appendChild(line);
 }
 
-// --- SAUVEGARDE STATS (MODE VISUALISATION - CORRIGÉ ELO + MERGE) ---
-async function updateVisuStats(isWin) {
+function initBoard(fen, orientation) {
+  if (board) board.destroy();
+  boardOrientation = orientation;
+  var config = {
+    draggable: true,
+    position: fen,
+    orientation: orientation,
+    onDragStart: onDragStart,
+    onDrop: onDrop,
+    pieceTheme:
+      "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
+    moveSpeed: 250,
+    snapbackSpeed: 500,
+    snapSpeed: 100,
+    trashSpeed: 100,
+  };
+  board = Chessboard("board", config);
+  const oldSvg = document.getElementById("arrow-overlay");
+  if (oldSvg) oldSvg.remove();
+  initArrows();
+  window.removeEventListener("resize", resizeSafe);
+  window.addEventListener("resize", resizeSafe);
+  setTimeout(resizeSafe, 100);
+}
+function resizeSafe() {
+  if (board) board.resize();
+}
+
+// --- STATS & USER ---
+console.log("--- 4. Attente authentification ---");
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const docRef = doc(db, "users", user.uid);
+    try {
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const nameEl = document.getElementById("user-name");
+        if (nameEl) nameEl.textContent = data.pseudo || "Joueur";
+        const avatarEl = document.getElementById("user-avatar");
+        if (avatarEl) {
+          const photoURL =
+            user.photoURL ||
+            `https://api.dicebear.com/9.x/adventurer/svg?seed=${data.pseudo || "User"}`;
+          avatarEl.style.backgroundImage = `url('${photoURL}')`;
+        }
+        const ratingEl = document.getElementById("user-rating");
+        if (ratingEl)
+          ratingEl.innerText = `Joueur: ${data.currentPuzzleElo || 1200}`;
+      }
+    } catch (e) {
+      console.error("Erreur Profil:", e);
+    }
+  } else {
+    const nameEl = document.getElementById("user-name");
+    if (nameEl) nameEl.textContent = "Invité";
+    const ratingEl = document.getElementById("user-rating");
+    if (ratingEl) ratingEl.innerText = "Joueur: 800";
+  }
+});
+
+async function updateStats(isWin) {
   const user = auth.currentUser;
   if (!user) return;
-
   const userRef = doc(db, "users", user.uid);
-
   try {
-    // 1. On récupère les stats actuelles
-    const docSnap = await getDoc(userRef);
-    const userData = docSnap.exists() ? docSnap.data() : {};
-
-    // 2. On récupère l'Elo actuel (ou 1000 par défaut si nouveau)
-    let currentElo = userData.currentVisuElo || 1000;
-    const bestElo = userData.bestVisuElo || 1000;
-
-    // 3. Calcul du nouveau score (+10 ou -10)
-    if (isWin) {
-      currentElo += 10;
-    } else {
-      currentElo = Math.max(100, currentElo - 10); // On ne descend pas sous 100
-    }
-
-    // 4. Préparation de la mise à jour
-    const updates = {
-      currentVisuElo: currentElo, // Ton niveau actuel
-    };
-
-    if (isWin) {
-      updates.visuSolved = increment(1);
-      updates.visuStreak = increment(1);
-
-      // Si ton nouveau niveau bat ton record, on met à jour le record
-      if (currentElo > bestElo) {
-        updates.bestVisuElo = currentElo;
-      }
-    } else {
-      updates.visuStreak = 0;
-    }
-
-    // 5. SAUVEGARDE SÉCURISÉE (setDoc + merge)
-    // C'est ce qui répare le bug de ton ami : si le doc n'existe pas, il le crée
+    const updates = isWin
+      ? { puzzlesSolved: increment(1), puzzleStreak: increment(1) }
+      : { puzzleStreak: 0 };
     await setDoc(userRef, updates, { merge: true });
+  } catch (error) {}
+}
 
-    console.log(`Niveau Visualisation mis à jour : ${currentElo}`);
-  } catch (error) {
-    console.error("Erreur sauvegarde stats visu:", error);
-  }
+function initStockfish() {
+  const stockfishUrl =
+    "https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.0/stockfish.js";
+  fetch(stockfishUrl)
+    .then((r) => r.text())
+    .then((c) => {
+      const b = new Blob([c], { type: "application/javascript" });
+      stockfish = new Worker(URL.createObjectURL(b));
+      stockfish.postMessage("uci");
+      stockfish.onmessage = (e) => {
+        if (
+          e.data.startsWith("info") &&
+          e.data.includes("score") &&
+          e.data.includes("pv")
+        )
+          parseAnalysis(e.data);
+      };
+    })
+    .catch(console.error);
+}
+function parseAnalysis(line) {
+  /* ... */
+}
+function updateEngineText(msg) {
+  const el = document.getElementById("engine-text");
+  if (el) el.innerHTML = msg;
 }
