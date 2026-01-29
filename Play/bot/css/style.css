@@ -381,3 +381,75 @@ select:focus,
     height: 90vw !important;
   }
 }
+/* =========================================
+   8. MODALE DE PROMOTION (STYLE INTEGRÉ)
+   ========================================= */
+
+#promotion-overlay {
+  position: fixed; /* Fixe par rapport à l'écran entier */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Fond sombre */
+  z-index: 2000; /* Au-dessus de tout */
+  display: flex; /* Centrage Flexbox */
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.promotion-modal {
+  background: var(--bg-glass); /* Utilise ton variable glass */
+  border: 1px solid var(--accent-gold);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  animation: popIn 0.2s ease-out;
+  min-width: 300px;
+}
+
+.promotion-modal h3 {
+  color: var(--text-main);
+  margin-bottom: 15px;
+  font-family: "Segoe UI", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.promo-pieces {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.promo-piece {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 5px;
+  border: 1px solid transparent;
+}
+
+.promo-piece:hover {
+  transform: scale(1.1);
+  background-color: rgba(212, 175, 55, 0.2);
+  border-color: var(--accent-gold);
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

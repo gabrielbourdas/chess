@@ -58,6 +58,9 @@ var isWaitingForRetry = false;
 var stockfish = null;
 var selectedSquare = null;
 
+// Variables Promotion
+var pendingMove = null; // { source, target }
+
 // Variables pour les flèches (Clic Droit)
 var rightClickStart = null;
 var arrows = [];
@@ -95,44 +98,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- GESTION CLICK DROIT (Flèches) - PRIORITAIRE ---
-
-    // 1. Bloquer le menu contextuel
     boardEl.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       return false;
     });
 
-    // 2. MOUSEDOWN (Début du tracé de flèche)
-    // capture: true permet d'intercepter l'événement AVANT chessboard.js
     boardEl.addEventListener(
       "mousedown",
       (e) => {
         if (e.button === 2) {
-          // 2 = Clic Droit
-          e.stopPropagation(); // EMPÊCHE Chessboard.js de bouger la pièce
+          e.stopPropagation();
           e.stopImmediatePropagation();
-
           const square = getSquareFromEvent(e);
-          if (square) {
-            rightClickStart = square;
-          }
+          if (square) rightClickStart = square;
         }
       },
       { capture: true },
     );
 
-    // 3. MOUSEUP (Fin du tracé)
     boardEl.addEventListener(
       "mouseup",
       (e) => {
         if (e.button === 2) {
-          e.stopPropagation(); // Bloque la propagation
-
+          e.stopPropagation();
           if (rightClickStart) {
             const square = getSquareFromEvent(e);
-            if (square) {
-              handleRightClickAction(rightClickStart, square);
-            }
+            if (square) handleRightClickAction(rightClickStart, square);
           }
           rightClickStart = null;
         }
@@ -175,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // --- FONCTION UTILITAIRE : Trouver la case cliquée ---
 function getSquareFromEvent(e) {
   let target = e.target;
-  // Ignore si on clique sur le SVG directement, cherche la div parente
   if (target.tagName === "IMG" && target.parentElement) {
     target = target.parentElement;
   }
@@ -199,7 +189,7 @@ function handleSquareClick(square) {
       removeSelection();
       selectedSquare = square;
       highlightSquare(square);
-      showMoveHints(square); // Affiche les points
+      showMoveHints(square);
     }
     return;
   }
@@ -264,7 +254,7 @@ function initArrows() {
       "polygon",
     );
     polygon.setAttribute("points", "0 0, 4 2, 0 4");
-    polygon.setAttribute("fill", "#ffa500"); // Orange
+    polygon.setAttribute("fill", "#ffa500");
     marker.appendChild(polygon);
     defs.appendChild(marker);
     svg.appendChild(defs);
@@ -294,18 +284,12 @@ function clearArrows() {
 function renderArrows() {
   const svg = document.getElementById("arrow-overlay");
   if (!svg) return;
-
-  // Nettoyage sauf defs
   while (svg.lastChild && svg.lastChild.tagName !== "defs") {
     svg.removeChild(svg.lastChild);
   }
-
   arrows.forEach((arrow) => {
-    if (arrow.start === arrow.end) {
-      drawCircle(svg, arrow.start);
-    } else {
-      drawArrow(svg, arrow.start, arrow.end);
-    }
+    if (arrow.start === arrow.end) drawCircle(svg, arrow.start);
+    else drawArrow(svg, arrow.start, arrow.end);
   });
 }
 
@@ -314,11 +298,9 @@ function getSquareCenter(square) {
   const ranks = "12345678";
   let f = files.indexOf(square[0]);
   let r = ranks.indexOf(square[1]);
-
   const cellSize = 12.5;
   const half = 6.25;
   let x, y;
-
   if (boardOrientation === "white") {
     x = f * cellSize + half;
     y = 100 - (r * cellSize + half);
@@ -346,14 +328,11 @@ function drawCircle(svg, square) {
 function drawArrow(svg, start, end) {
   const s = getSquareCenter(start);
   const e = getSquareCenter(end);
-
   const angle = Math.atan2(e.y - s.y, e.x - s.x);
   const dist = Math.sqrt(Math.pow(e.x - s.x, 2) + Math.pow(e.y - s.y, 2));
   const offset = 4.5;
-
   const newEndX = s.x + Math.cos(angle) * (dist - offset);
   const newEndY = s.y + Math.sin(angle) * (dist - offset);
-
   const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
   line.setAttribute("x1", s.x);
   line.setAttribute("y1", s.y);
@@ -386,7 +365,6 @@ function initBoard(fen, orientation) {
   };
   board = Chessboard("board", config);
 
-  // Réinitialiser SVG
   const oldSvg = document.getElementById("arrow-overlay");
   if (oldSvg) oldSvg.remove();
   initArrows();
@@ -421,23 +399,56 @@ function updateHistory() {
   historyEl.scrollTop = historyEl.scrollHeight;
 }
 
-// --- LOGIQUE UNIFIÉE (Drag & Click) ---
-function handleUserMove(source, target) {
-  const move = game.move({ from: source, to: target, promotion: "q" });
+// --- LOGIQUE UNIFIÉE & PROMOTION ---
+
+function handleUserMove(source, target, promotionChoice = null) {
+  // 1. Détection Promotion
+  const piece = game.get(source);
+  const isPromotion =
+    piece.type === "p" &&
+    ((piece.color === "w" && target[1] === "8") ||
+      (piece.color === "b" && target[1] === "1"));
+
+  // Si c'est une promotion et qu'on n'a pas encore choisi
+  if (isPromotion && !promotionChoice) {
+    pendingMove = { source, target };
+    showPromotionModal(piece.color);
+    return "pending"; // On indique qu'on attend
+  }
+
+  const finalPromotion = promotionChoice || "q";
+
+  // 2. Tentative de mouvement
+  const move = game.move({
+    from: source,
+    to: target,
+    promotion: finalPromotion,
+  });
 
   if (move === null) return "snapback";
 
+  // Mouvement valide sur le plateau
   board.move(source + "-" + target);
-  clearArrows(); // Supprime les flèches quand on joue
+
+  // Important : on force la mise à jour pour afficher la pièce promue (Dame/Tour...)
+  if (isPromotion) board.position(game.fen());
+
+  clearArrows();
   updateHistory();
   startEvaluation(game.fen());
 
-  const attemptUCI = source + target;
+  // 3. Validation de la solution du Puzzle
+  let attemptUCI = source + target;
+  if (move.promotion) attemptUCI += move.promotion; // ex: a7a8q
+
   const expectedMove = currentPuzzle.movesList[moveIndex];
 
   if (!expectedMove) return "snapback";
 
-  if (attemptUCI === expectedMove.substring(0, 4)) {
+  // On compare l'UCI complet (incluant la promotion si nécessaire)
+  // expectedMove est une string "e2e4" ou "a7a8q"
+  // Si le puzzle attend "a7a8q" et que l'utilisateur a fait "a7a8r", ce sera faux.
+  if (attemptUCI === expectedMove) {
     handleSuccess(move);
     return true;
   } else {
@@ -448,9 +459,48 @@ function handleUserMove(source, target) {
   }
 }
 
+// --- GESTION MODALE PROMOTION ---
+// Ces fonctions doivent être accessibles globalement (si attachées via onclick dans le HTML généré)
+window.confirmPromotion = confirmPromotion;
+
+function showPromotionModal(color) {
+  const modal = document.getElementById("promotion-overlay");
+  const container = document.getElementById("promo-pieces-container");
+  if (!modal || !container) return;
+
+  container.innerHTML = "";
+  const pieces = ["q", "r", "b", "n"]; // Dame, Tour, Fou, Cavalier
+
+  pieces.forEach((p) => {
+    const img = document.createElement("img");
+    img.src = `https://chessboardjs.com/img/chesspieces/wikipedia/${color}${p.toUpperCase()}.png`;
+    img.className = "promo-piece";
+    img.onclick = () => confirmPromotion(p);
+    container.appendChild(img);
+  });
+
+  modal.style.display = "flex";
+}
+
+function confirmPromotion(pieceChar) {
+  document.getElementById("promotion-overlay").style.display = "none";
+
+  if (pendingMove) {
+    const { source, target } = pendingMove;
+    const result = handleUserMove(source, target, pieceChar);
+
+    // Si le mouvement échoue (mauvaise solution de puzzle), handleFailure gérera l'UI
+    // Si c'était illégal (snapback), on remet la pièce
+    if (result === "snapback") {
+      board.position(game.fen());
+    }
+    pendingMove = null;
+  }
+}
+
 // --- DRAG & DROP HANDLERS ---
 function onDragStart(source, piece, position, orientation) {
-  clearArrows(); // Nettoyage flèches
+  clearArrows();
 
   if (!isPuzzleActive) return false;
   if (isWaitingForRetry) return false;
@@ -470,6 +520,10 @@ function onDrop(source, target) {
     return;
   }
   const result = handleUserMove(source, target);
+
+  // Si on attend la promotion ("pending"), on ne fait rien (la pièce reste visuellement là où on l'a lâchée)
+  if (result === "pending") return;
+
   if (result === "snapback") return "snapback";
   removeSelection();
 }
@@ -481,6 +535,8 @@ function retryPuzzle() {
   updateHistory();
   removeSelection();
   clearArrows();
+  pendingMove = null; // Reset au cas où
+  document.getElementById("promotion-overlay").style.display = "none";
 
   isWaitingForRetry = false;
   document.getElementById("btn-retry").style.display = "none";
@@ -503,12 +559,14 @@ async function loadRandomPuzzle() {
 
   document.getElementById("btn-retry").style.display = "none";
   document.getElementById("btn-hint").style.display = "block";
+  document.getElementById("promotion-overlay").style.display = "none";
   updateEngineText("");
 
   isPuzzleActive = false;
   isWaitingForRetry = false;
   moveIndex = 0;
   selectedSquare = null;
+  pendingMove = null;
   clearArrows();
   game.clear();
   updateHistory();
@@ -654,6 +712,8 @@ function makeComputerMove(moveStr) {
 
   if (move) {
     board.move(from + "-" + to);
+    // Si l'ordi fait une promotion, on update la position
+    if (move.promotion) board.position(game.fen());
     updateHistory();
     if (move.flags.includes("c")) playSound("capture");
     else playSound("move");

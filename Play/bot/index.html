@@ -17,7 +17,6 @@
 
     <link rel="stylesheet" href="../../css/nav.css" />
     <link rel="stylesheet" href="../../css/style.css" />
-
     <link rel="stylesheet" href="./css/style.css" />
 
     <link
@@ -117,13 +116,17 @@
       </div>
     </main>
 
+    <div id="promotion-overlay" class="promotion-overlay" style="display: none">
+      <div class="promotion-modal">
+        <h3>Promotion</h3>
+        <div id="promo-pieces-container" class="promo-pieces"></div>
+      </div>
+    </div>
+
     <script src="bot-game.js"></script>
     <script>
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
-      }
-      function hidesidebar() {
-        document.querySelector(".sidebar").style.display = "none";
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
       }
     </script>
   </body>

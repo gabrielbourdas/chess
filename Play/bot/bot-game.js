@@ -13,6 +13,7 @@ var arrowsList = [];
 var arrowStartSquare = null;
 var selectedSquare = null;
 var draggedSource = null;
+var pendingMove = null; // Variable pour la promotion
 
 // Paramètres par défaut
 var playerColor = "w";
@@ -22,7 +23,6 @@ var difficulty = 5;
 // GESTION DES SONS (MOUVEMENT & CAPTURE)
 // =============================================
 
-// Liens directs vers les sons (Format MP3 standard)
 const audioMove = new Audio(
   "https://images.chesscomfiles.com/chess-themes/sounds/_Common/standard/move.mp3",
 );
@@ -30,30 +30,16 @@ const audioCapture = new Audio(
   "https://images.chesscomfiles.com/chess-themes/sounds/_Common/standard/capture.mp3",
 );
 
-// Fonction pour jouer le son
 function playMoveSound(move) {
-  // Vérifie si le coup est une capture ('c') ou une prise en passant ('e')
   const isCapture = move.flags.includes("c") || move.flags.includes("e");
-
-  // Sélectionne le bon fichier audio
   const soundToPlay = isCapture ? audioCapture : audioMove;
-
-  // Remet le son au début (pour pouvoir le jouer rapidement plusieurs fois de suite)
   soundToPlay.currentTime = 0;
-
-  // Tente de jouer le son
   var playPromise = soundToPlay.play();
 
   if (playPromise !== undefined) {
-    playPromise
-      .then((_) => {
-        // Le son s'est joué avec succès
-        console.log(isCapture ? "🔊 Son: Capture" : "🔊 Son: Mouvement");
-      })
-      .catch((error) => {
-        // Le navigateur a bloqué le son
-        console.warn("⚠️ Erreur Audio :", error);
-      });
+    playPromise.catch((error) => {
+      // Ignorer les erreurs d'autoplay
+    });
   }
 }
 
@@ -123,6 +109,8 @@ function onDrop(source, target) {
 
   removeAllHighlights();
   var move = attemptMove(source, target);
+
+  // Si attemptMove retourne null (mouvement illégal OU promotion en attente)
   if (move === null) return "snapback";
 }
 
@@ -137,12 +125,14 @@ function handleSquareClick(square) {
   if (selectedSquare) {
     var move = attemptMove(selectedSquare, square);
     if (move === null) {
+      // Si le mouvement a échoué, on regarde si on a cliqué sur une autre pièce à nous
       var piece = game.get(square);
       if (piece && piece.color === game.turn()) {
         deselectSquare();
         selectSquare(square);
       } else {
-        deselectSquare();
+        // Sinon on désélectionne (sauf si c'est une promotion en cours)
+        if (!pendingMove) deselectSquare();
       }
     } else {
       deselectSquare();
@@ -155,17 +145,37 @@ function handleSquareClick(square) {
   }
 }
 
-function attemptMove(from, to) {
-  // On effectue le mouvement
-  var move = game.move({ from: from, to: to, promotion: "q" });
+function attemptMove(from, to, promotionChoice = null) {
+  // 1. DÉTECTION PROMOTION
+  const piece = game.get(from);
+  const isPawn = piece && piece.type === "p";
+  // Vérifie si le pion atteint la dernière rangée (8 pour Blancs, 1 pour Noirs)
+  const isPromotionRank =
+    (piece.color === "w" && to[1] === "8") ||
+    (piece.color === "b" && to[1] === "1");
 
-  // Si le mouvement est invalide, on arrête
+  // Si c'est une promotion et qu'on n'a pas encore choisi la pièce
+  if (isPawn && isPromotionRank && !promotionChoice) {
+    pendingMove = { from, to };
+    showPromotionModal(piece.color);
+    return null; // On annule le mouvement pour l'instant (snapback visuel)
+  }
+
+  // Si choix fait ou pas de promotion, on définit la pièce (Dame par défaut pour le bot ou logique interne)
+  const finalPromotion = promotionChoice || "q";
+
+  // 2. TENTATIVE DE MOUVEMENT
+  var move = game.move({ from: from, to: to, promotion: finalPromotion });
+
+  // Si le mouvement est invalide
   if (move === null) return null;
 
   // --- SON : On joue le son ici pour le joueur ---
   playMoveSound(move);
 
+  // Mise à jour visuelle forcée (crucial pour afficher la pièce promue)
   board.position(game.fen());
+
   clearArrows();
   updateStatus();
   updateMoveHistory();
@@ -178,6 +188,8 @@ function attemptMove(from, to) {
 }
 
 function onSnapEnd() {
+  // Cette fonction gère la mise à jour visuelle après un drag & drop standard
+  // Si une promotion vient d'avoir lieu, board.position a déjà été appelé dans attemptMove
   board.position(game.fen());
 }
 
@@ -190,7 +202,45 @@ function isPlayerTurn() {
 }
 
 // =============================================
-// 3. INTELLIGENCE ARTIFICIELLE
+// 3. GESTION DE LA PROMOTION (INTERFACE)
+// =============================================
+
+// Exposition globale pour les onclick générés dans le HTML
+window.confirmPromotion = confirmPromotion;
+
+function showPromotionModal(color) {
+  const modal = document.getElementById("promotion-overlay");
+  const container = document.getElementById("promo-pieces-container");
+  if (!modal || !container) return;
+
+  container.innerHTML = "";
+  // Ordre des pièces
+  const pieces = ["q", "r", "n", "b"];
+
+  pieces.forEach((p) => {
+    const img = document.createElement("img");
+    img.src = `https://chessboardjs.com/img/chesspieces/wikipedia/${color}${p.toUpperCase()}.png`;
+    img.className = "promo-piece";
+    img.onclick = () => confirmPromotion(p);
+    container.appendChild(img);
+  });
+
+  modal.style.display = "flex";
+}
+
+function confirmPromotion(pieceChar) {
+  document.getElementById("promotion-overlay").style.display = "none";
+
+  if (pendingMove) {
+    const { from, to } = pendingMove;
+    // On relance le mouvement avec le choix de la pièce
+    attemptMove(from, to, pieceChar);
+    pendingMove = null;
+  }
+}
+
+// =============================================
+// 4. INTELLIGENCE ARTIFICIELLE
 // =============================================
 
 function askBotToPlay() {
@@ -223,7 +273,6 @@ function makeBotMove(bestMoveUCI) {
 
   if (move === null) return;
 
-  // --- SON : On joue le son ici pour le bot ---
   playMoveSound(move);
 
   board.position(game.fen());
@@ -233,7 +282,7 @@ function makeBotMove(bestMoveUCI) {
 }
 
 // =============================================
-// 4. GESTION VISUELLE
+// 5. GESTION VISUELLE
 // =============================================
 
 function selectSquare(square) {
@@ -286,7 +335,7 @@ function onMouseoutSquare(square) {
 }
 
 // =============================================
-// 5. SYSTÈME DE FLÈCHES
+// 6. SYSTÈME DE FLÈCHES
 // =============================================
 
 function initArrowSystem() {
@@ -435,6 +484,10 @@ $(document).ready(function () {
     deselectSquare();
     removeAllHighlights();
     gameActive = true;
+
+    // Au cas où une promotion était en attente
+    pendingMove = null;
+    document.getElementById("promotion-overlay").style.display = "none";
   });
 
   $("#btn-play-white").on("click", function () {
@@ -463,6 +516,8 @@ $(document).ready(function () {
     difficulty = parseInt($(this).val());
     updateBotTitle();
     console.log("Niveau choisi:", difficulty, LEVEL_CONFIG[difficulty]);
+    // Relance la partie automatiquement lors du changement de niveau
+    startNewGame();
   });
 
   updateBotTitle();
@@ -492,6 +547,10 @@ function startNewGame() {
   clearArrows();
   deselectSquare();
   removeAllHighlights();
+
+  // Reset de la promotion
+  pendingMove = null;
+  document.getElementById("promotion-overlay").style.display = "none";
 
   if (playerColor === "b") {
     window.setTimeout(askBotToPlay, 500);

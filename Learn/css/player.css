@@ -1,0 +1,357 @@
+/* =========================================
+   STYLE : LECTEUR DE LEÇON (PLAYER)
+   ========================================= */
+
+/* On force le body à prendre toute la hauteur sans scroll global si possible */
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Le scroll se fera dans les panneaux */
+  background: var(--bg-main);
+}
+
+/* --- HEADER MINIMALISTE --- */
+.lesson-header {
+  height: 60px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 10;
+}
+
+.back-link {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: var(--text-primary);
+}
+
+.back-link .arrow {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.lesson-header h1 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* --- LAYOUT PRINCIPAL (GRID) --- */
+.lesson-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* --- SIDEBAR (GAUCHE) --- */
+.course-sidebar {
+  width: 280px;
+  background: var(--bg-tertiary);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-content {
+  padding: 2rem;
+}
+
+.sidebar-content h3 {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.chapter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chapter-item {
+  padding: 10px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chapter-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+}
+
+.chapter-item.active {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--accent-gold);
+  border-left: 3px solid var(--accent-gold);
+}
+
+.chapter-item.completed {
+  color: #2ecc71; /* Vert discret */
+}
+
+/* --- WORKSPACE (CENTRE + DROITE) --- */
+.lesson-workspace {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+
+/* --- PANNEAU ÉCHIQUIER --- */
+.board-panel {
+  flex: 1.2; /* Prend un peu plus de place */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(
+    circle at center,
+    #151515 0%,
+    var(--bg-main) 100%
+  );
+  padding: 2rem;
+  position: relative;
+}
+
+.board-container {
+  width: 100%;
+  max-width: 550px; /* Taille max confortable */
+  aspect-ratio: 1/1;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 5px solid #252525;
+  border-radius: 4px;
+}
+
+/* Flèches SVG par-dessus le plateau */
+.arrow-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.board-controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.icon-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: 0.2s;
+}
+
+.icon-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* --- PANNEAU CONTENU (DROITE) --- */
+.content-panel {
+  flex: 1; /* Prend le reste */
+  max-width: 500px;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 3rem;
+  overflow-y: auto;
+}
+
+.step-counter {
+  font-size: 0.8rem;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.content-panel h2 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.instruction-text {
+  font-size: 1.05rem;
+  color: #ccc;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.instruction-text p {
+  margin-bottom: 1rem;
+}
+
+.instruction-text strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* FEEDBACK BOX */
+.feedback-box {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: slideIn 0.3s ease;
+}
+
+.feedback-box.hidden {
+  display: none;
+}
+
+.feedback-box.success {
+  background: rgba(46, 204, 113, 0.1);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  color: #2ecc71;
+}
+
+.feedback-box.error {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+}
+
+/* CONTROLES BAS DE PAGE */
+.lesson-footer {
+  margin-top: auto; /* Pousse vers le bas */
+  display: flex;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+  letter-spacing: 1px;
+}
+
+.btn-primary {
+  background: var(--accent-gold);
+  color: #000;
+}
+.btn-primary:hover {
+  background: #e5c150;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+.btn-secondary:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.btn-secondary:disabled,
+.btn-primary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+  .lesson-layout {
+    flex-direction: column;
+    overflow-y: auto; /* Scroll global sur tablette/mobile */
+  }
+
+  body {
+    height: auto;
+    overflow: auto;
+  }
+
+  .course-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 200px; /* Sidebar plus petite */
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .lesson-workspace {
+    flex-direction: column;
+  }
+
+  .board-panel {
+    padding: 1rem;
+  }
+
+  .content-panel {
+    max-width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--border-subtle);
+    padding: 2rem;
+  }
+}

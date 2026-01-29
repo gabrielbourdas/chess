@@ -63,6 +63,9 @@ var isWaitingForRetry = false;
 var stockfish = null;
 var selectedSquare = null;
 
+// Variables Promotion (AJOUTÉ)
+var pendingMove = null;
+
 // Variables Clic Droit
 var rightClickStart = null;
 var arrows = [];
@@ -103,12 +106,14 @@ document.addEventListener("DOMContentLoaded", () => {
               removeSelection();
             } else {
               const moveResult = handleUserMove(selectedSquare, square);
-              if (!moveResult) {
+              // Si le mouvement a réussi (true) ou est en attente de promotion ("pending")
+              if (moveResult === true || moveResult === "pending") {
+                removeSelection();
+              } else {
+                // Mouvement invalide, on sélectionne la nouvelle pièce si c'est la nôtre
                 if (piece.color === game.turn()) {
                   selectSquare(square);
                 }
-              } else {
-                removeSelection();
               }
             }
           }
@@ -232,7 +237,43 @@ function removeSelection() {
   $board.find(".capture-hint").removeClass("capture-hint");
 }
 
-// --- LOGIQUE BATCH / PLANIFICATION (CORRIGÉE) ---
+// --- GESTION PROMOTION (AJOUTÉ) ---
+window.confirmPromotion = confirmPromotion;
+
+function showPromotionModal(color) {
+  const modal = document.getElementById("promotion-overlay");
+  const container = document.getElementById("promo-pieces-container");
+  if (!modal || !container) return;
+
+  container.innerHTML = "";
+  const pieces = ["q", "r", "b", "n"]; // Dame, Tour, Fou, Cavalier
+
+  pieces.forEach((p) => {
+    const img = document.createElement("img");
+    img.src = `https://chessboardjs.com/img/chesspieces/wikipedia/${color}${p.toUpperCase()}.png`;
+    img.className = "promo-piece";
+    img.onclick = () => confirmPromotion(p);
+    container.appendChild(img);
+  });
+
+  modal.style.display = "flex";
+}
+
+function confirmPromotion(pieceChar) {
+  document.getElementById("promotion-overlay").style.display = "none";
+
+  if (pendingMove) {
+    const { source, target } = pendingMove;
+    const result = handleUserMove(source, target, pieceChar);
+
+    if (result === false) {
+      board.position(game.fen());
+    }
+    pendingMove = null;
+  }
+}
+
+// --- LOGIQUE BATCH / PLANIFICATION ---
 
 function updatePlanningUI() {
   const listEl = document.getElementById("planning-list");
@@ -290,8 +331,6 @@ function validatePlanning() {
   function playNextStep() {
     if (step >= planningMoves.length) {
       // Fin de la séquence utilisateur
-      // On vérifie si on est allé au bout du puzzle
-      // step+1 car puzzle contient coup ordi initial
       if (step + 1 >= currentPuzzle.movesList.length) {
         // Puzzle fini
       } else {
@@ -303,7 +342,7 @@ function validatePlanning() {
 
     const plannedMove = planningMoves[step];
 
-    // CORRECTION DE L'INDEX : +1 pour sauter le coup initial de l'ordi
+    // +1 pour sauter le coup initial de l'ordi
     const puzzleIndexToCheck = step + 1;
     const expectedMoveUCI = currentPuzzle.movesList[puzzleIndexToCheck];
 
@@ -312,11 +351,15 @@ function validatePlanning() {
       return;
     }
 
-    const moveAttemptUCI = plannedMove.from + plannedMove.to;
+    // On reconstruit l'UCI du coup joué (incluant la promotion si présente)
+    let moveAttemptUCI = plannedMove.from + plannedMove.to;
+    if (plannedMove.promotion) {
+      moveAttemptUCI += plannedMove.promotion;
+    }
 
     // Comparaison
-    if (moveAttemptUCI === expectedMoveUCI.substring(0, 4)) {
-      game.move(plannedMove);
+    if (moveAttemptUCI === expectedMoveUCI) {
+      game.move(plannedMove); // Rejoue le coup planifié
       board.position(game.fen());
 
       if (plannedMove.flags.includes("c")) playSound("capture");
@@ -374,13 +417,40 @@ function handleFailureBatch(stepIndex) {
   updateEngineText("Analysez la séquence...");
 }
 
-// --- LOGIQUE UNIFIÉE ---
-function handleUserMove(source, target) {
-  // Mode Batch : On joue le coup "virtuellement"
-  const move = game.move({ from: source, to: target, promotion: "q" });
+// --- LOGIQUE UNIFIÉE (MODIFIÉ POUR PROMOTION) ---
+function handleUserMove(source, target, promotionChoice = null) {
+  // 1. Détection de la Promotion
+  const piece = game.get(source);
+  const isPromotion =
+    piece &&
+    piece.type === "p" &&
+    ((piece.color === "w" && target[1] === "8") ||
+      (piece.color === "b" && target[1] === "1"));
+
+  // Si c'est une promotion et qu'on n'a pas encore choisi
+  if (isPromotion && !promotionChoice) {
+    pendingMove = { source, target };
+    showPromotionModal(piece.color);
+    return "pending"; // On attend
+  }
+
+  const finalPromotion = promotionChoice || "q";
+
+  // 2. Mode Batch : On joue le coup "virtuellement"
+  const move = game.move({
+    from: source,
+    to: target,
+    promotion: finalPromotion,
+  });
+
   if (move === null) return false;
 
+  // Mise à jour visuelle du plateau
   board.move(source + "-" + target);
+
+  // IMPORTANT : Si c'est une promotion, on force la mise à jour pour afficher la Dame/Cavalier
+  if (isPromotion) board.position(game.fen());
+
   planningMoves.push(move);
   updatePlanningUI();
 
@@ -403,13 +473,23 @@ function onDragStart(source, piece, position, orientation) {
 
 function onDrop(source, target) {
   if (source === target) return;
+
   const result = handleUserMove(source, target);
-  if (!result) return "snapback";
+
+  // Si on attend la sélection de promotion, on ne fait rien (la pièce reste là visuellement ou est gérée par la modale)
+  if (result === "pending") return;
+
+  if (result === false) return "snapback";
   removeSelection();
 }
 
 // --- JEU & SETUP ---
 function retryPuzzle() {
+  // Nettoyage modale
+  pendingMove = null;
+  const modal = document.getElementById("promotion-overlay");
+  if (modal) modal.style.display = "none";
+
   game.load(initialFen);
   board.position(initialFen);
   planningMoves = [];
@@ -436,6 +516,12 @@ function retryPuzzle() {
 
 async function loadRandomPuzzle() {
   console.log("Chargement d'un nouveau puzzle...");
+
+  // Nettoyage modale
+  pendingMove = null;
+  const modal = document.getElementById("promotion-overlay");
+  if (modal) modal.style.display = "none";
+
   const fb = document.getElementById("feedback-area");
   if (fb) {
     fb.className = "feedback";
@@ -556,6 +642,9 @@ function makeComputerMove(moveStr) {
 
   if (move) {
     board.move(from + "-" + to);
+    // Si promotion ordi, on sync la position
+    if (move.promotion) board.position(game.fen());
+
     const historyEl = document.getElementById("move-history");
     if (historyEl)
       historyEl.innerHTML = `<span style="color:#eee;">Dernier coup : ${move.san}</span>`;
@@ -602,9 +691,6 @@ function generateRandomId() {
 function useHint() {
   if (!isPuzzleActive || isWaitingForRetry) return;
   // Calcul indice basé sur avancement + longueur plan
-  // +1 car moveIndex est décalé
-  // Si planning vide, on veut moveIndex (ex: 1)
-  // Si planning a 1 coup, on veut moveIndex + 1 (ex: 2)
   const hintIndex = moveIndex + planningMoves.length;
 
   if (hintIndex >= currentPuzzle.movesList.length) return;

@@ -3,23 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess | Académie Stratégique</title>
+    <title>Open Chess - L'Académie</title>
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
 
     <link rel="stylesheet" href="../css/nav.css" />
     <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="./css/style.css" />
+
+    <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
     <header>
       <nav class="navbar">
@@ -29,206 +28,410 @@
         <ul class="nav-links">
           <li><a href="../Play/index.html">Jouer</a></li>
           <li><a href="../Puzzles/index.html">Défis</a></li>
+          <li><a href="index.html" class="active">Apprendre</a></li>
           <li><a href="../Analyze/index.html">Analyser</a></li>
-          <li><a href="./index.html" class="active">Apprendre</a></li>
         </ul>
         <div class="nav-actions">
-          <a href="../login/index.html" class="btn-login">Connexion</a>
+          <a href="../login/index.html" class="btn-login" id="nav-login-btn"
+            >Connexion</a
+          >
         </div>
         <div class="hamburger" onclick="toggleMenu()">
           <span></span><span></span>
         </div>
       </nav>
-
       <div class="mobile-menu" id="mobileMenu">
         <a href="../Play/index.html">Jouer</a>
         <a href="../Puzzles/index.html">Défis</a>
-        <a href="../Analyze/index.html">Analyser</a>
-        <a href="./index.html">Apprendre</a>
+        <a href="index.html">Apprendre</a>
         <a href="../login/index.html">Connexion</a>
       </div>
     </header>
 
-    <main class="learn-main">
+    <main>
       <section class="learn-hero">
         <div class="hero-content">
-          <span class="subtitle">Bibliothèque Stratégique</span>
-          <h1>L'Art de la Guerre <br /><em>sur 64 cases.</em></h1>
-          <p class="hero-desc">
-            Ne jouez plus au hasard. De l'ouverture à la finale, maîtrisez les
-            concepts qui séparent les amateurs des maîtres.
+          <span class="subtitle">L'Académie</span>
+          <h1>Le Cursus <br /><em>Complet.</em></h1>
+          <p>
+            Une progression structurée inspirée des meilleures écoles d'échecs.
+            Maîtrisez chaque phase du jeu, module après module.
           </p>
-
-          <div class="hero-nav-pill">
-            <a href="./Opening.html" class="pill-link">Ouvertures</a>
-            <span class="pill-sep">•</span>
-            <a href="./Midgame.html" class="pill-link">Milieu</a>
-            <span class="pill-sep">•</span>
-            <a href="./Endgame.html" class="pill-link">Finales</a>
-          </div>
         </div>
+        <div class="hero-bg-decoration"></div>
       </section>
 
-      <section class="featured-container">
-        <div class="featured-card">
-          <div class="featured-content">
-            <div class="featured-badge">🔥 Leçon de la Semaine</div>
-            <h3>Comprendre "L'Espagnole"</h3>
-            <p>
-              Pourquoi Ruy Lopez est-elle l'ouverture des champions depuis 150
-              ans ? Découvrez le secret de la pression durable.
-            </p>
-            <div class="featured-actions">
-              <a
-                href="./openings/jeu_ouvert.html#tab-espagnole"
-                class="btn-primary"
-              >
-                <i class="fas fa-play"></i> Étudier maintenant
-              </a>
-              <span class="time-tag"><i class="far fa-clock"></i> 15 min</span>
+      <div
+        class="stats-overview"
+        id="user-progress-panel"
+        style="display: none"
+      >
+        <div class="stat-card">
+          <span class="stat-val" id="completed-courses">0/24</span>
+          <span class="stat-label">Modules Validés</span>
+        </div>
+        <div class="stat-card gold">
+          <span class="stat-val" id="user-rank">Novice</span>
+          <span class="stat-label">Grade Académique</span>
+        </div>
+      </div>
+
+      <section class="courses-section">
+        <div class="category-header">
+          <div class="cat-title">
+            <span class="cat-level">Cycle 1 (0 - 1000 Elo)</span>
+            <h3>Les Fondations</h3>
+          </div>
+          <div class="line"></div>
+        </div>
+
+        <div class="courses-grid">
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1586165368502-1bad197a6461?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge easy">Bases</span>
+            </div>
+            <div class="card-content">
+              <h4>Règles & But du Jeu</h4>
+              <p>
+                Déplacements, valeurs des pièces, échec et mat, pat, roque et
+                prise en passant.
+              </p>
+              <div class="progress-bar-container">
+                <div class="progress-info">
+                  <span>Complété</span><span>100%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 100%"></div>
+                </div>
+              </div>
+              <a href="./player.html?id=module-1" class="btn-course">Revoir</a>
             </div>
           </div>
-          <div class="featured-visual">
-            <i class="fa-solid fa-chess-bishop big-icon"></i>
-          </div>
-        </div>
-      </section>
 
-      <section class="modules-grid">
-        <div id="ouvertures" class="module-card">
-          <div class="card-header">
-            <div class="icon-box">🏛️</div>
-            <h3>Les Ouvertures</h3>
-          </div>
-          <div class="card-body">
-            <p class="intro">Posez les fondations de votre victoire.</p>
-            <ul class="principles-list">
-              <li>
-                <span class="check-icon">✓</span>
-                <div>
-                  <strong>Contrôle du Centre</strong>
-                  <span>Dominez e4/d4 dès le début.</span>
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1529699211952-734e80c4d42b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge easy">Finale</span>
+            </div>
+            <div class="card-content">
+              <h4>Mats Élémentaires</h4>
+              <p>
+                Savoir conclure : Mat de l'escalier, Roi & Dame, Roi & Tour. Les
+                techniques indispensables.
+              </p>
+              <div class="progress-bar-container">
+                <div class="progress-info">
+                  <span>En cours</span><span>30%</span>
                 </div>
-              </li>
-              <li>
-                <span class="check-icon">✓</span>
-                <div>
-                  <strong>Développement Actif</strong>
-                  <span>Sortez vos pièces, ne les laissez pas dormir.</span>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 30%"></div>
                 </div>
-              </li>
-            </ul>
-            <a href="./Opening.html" class="btn-card"
-              >Explorer le Catalogue <i class="fas fa-arrow-right"></i
-            ></a>
+              </div>
+              <a href="#" class="btn-course primary">Continuer</a>
+            </div>
           </div>
-        </div>
 
-        <div id="milieu" class="module-card highlight">
-          <div class="card-header">
-            <div class="icon-box">⚔️</div>
-            <h3>Milieu de Jeu</h3>
-          </div>
-          <div class="card-body">
-            <p class="intro">Là où la créativité rencontre le calcul.</p>
-            <ul class="principles-list">
-              <li>
-                <span class="check-icon">✓</span>
-                <div>
-                  <strong>Motifs Tactiques</strong>
-                  <span>Fourchettes, clouages, attaques à la découverte.</span>
-                </div>
-              </li>
-              <li>
-                <span class="check-icon">✓</span>
-                <div>
-                  <strong>Plans Stratégiques</strong>
-                  <span>Savoir quoi faire quand il n'y a rien à faire.</span>
-                </div>
-              </li>
-            </ul>
-            <a href="./Midgame.html" class="btn-card"
-              >Aiguiser sa Vision <i class="fas fa-arrow-right"></i
-            ></a>
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1528819622765-d6bcf132f793?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge easy">Ouverture</span>
+            </div>
+            <div class="card-content">
+              <h4>Principes d'Ouverture</h4>
+              <p>
+                Contrôle du centre, développement rapide, sécurité du Roi. Les 3
+                règles d'or.
+              </p>
+              <a href="#" class="btn-course primary">Commencer</a>
+            </div>
           </div>
         </div>
 
-        <div id="finales" class="module-card">
-          <div class="card-header">
-            <div class="icon-box">👑</div>
-            <h3>Les Finales</h3>
+        <div class="category-header">
+          <div class="cat-title">
+            <span class="cat-level">Cycle 2 (1000 - 1400 Elo)</span>
+            <h3>Tactique & Combinaison</h3>
           </div>
-          <div class="card-body">
-            <p class="intro">La technique pure pour conclure.</p>
-            <ul class="principles-list">
-              <li>
-                <span class="check-icon">✓</span>
-                <div>
-                  <strong>Activité du Roi</strong>
-                  <span>En finale, le Roi devient un attaquant.</span>
-                </div>
-              </li>
-              <li>
-                <span class="check-icon">✓</span>
-                <div>
-                  <strong>Promotion</strong>
-                  <span>L'art de transformer un pion en Dame.</span>
-                </div>
-              </li>
-            </ul>
-            <a href="./Endgame.html" class="btn-card"
-              >Maîtriser la Technique <i class="fas fa-arrow-right"></i
-            ></a>
+          <div class="line"></div>
+        </div>
+
+        <div class="courses-grid">
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1580541832626-2a7131ee809f?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge medium">Tactique</span>
+            </div>
+            <div class="card-content">
+              <h4>Motifs Tactiques I</h4>
+              <p>
+                Les attaques doubles : La Fourchette, le Clouage
+                (absolu/relatif) et l'Enfilade.
+              </p>
+              <a href="#" class="btn-course primary">Commencer</a>
+            </div>
+          </div>
+
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1610633389966-26792f808381?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge medium">Tactique</span>
+            </div>
+            <div class="card-content">
+              <h4>Motifs Tactiques II</h4>
+              <p>
+                Calcul avancé : Attaque à la découverte, Rayons X, Attraction,
+                Déviation et Surcharge.
+              </p>
+              <a href="#" class="btn-course primary">Commencer</a>
+            </div>
+          </div>
+
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge medium">Attaque</span>
+            </div>
+            <div class="card-content">
+              <h4>Tableaux de Mat</h4>
+              <p>
+                Reconnaître le danger : Mat du couloir, Étouffé, Arabe,
+                Anastasie et le "Cadeau Grec".
+              </p>
+              <a href="#" class="btn-course primary">Commencer</a>
+            </div>
+          </div>
+
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1560174038-da43ac74f01b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge medium">Finale</span>
+            </div>
+            <div class="card-content">
+              <h4>Finales de Pions</h4>
+              <p>
+                Concepts clés : L'Opposition, la Règle du Carré et les cases
+                clés.
+              </p>
+              <a href="#" class="btn-course primary">Commencer</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="category-header">
+          <div class="cat-title">
+            <span class="cat-level">Cycle 3 (1400 - 1800 Elo)</span>
+            <h3>Stratégie Positionnelle</h3>
+          </div>
+          <div class="line"></div>
+        </div>
+
+        <div class="courses-grid">
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge hard">Stratégie</span>
+            </div>
+            <div class="card-content">
+              <h4>Structures de Pions</h4>
+              <p>
+                Lire le squelette de la position : Pions isolés, doublés,
+                arriérés, chaînes et majorité.
+              </p>
+              <a href="#" class="btn-course primary">Commencer</a>
+            </div>
+          </div>
+
+          <div class="course-card">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1588611910679-e3661eb1a4b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge hard">Stratégie</span>
+            </div>
+            <div class="card-content">
+              <h4>Activité des Pièces</h4>
+              <p>
+                Améliorer ses pièces : Avant-postes pour les Cavaliers, colonnes
+                ouvertes pour les Tours, le "Bon" Fou.
+              </p>
+              <a href="#" class="btn-course primary">Commencer</a>
+            </div>
+          </div>
+
+          <div class="course-card locked">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge hard">Finale</span>
+              <div class="lock-overlay"><span class="lock-icon">🔒</span></div>
+            </div>
+            <div class="card-content">
+              <h4>Finales de Tours</h4>
+              <p>
+                La théorie indispensable : Position de Lucena, Position de
+                Philidor et coupure du Roi.
+              </p>
+              <a href="#" class="btn-course disabled">Verrouillé</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="category-header">
+          <div class="cat-title">
+            <span class="cat-level">Cycle 4 (1800+ Elo)</span>
+            <h3>Théorie & Répertoire</h3>
+          </div>
+          <div class="line"></div>
+        </div>
+
+        <div class="courses-grid">
+          <div class="course-card locked">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge expert">Répertoire</span>
+              <div class="lock-overlay"><span class="lock-icon">🔒</span></div>
+            </div>
+            <div class="card-content">
+              <h4>Construire son Répertoire (Blancs)</h4>
+              <p>
+                Choix systémiques : 1.e4 (Italienne/Espagnole) vs 1.d4 (Gambit
+                Dame/Londres).
+              </p>
+              <a href="#" class="btn-course disabled">Verrouillé</a>
+            </div>
+          </div>
+
+          <div class="course-card locked">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1523875194681-bedd468c58bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge expert">Répertoire</span>
+              <div class="lock-overlay"><span class="lock-icon">🔒</span></div>
+            </div>
+            <div class="card-content">
+              <h4>Défenses (Noirs)</h4>
+              <p>
+                Répondre à 1.e4 (Sicilienne, Caro-Kann) et 1.d4 (Est-Indienne,
+                Slave).
+              </p>
+              <a href="#" class="btn-course disabled">Verrouillé</a>
+            </div>
+          </div>
+
+          <div class="course-card locked">
+            <div
+              class="card-image"
+              style="
+                background-image: url(&quot;https://images.unsplash.com/photo-1518133835878-5a93cc3f89e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80&quot;);
+              "
+            >
+              <span class="badge expert">Maîtrise</span>
+              <div class="lock-overlay"><span class="lock-icon">🔒</span></div>
+            </div>
+            <div class="card-content">
+              <h4>Déséquilibres Dynamiques</h4>
+              <p>
+                Sacrifices positionnels, paire de fous vs cavaliers, attaque vs
+                défense.
+              </p>
+              <a href="#" class="btn-course disabled">Verrouillé</a>
+            </div>
           </div>
         </div>
       </section>
     </main>
 
     <footer>
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>Open Chess<span style="color: var(--accent-gold)">.</span></h3>
-          <p>
-            L'excellence stratégique à portée de main. Progressez à votre
-            rythme.
-          </p>
-        </div>
-
-        <div class="footer-section">
-          <h3>Rejoignez l'élite</h3>
-          <p style="margin-bottom: 1.5rem">
-            Créez un compte pour suivre votre progression et sauvegarder vos
-            cours favoris.
-          </p>
-          <a
-            href="../login/index.html"
-            class="btn-primary"
-            style="display: inline-block"
-          >
-            S'inscrire Gratuitement
-          </a>
-        </div>
-
-        <div class="footer-section">
-          <h3>Liens Utiles</h3>
-          <ul>
-            <li><a href="../support/index.html">Contact & Support</a></li>
-            <li><a href="../rules/index.html">Règles du Jeu</a></li>
-            <li><a href="../video/index.html">Créateur de contenue</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        &copy; <span id="year">2026</span> Open Chess. Tous droits réservés.
+      <div class="footer-copy">
+        <p>&copy; 2026 Open Chess.</p>
       </div>
     </footer>
 
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-      function toggleMenu() {
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+      // Config Firebase (A adapter selon ton fichier global)
+      const firebaseConfig = {
+        apiKey: "AIzaSyBNBUO3JupohDCYAMs7Xf6kKgxnnFgPpVM",
+        authDomain: "open-chess-2f3cf.firebaseapp.com",
+        projectId: "open-chess-2f3cf",
+        storageBucket: "open-chess-2f3cf.firebasestorage.app",
+        messagingSenderId: "447945730536",
+        appId: "1:447945730536:web:a1e3347bc13e94040bdc5d",
+        measurementId: "G-71F05DTLHG",
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      // Gestion état connecté
+      onAuthStateChanged(auth, (user) => {
+        const navLogin = document.getElementById("nav-login-btn");
+        const progressPanel = document.getElementById("user-progress-panel");
+
+        if (user) {
+          navLogin.textContent = "Mon Compte";
+          navLogin.href = "../profile/index.html"; // Ajuster le chemin
+          progressPanel.style.display = "flex";
+        } else {
+          navLogin.textContent = "Connexion";
+          progressPanel.style.display = "none";
+        }
+      });
+
+      // Menu mobile
+      window.toggleMenu = function () {
         document.getElementById("mobileMenu").classList.toggle("active");
         document.querySelector(".hamburger").classList.toggle("active");
-      }
+      };
     </script>
   </body>
 </html>

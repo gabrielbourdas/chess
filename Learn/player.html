@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Chess - Leçon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+    />
+
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="css/player.css" />
+
+    <style>
+      /* Le fond obscurci */
+      #promotion-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        display: none; /* Caché par défaut */
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* La boîte contenant les pièces */
+      .promotion-modal {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        animation: popIn 0.2s ease-out;
+      }
+
+      .promotion-title {
+        margin: 0 0 10px 0;
+        font-family: "Inter", sans-serif;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .promotion-pieces {
+        display: flex;
+        gap: 10px;
+      }
+
+      /* Les pièces cliquables */
+      .promo-piece {
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition:
+          transform 0.1s,
+          background 0.1s;
+        background-color: #f0f0f0;
+      }
+
+      .promo-piece:hover {
+        transform: scale(1.1);
+        background-color: #e0e0e0;
+      }
+
+      @keyframes popIn {
+        from {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="lesson-header">
+      <div class="header-left">
+        <a href="index.html" class="back-link">
+          <span class="arrow">←</span> Retour Académie
+        </a>
+      </div>
+      <div class="header-center">
+        <h1 id="course-title">Chargement...</h1>
+      </div>
+      <div class="header-right"></div>
+    </header>
+
+    <div class="lesson-layout">
+      <aside class="course-sidebar">
+        <div class="sidebar-content">
+          <h3>Plan du cours</h3>
+          <ul id="chapter-list" class="chapter-list"></ul>
+        </div>
+      </aside>
+
+      <main class="lesson-workspace">
+        <div class="board-panel">
+          <div class="board-container" style="position: relative">
+            <div id="board" style="width: 100%"></div>
+
+            <svg
+              id="arrow-overlay"
+              class="arrow-canvas"
+              viewBox="0 0 100 100"
+            ></svg>
+
+            <div id="promotion-overlay">
+              <div class="promotion-modal">
+                <p class="promotion-title">Choisir une pièce</p>
+                <div class="promotion-pieces" id="promo-pieces-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="board-controls">
+            <button id="btn-reset-board" class="icon-btn" title="Réinitialiser">
+              ⟲
+            </button>
+            <button id="btn-flip-board" class="icon-btn" title="Retourner">
+              ⇅
+            </button>
+          </div>
+        </div>
+
+        <div class="content-panel">
+          <div class="step-content">
+            <span class="step-counter" id="step-counter">Chargement...</span>
+            <h2 id="step-title"></h2>
+            <div id="step-instruction" class="instruction-text"></div>
+            <div id="feedback-box" class="feedback-box hidden">
+              <div class="feedback-message"></div>
+            </div>
+          </div>
+
+          <div class="lesson-footer">
+            <button id="btn-prev" class="btn-secondary">Précédent</button>
+            <button id="btn-next" class="btn-primary">Suivant</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+
+    <script type="module" src="js/lesson-engine.js"></script>
+  </body>
+</html>
