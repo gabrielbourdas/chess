@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ressources & Outils - Open Chess</title>
+
+    <link rel="stylesheet" href="../../css/nav.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <style>
+      /* CSS SPÉCIFIQUE RESSOURCES (à mettre dans style.css si tu préfères) */
+      .resources-container {
+        max-width: 1000px;
+        margin: 100px auto 40px;
+        padding: 20px;
+      }
+
+      .section-title {
+        color: var(--accent-gold);
+        font-size: 1.8rem;
+        margin: 40px 0 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+      }
+
+      .resource-card {
+        background: rgba(30, 30, 30, 0.6); /* Touche Glass */
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 20px;
+        transition: 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .resource-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-gold);
+        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.1);
+      }
+
+      .res-icon {
+        font-size: 2rem;
+        color: var(--accent-gold);
+        margin-bottom: 15px;
+      }
+
+      .res-title {
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+
+      .res-desc {
+        color: #aaa;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        flex-grow: 1;
+      }
+
+      .btn-visit {
+        text-decoration: none;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        transition: 0.2s;
+      }
+
+      .btn-visit:hover {
+        background: var(--accent-gold);
+        color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <a href="/" class="logo">OPEN CHESS<span class="dot">.</span></a>
+        <ul class="nav-links">
+          <li><a href="/Play/index.html">Jouer</a></li>
+          <li><a href="/Puzzles/index.html">Défis</a></li>
+          <li><a href="/Learn/index.html">Apprendre</a></li>
+          <li><a href="/Analyze/index.html">Analyser</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="resources-container">
+      <div style="text-align: center; margin-bottom: 50px">
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px">
+          La Boîte à Outils
+        </h1>
+        <p style="color: #aaa">
+          Une sélection des meilleures ressources pour compléter votre
+          entraînement.
+        </p>
+      </div>
+
+      <h2 class="section-title">
+        <i class="fas fa-laptop-code"></i> Logiciels & Moteurs
+      </h2>
+      <div class="resources-grid">
+        <div class="resource-card">
+          <i class="fas fa-microchip res-icon"></i>
+          <h3 class="res-title">Stockfish (Officiel)</h3>
+          <p class="res-desc">
+            Le moteur d'échecs le plus puissant au monde. Open source et
+            gratuit, c'est celui que nous utilisons sur Open Chess.
+          </p>
+          <a
+            href="https://stockfishchess.org/"
+            target="_blank"
+            class="btn-visit"
+            >Voir le site</a
+          >
+        </div>
+        <div class="resource-card">
+          <i class="fas fa-database res-icon"></i>
+          <h3 class="res-title">SCID vs PC</h3>
+          <p class="res-desc">
+            Un logiciel de base de données gratuit pour PC/Mac. Idéal pour
+            stocker vos parties et étudier les ouvertures.
+          </p>
+          <a
+            href="https://scidvspc.sourceforge.net/"
+            target="_blank"
+            class="btn-visit"
+            >Télécharger</a
+          >
+        </div>
+        <div class="resource-card">
+          <i class="fas fa-mobile-alt res-icon"></i>
+          <h3 class="res-title">DroidFish (Android)</h3>
+          <p class="res-desc">
+            Probablement la meilleure application mobile gratuite pour analyser
+            vos parties en déplacement.
+          </p>
+          <a href="#" class="btn-visit">Sur Play Store</a>
+        </div>
+      </div>
+
+      <h2 class="section-title">
+        <i class="fas fa-book-open"></i> Lectures Incontournables
+      </h2>
+      <div class="resources-grid">
+        <div class="resource-card">
+          <i class="fas fa-book res-icon"></i>
+          <h3 class="res-title">Mon Système</h3>
+          <p class="res-desc">
+            Par Aron Nimzowitsch. La bible du jeu positionnel. Un peu complexe
+            mais essentiel pour passer un cap.
+          </p>
+          <span class="btn-visit" style="cursor: default; opacity: 0.5"
+            >Livre de référence</span
+          >
+        </div>
+        <div class="resource-card">
+          <i class="fas fa-book res-icon"></i>
+          <h3 class="res-title">Les Secrets de la tactique</h3>
+          <p class="res-desc">
+            Pour progresser, 99% du travail est tactique. Ce genre d'ouvrage
+            aide à repérer les motifs (clouage, fourchette...).
+          </p>
+          <span class="btn-visit" style="cursor: default; opacity: 0.5"
+            >Livre de référence</span
+          >
+        </div>
+      </div>
+
+      <h2 class="section-title">
+        <i class="fas fa-globe-europe"></i> Monde des Échecs
+      </h2>
+      <div class="resources-grid">
+        <div class="resource-card">
+          <i class="fas fa-chess-knight res-icon"></i>
+          <h3 class="res-title">FIDE</h3>
+          <p class="res-desc">
+            La Fédération Internationale des Échecs. Pour suivre les règles
+            officielles et les classements mondiaux.
+          </p>
+          <a href="https://www.fide.com/" target="_blank" class="btn-visit"
+            >Site Officiel</a
+          >
+        </div>
+        <div class="resource-card">
+          <i class="fas fa-flag res-icon"></i>
+          <h3 class="res-title">FFE</h3>
+          <p class="res-desc">
+            Fédération Française des Échecs. Pour trouver un club près de chez
+            vous et jouer en compétition réelle.
+          </p>
+          <a href="http://www.echecs.asso.fr/" target="_blank" class="btn-visit"
+            >Site Officiel</a
+          >
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

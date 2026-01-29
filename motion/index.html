@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mentions Légales - Open Chess</title>
+
+    <link rel="stylesheet" href="../../css/nav.css" />
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <style>
+      /* CSS SPÉCIFIQUE LÉGAL (Style identique à Ressources pour la cohérence) */
+      .legal-container {
+        max-width: 900px;
+        margin: 100px auto 40px;
+        padding: 20px;
+      }
+
+      .legal-header {
+        text-align: center;
+        margin-bottom: 50px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 30px;
+      }
+
+      .legal-header h1 {
+        font-size: 2.5rem;
+        color: var(--text-main);
+        margin-bottom: 10px;
+      }
+
+      .legal-header span {
+        color: var(--accent-gold);
+      }
+
+      .legal-section {
+        background: rgba(30, 30, 30, 0.4); /* Légère transparence */
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 30px;
+      }
+
+      .legal-section h2 {
+        color: var(--accent-gold);
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .legal-section p,
+      .legal-section li {
+        color: #ccc;
+        line-height: 1.6;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+      }
+
+      .legal-section ul {
+        margin-left: 20px;
+        margin-bottom: 15px;
+      }
+
+      .legal-section a {
+        color: var(--accent-gold);
+        text-decoration: none;
+        border-bottom: 1px dotted var(--accent-gold);
+      }
+
+      .legal-section a:hover {
+        color: #fff;
+        border-bottom-style: solid;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <a href="/" class="logo">OPEN CHESS<span class="dot">.</span></a>
+        <ul class="nav-links">
+          <li><a href="/Play/index.html">Jouer</a></li>
+          <li><a href="/Puzzles/index.html">Défis</a></li>
+          <li><a href="/Learn/index.html">Apprendre</a></li>
+          <li><a href="/Analyze/index.html">Analyser</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="legal-container">
+      <div class="legal-header">
+        <h1>Mentions <span>Légales</span></h1>
+        <p style="color: #aaa">Transparence et conditions d'utilisation.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2><i class="fas fa-user-edit"></i> 1. Éditeur du Site</h2>
+        <p>
+          Le site <strong>Open Chess</strong> est un projet personnel à but non
+          lucratif, développé dans un cadre éducatif et technique.
+        </p>
+        <ul>
+          <li>
+            <strong>Développeur / Propriétaire :</strong> gabriel Bourdas
+            (shyr0)
+          </li>
+          <li>
+            <strong>Contact :</strong>
+            <a href="mailto:gabrielbourdas@gmail.com">Contact]</a>
+          </li>
+          <li><strong>Statut :</strong> Projet personnel (Open Source).</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2><i class="fas fa-server"></i> 2. Hébergement</h2>
+        <p>
+          Ce site est hébergé par <strong>Google Firebase</strong> (Firebase
+          Hosting).
+        </p>
+        <p>
+          Google LLC<br />
+          1600 Amphitheatre Parkway,<br />
+          Mountain View, California 94043, USA.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2><i class="fas fa-code"></i> 3. Crédits & Technologies</h2>
+        <p>
+          Open Chess repose sur plusieurs technologies Open Source. Nous
+          remercions les créateurs de ces bibliothèques :
+        </p>
+        <ul>
+          <li>
+            <strong>Moteur de jeu :</strong>
+            <a href="https://github.com/jhlywa/chess.js" target="_blank"
+              >Chess.js</a
+            >
+            (Logique des coups).
+          </li>
+          <li>
+            <strong>Interface :</strong>
+            <a href="https://chessboardjs.com/" target="_blank"
+              >Chessboard.js</a
+            >
+            (Affichage du plateau).
+          </li>
+          <li>
+            <strong>Intelligence Artificielle :</strong>
+            <a href="https://stockfishchess.org/" target="_blank">Stockfish</a>
+            (Moteur d'analyse).
+          </li>
+          <li>
+            <strong>Base de données :</strong> Google Firebase (Firestore &
+            Auth).
+          </li>
+          <li><strong>Icônes :</strong> FontAwesome.</li>
+        </ul>
+        <p>
+          Le code source spécifique à l'interface d'Open Chess appartient à son
+          développeur. Toute reproduction totale ou partielle sans autorisation
+          est interdite, sauf mention contraire sur le dépôt GitHub associé.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2><i class="fas fa-user-shield"></i> 4. Données & Confidentialité</h2>
+        <p>
+          Nous respectons votre vie privée. Ce site collecte un minimum de
+          données nécessaires à son fonctionnement via
+          <strong>Google Firebase Auth</strong> :
+        </p>
+        <ul>
+          <li>Adresse email (pour l'authentification).</li>
+          <li>Pseudo et statistiques de jeu (pour votre profil public).</li>
+        </ul>
+        <p>
+          Aucune donnée n'est revendue à des tiers. Conformément au RGPD, vous
+          disposez d'un droit d'accès, de modification et de suppression de vos
+          données en nous contactant via l'adresse email mentionnée plus haut ou
+          via la page Support.
+        </p>
+      </div>
+
+      <div class="legal-section">
+        <h2>
+          <i class="fas fa-exclamation-triangle"></i> 5. Limitation de
+          responsabilité
+        </h2>
+        <p>
+          Open Chess est fourni "tel quel". Bien que nous nous efforcions
+          d'assurer une expérience fluide, nous ne pouvons être tenus
+          responsables des bugs, interruptions de service ou erreurs dans
+          l'analyse des coups d'échecs.
+        </p>
+        <p>
+          L'utilisation de moteurs d'échecs (triche) lors de parties contre
+          d'autres humains (si fonctionnalité future) est strictement interdite.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
