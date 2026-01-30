@@ -1,0 +1,198 @@
+/* =========================================
+   STYLE SPÉCIFIQUE : PAGE JOUER (Play)
+   ========================================= */
+
+/* 1. HERO SECTION (L'en-tête bleu) */
+.game-hero {
+  padding: 6rem 2rem 4rem 2rem;
+  text-align: center;
+  /* Fond dégradé bleuté pour différencier de l'accueil */
+  background: radial-gradient(
+    circle at center,
+    rgba(93, 156, 236, 0.1) 0%,
+    transparent 60%
+  );
+}
+
+.game-hero h1 {
+  font-family: var(--font-heading, "Playfair Display", serif);
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold, #d4af37);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 6px 16px;
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.hero-subtitle {
+  color: #a0a0a0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.text-gold {
+  color: var(--accent-gold, #d4af37);
+  font-style: italic;
+}
+
+/* 2. GRILLE DES MODES (Mise en page) */
+.modes-selection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem 2rem;
+}
+
+.cards-grid {
+  display: grid;
+  /* Crée des colonnes automatiques de min 300px */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* 3. DESIGN DES CARTES (Ce qu'il manquait) */
+.feature-card {
+  background: #1e1e1e; /* Fond gris foncé */
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Bordure subtile */
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  text-decoration: none;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+
+  /* Flexbox pour aligner le contenu verticalement */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%; /* Pour qu'elles fassent la même hauteur */
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Les cercles autour des icônes */
+.card-image {
+  margin-bottom: 1.5rem;
+}
+
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  background: rgba(255, 255, 255, 0.05);
+  transition: transform 0.3s ease;
+}
+
+/* Couleurs spécifiques des cercles */
+.icon-circle.gold {
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.1);
+}
+.icon-circle.blue {
+  color: #5d9cec;
+  background: rgba(93, 156, 236, 0.1);
+}
+.icon-circle.gray {
+  color: #888;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.feature-card:hover .icon-circle {
+  transform: scale(1.1);
+}
+
+/* Texte dans les cartes */
+.card-body h3 {
+  font-family: var(--font-heading, "Playfair Display", serif);
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0 0 1rem 0;
+}
+
+.card-body p {
+  color: #a0a0a0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  flex-grow: 1; /* Pousse le lien vers le bas */
+}
+
+/* Flèche et lien en bas de carte */
+.link-arrow {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: gap 0.2s ease;
+}
+
+.interactive .link-arrow {
+  color: #d4af37;
+} /* Or */
+.online-mode .link-arrow {
+  color: #5d9cec;
+} /* Bleu */
+.local-mode .link-arrow {
+  color: #ccc;
+} /* Gris */
+
+.feature-card:hover .link-arrow {
+  gap: 1rem; /* Animation de la flèche */
+}
+
+/* Carte Verrouillée (Tournois) */
+.feature-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+.feature-card.locked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.coming-soon {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #666;
+  border: 1px solid #444;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+  .game-hero h1 {
+    font-size: 2.5rem;
+  }
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -3,115 +3,154 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jouer - Open Chess</title>
+    <title>Open Chess | Choisir un mode de jeu</title>
     <link rel="icon" href="/img/logo.png" type="image/x-icon" />
 
-    <link rel="stylesheet" href="../css/nav.css" />
-    <link rel="stylesheet" href="../css/style.css" />
-    <link rel="stylesheet" href="../css/media.css" />
-
-    <link rel="stylesheet" href="./css/style.css" />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <header>
       <nav class="navbar">
-        <a href="/" class="logo">OPEN CHESS<span class="dot">.</span></a>
+        <a href="../index.html" class="logo"
+          >OPEN CHESS<span class="dot">.</span></a
+        >
         <ul class="nav-links">
-          <li><a href="/Play/index.html">Jouer</a></li>
-          <li><a href="/Puzzles/index.html">Défis</a></li>
-          <li><a href="/Learn/index.html">Apprendre</a></li>
-          <li><a href="/Analyze/index.html">Analyser</a></li>
+          <li><a href="./index.html" class="active">Jouer</a></li>
+          <li><a href="../Puzzles/index.html">Défis</a></li>
+          <li><a href="../Analyse/index.html">Analyser</a></li>
+          <li><a href="../Learn/index.html">Apprendre</a></li>
         </ul>
         <div class="nav-actions">
-          <a href="/login/index.html" class="btn-login" id="nav-login-btn"
-            >Connexion</a
-          >
-          <a href="/Play/index.html" class="btn-primary small"
-            >Lancer un défi</a
-          >
+          <a href="../login/index.html" class="btn-login">Connexion</a>
         </div>
         <div class="hamburger" onclick="toggleMenu()">
           <span></span><span></span>
         </div>
       </nav>
       <div class="mobile-menu" id="mobileMenu">
-        <a href="/Play/index.html">Jouer</a>
-        <a href="/Puzzles/index.html">Défis</a>
-        <a href="/Learn/index.html">Apprendre</a>
-        <a href="/login/index.html">Connexion</a>
+        <a href="./index.html">Jouer</a>
+        <a href="../Puzzles/index.html">Défis</a>
+        <a href="../Analyze/index.html">Analyser</a>
+        <a href="../Learn/index.html">Apprendre</a>
+        <a href="../login/index.html">Connexion</a>
       </div>
     </header>
 
-    <main class="play-menu-container">
-      <div class="play-header">
-        <h1>Choisissez votre mode</h1>
-        <p>
-          Affrontez l'intelligence artificielle ou défiez des joueurs du monde
-          entier dans une interface premium.
-        </p>
-      </div>
+    <main class="play-main">
+      <section class="game-hero">
+        <div class="hero-content">
+          <span class="hero-tag">Nouvelle Partie</span>
+          <h1>Choisissez votre <span class="text-gold">Adversaire</span></h1>
+          <p class="hero-subtitle">
+            Que vous souhaitiez défier Stockfish ou affronter un ami,
+            l'échiquier est prêt.
+          </p>
+        </div>
+      </section>
 
-      <div class="modes-grid">
-        <a href="bot/index.html" class="mode-card bot-mode">
-          <div class="card-content">
-            <div class="icon-box">
-              <i class="fas fa-chess-knight"></i>
+      <section class="modes-selection">
+        <div class="cards-grid">
+          <a href="bot/index.html" class="feature-card interactive">
+            <div class="card-image">
+              <div class="icon-circle gold">
+                <i class="fa-solid fa-robot"></i>
+              </div>
             </div>
-            <h2>Contre l'Ordinateur</h2>
-            <p>
-              Défiez Stockfish à différents niveaux de difficulté. Idéal pour
-              s'entraîner sans pression.
-            </p>
-            <span class="btn-mode primary">Jouer Solo</span>
-          </div>
-          <div class="bg-decoration"></div>
-        </a>
+            <div class="card-body">
+              <h3>Contre l'Ordinateur</h3>
+              <p>
+                Affrontez Stockfish 16. Choisissez parmi 20 niveaux de
+                difficulté, du débutant absolu au Grand Maître.
+              </p>
+              <span class="link-arrow">
+                Défier le Bot <i class="fa-solid fa-chess-pawn"></i>
+              </span>
+            </div>
+          </a>
 
-        <a href="#" class="mode-card online-mode">
-          <div class="card-content">
-            <div class="icon-box">
-              <i class="fas fa-globe-americas"></i>
+          <a href="online/index.html" class="feature-card online-mode">
+            <div class="card-image">
+              <div class="icon-circle blue">
+                <i class="fa-solid fa-earth-americas"></i>
+              </div>
             </div>
-            <h2>Jouer en Ligne</h2>
-            <p>
-              Rejoignez l'arène et affrontez d'autres passionnés en temps réel.
-              Grimpez au classement !
-            </p>
-            <span class="btn-mode secondary">Trouver un adversaire</span>
+            <div class="card-body">
+              <h3>Jouer en Ligne</h3>
+              <p>
+                Rejoignez la communauté. Matchs rapides (Blitz/Bullet) ou
+                parties longues. Classement Elo en temps réel.
+              </p>
+              <span class="link-arrow">
+                Trouver un adversaire <i class="fa-solid fa-arrow-right"></i>
+              </span>
+            </div>
+          </a>
+
+          <a href="local/index.html" class="feature-card local-mode">
+            <div class="card-image">
+              <div class="icon-circle gray">
+                <i class="fa-solid fa-user-group"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>1 vs 1 Local</h3>
+              <p>
+                Jouez avec un ami sur le même écran. Idéal pour analyser une
+                partie ou jouer sans connexion.
+              </p>
+              <span class="link-arrow">
+                Lancer le plateau <i class="fa-solid fa-handshake"></i>
+              </span>
+            </div>
+          </a>
+
+          <div class="feature-card locked">
+            <div class="card-image">
+              <div class="icon-circle gray">
+                <i class="fa-solid fa-trophy"></i>
+              </div>
+            </div>
+            <div class="card-body">
+              <h3>Tournois</h3>
+              <p>
+                Participez à des arènes suisses ou des tournois à élimination
+                directe. Gagnez des trophées exclusifs.
+              </p>
+              <span class="coming-soon">Bientôt disponible</span>
+            </div>
           </div>
-          <div class="badge-soon">Bientôt</div>
-          <div class="bg-decoration"></div>
-        </a>
-      </div>
+        </div>
+      </section>
     </main>
 
     <footer>
       <div class="footer-inner">
         <div class="footer-brand">
           <h4>Open Chess<span class="dot">.</span></h4>
-          <p>Site développé avec passion pour la famille et les amis.</p>
+          <p>
+            Site développé dans le but d'améliorer les compétences en échecs.
+          </p>
         </div>
 
         <div class="footer-nav-group">
           <div class="footer-col">
-            <h5>Le Jeu</h5>
-            <ul>
-              <li><a href="/Play/index.html">Jouer</a></li>
-              <li><a href="/Puzzles/index.html">Puzzles</a></li>
-              <li><a href="/Analyze/index.html">Analyse</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
             <h5>Infos Pratiques</h5>
             <ul>
-              <li><a href="/rules/index.html">Règles Simplifiées</a></li>
-              <li><a href="/video/index.html">Chaîne YouTube</a></li>
+              <li><a href="/motion/index.html">Mentions légales</a></li>
+              <li><a href="/ressources/index.html">Ressources externe</a></li>
               <li><a href="/support/index.html">Support / Contact</a></li>
             </ul>
           </div>
@@ -124,17 +163,9 @@
     </footer>
 
     <script>
-      function showsidebar() {
-        document.querySelector(".sidebar").style.display = "flex";
-        setTimeout(() => {
-          document.querySelector(".sidebar").classList.add("active");
-        }, 10);
-      }
-      function hidesidebar() {
-        document.querySelector(".sidebar").classList.remove("active");
-        setTimeout(() => {
-          document.querySelector(".sidebar").style.display = "none";
-        }, 300);
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("active");
+        document.querySelector(".hamburger").classList.toggle("active");
       }
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
