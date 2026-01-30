@@ -63,7 +63,7 @@ var isWaitingForRetry = false;
 var stockfish = null;
 var selectedSquare = null;
 
-// Variables Promotion (AJOUTÉ)
+// Variables Promotion
 var pendingMove = null;
 
 // Variables Clic Droit
@@ -71,7 +71,7 @@ var rightClickStart = null;
 var arrows = [];
 var boardOrientation = "white";
 
-// Variables Batch
+// Variables Batch (Mode Planification)
 var planningMoves = [];
 var initialFen = "";
 
@@ -86,40 +86,23 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!boardEl) {
     console.error("ERREUR : Élément #board introuvable dans le HTML");
   } else {
-    // --- GESTION CLICK GAUCHE ---
+    // --- GESTION CLICK GAUCHE (Alignée sur puzzle-logic.js) ---
     boardEl.addEventListener("click", (e) => {
+      // 1. Nettoyage visuel immédiat
       clearArrows();
+
       if (!isPuzzleActive || isWaitingForRetry) return;
 
       const square = getSquareFromEvent(e);
+
       if (square) {
         const piece = game.get(square);
-        const isPiece = piece !== null;
+        // Important : Si c'est MA pièce, on laisse faire le onDrop (click = drop sur place)
+        // Sinon (case vide ou ennemie), on traite le clic pour un mouvement potentiel
+        const isMyPiece = piece && piece.color === game.turn();
 
-        if (isPiece) {
-          if (!selectedSquare) {
-            if (piece.color === game.turn()) {
-              selectSquare(square);
-            }
-          } else {
-            if (selectedSquare === square) {
-              removeSelection();
-            } else {
-              const moveResult = handleUserMove(selectedSquare, square);
-              // Si le mouvement a réussi (true) ou est en attente de promotion ("pending")
-              if (moveResult === true || moveResult === "pending") {
-                removeSelection();
-              } else {
-                // Mouvement invalide, on sélectionne la nouvelle pièce si c'est la nôtre
-                if (piece.color === game.turn()) {
-                  selectSquare(square);
-                }
-              }
-            }
-          }
-        } else if (selectedSquare) {
-          handleUserMove(selectedSquare, square);
-          removeSelection();
+        if (!isMyPiece) {
+          handleSquareClick(square);
         }
       } else {
         removeSelection();
@@ -192,18 +175,43 @@ function setupButton(id, func) {
   if (btn) btn.addEventListener("click", func);
 }
 
-function selectSquare(square) {
-  removeSelection();
-  selectedSquare = square;
-  highlightSquare(square);
-  showMoveHints(square);
+// --- LOGIQUE SELECTION (Tirée de puzzle-logic.js) ---
+function handleSquareClick(square) {
+  const piece = game.get(square);
+  const turn = game.turn();
+
+  // CAS 1 : Clic sur une de NOS pièces -> Sélection
+  if (piece && piece.color === turn) {
+    if (selectedSquare === square) {
+      removeSelection();
+    } else {
+      removeSelection();
+      selectedSquare = square;
+      highlightSquare(square);
+      showMoveHints(square);
+    }
+    return;
+  }
+
+  // CAS 2 : Clic sur une case destination -> Mouvement
+  if (selectedSquare) {
+    handleUserMove(selectedSquare, square);
+    removeSelection();
+  }
 }
 
-// --- UTILITAIRES DOM ---
+function selectSquare(square) {
+  // Alias pour garder la compatibilité interne si besoin
+  handleSquareClick(square);
+}
+
+// --- UTILITAIRES DOM (Copie exacte de puzzle-logic.js) ---
 function getSquareFromEvent(e) {
   let target = e.target;
-  if (target.tagName === "IMG" && target.parentElement)
+  // Gestion du cas où on clique sur l'image
+  if (target.tagName === "IMG" && target.parentElement) {
     target = target.parentElement;
+  }
   const squareEl = target.closest('div[class*="square-"]');
   if (!squareEl) return null;
   const classes = squareEl.className;
@@ -237,7 +245,7 @@ function removeSelection() {
   $board.find(".capture-hint").removeClass("capture-hint");
 }
 
-// --- GESTION PROMOTION (AJOUTÉ) ---
+// --- GESTION PROMOTION ---
 window.confirmPromotion = confirmPromotion;
 
 function showPromotionModal(color) {
@@ -266,7 +274,7 @@ function confirmPromotion(pieceChar) {
     const { source, target } = pendingMove;
     const result = handleUserMove(source, target, pieceChar);
 
-    if (result === false) {
+    if (result === "snapback") {
       board.position(game.fen());
     }
     pendingMove = null;
@@ -274,7 +282,6 @@ function confirmPromotion(pieceChar) {
 }
 
 // --- LOGIQUE BATCH / PLANIFICATION ---
-
 function updatePlanningUI() {
   const listEl = document.getElementById("planning-list");
   if (!listEl) return;
@@ -321,7 +328,6 @@ function validatePlanning() {
   console.log("Validation de la séquence...");
   if (planningMoves.length === 0) return;
 
-  // 1. Reset visuel au début du challenge
   game.load(initialFen);
   board.position(initialFen);
   isPuzzleActive = false;
@@ -330,7 +336,6 @@ function validatePlanning() {
 
   function playNextStep() {
     if (step >= planningMoves.length) {
-      // Fin de la séquence utilisateur
       if (step + 1 >= currentPuzzle.movesList.length) {
         // Puzzle fini
       } else {
@@ -341,8 +346,6 @@ function validatePlanning() {
     }
 
     const plannedMove = planningMoves[step];
-
-    // +1 pour sauter le coup initial de l'ordi
     const puzzleIndexToCheck = step + 1;
     const expectedMoveUCI = currentPuzzle.movesList[puzzleIndexToCheck];
 
@@ -351,21 +354,19 @@ function validatePlanning() {
       return;
     }
 
-    // On reconstruit l'UCI du coup joué (incluant la promotion si présente)
     let moveAttemptUCI = plannedMove.from + plannedMove.to;
     if (plannedMove.promotion) {
       moveAttemptUCI += plannedMove.promotion;
     }
 
-    // Comparaison
     if (moveAttemptUCI === expectedMoveUCI) {
-      game.move(plannedMove); // Rejoue le coup planifié
+      game.move(plannedMove);
       board.position(game.fen());
 
       if (plannedMove.flags.includes("c")) playSound("capture");
       else playSound("move");
 
-      moveIndex = puzzleIndexToCheck + 1; // Update global index
+      moveIndex = puzzleIndexToCheck + 1;
       step++;
 
       if (moveIndex >= currentPuzzle.movesList.length) {
@@ -417,7 +418,7 @@ function handleFailureBatch(stepIndex) {
   updateEngineText("Analysez la séquence...");
 }
 
-// --- LOGIQUE UNIFIÉE (MODIFIÉ POUR PROMOTION) ---
+// --- LOGIQUE UNIFIÉE (MOVE & BATCH) ---
 function handleUserMove(source, target, promotionChoice = null) {
   // 1. Détection de la Promotion
   const piece = game.get(source);
@@ -427,11 +428,10 @@ function handleUserMove(source, target, promotionChoice = null) {
     ((piece.color === "w" && target[1] === "8") ||
       (piece.color === "b" && target[1] === "1"));
 
-  // Si c'est une promotion et qu'on n'a pas encore choisi
   if (isPromotion && !promotionChoice) {
     pendingMove = { source, target };
     showPromotionModal(piece.color);
-    return "pending"; // On attend
+    return "pending";
   }
 
   const finalPromotion = promotionChoice || "q";
@@ -443,14 +443,12 @@ function handleUserMove(source, target, promotionChoice = null) {
     promotion: finalPromotion,
   });
 
-  if (move === null) return false;
+  if (move === null) return "snapback"; // Retourne snapback comme dans puzzle-logic
 
-  // Mise à jour visuelle du plateau
   board.move(source + "-" + target);
-
-  // IMPORTANT : Si c'est une promotion, on force la mise à jour pour afficher la Dame/Cavalier
   if (isPromotion) board.position(game.fen());
 
+  // Spécifique à ce fichier : Ajout à la liste de planification
   planningMoves.push(move);
   updatePlanningUI();
 
@@ -467,25 +465,28 @@ function onDragStart(source, piece, position, orientation) {
   if (isWaitingForRetry) return false;
   if (game.game_over()) return false;
 
+  // En mode planning, on peut jouer les deux couleurs à condition que ce soit leur tour
   if (game.turn() === "w" && piece.search(/^b/) !== -1) return false;
   if (game.turn() === "b" && piece.search(/^w/) !== -1) return false;
 }
 
 function onDrop(source, target) {
-  if (source === target) return;
+  // CORRECTION MAJEURE : Si on lâche sur la même case, c'est un CLIC de sélection
+  if (source === target) {
+    handleSquareClick(source);
+    return;
+  }
 
   const result = handleUserMove(source, target);
 
-  // Si on attend la sélection de promotion, on ne fait rien (la pièce reste là visuellement ou est gérée par la modale)
   if (result === "pending") return;
+  if (result === "snapback") return "snapback";
 
-  if (result === false) return "snapback";
   removeSelection();
 }
 
 // --- JEU & SETUP ---
 function retryPuzzle() {
-  // Nettoyage modale
   pendingMove = null;
   const modal = document.getElementById("promotion-overlay");
   if (modal) modal.style.display = "none";
@@ -495,7 +496,6 @@ function retryPuzzle() {
   planningMoves = [];
   updatePlanningUI();
 
-  // CORRECTION : On reset à 1 (après coup ordi)
   moveIndex = 1;
 
   removeSelection();
@@ -517,7 +517,6 @@ function retryPuzzle() {
 async function loadRandomPuzzle() {
   console.log("Chargement d'un nouveau puzzle...");
 
-  // Nettoyage modale
   pendingMove = null;
   const modal = document.getElementById("promotion-overlay");
   if (modal) modal.style.display = "none";
@@ -556,7 +555,6 @@ async function loadRandomPuzzle() {
       console.log("Puzzle trouvé ! ID:", snapshot.docs[0].id);
       setupPuzzle(snapshot.docs[0].data());
     } else {
-      console.log("Pas de puzzle trouvé, nouvelle tentative...");
       loadRandomPuzzle();
     }
   } catch (error) {
@@ -623,12 +621,11 @@ function setupPuzzle(data) {
     const computerMoveStr = movesList[0];
     makeComputerMove(computerMoveStr);
     initialFen = game.fen();
-
-    // CORRECTION : Début à 1
     moveIndex = 1;
 
     updateStatusWithTurn();
     isPuzzleActive = true;
+    console.log("Puzzle actif. À vous de jouer.");
   }, 500);
 }
 
@@ -642,7 +639,6 @@ function makeComputerMove(moveStr) {
 
   if (move) {
     board.move(from + "-" + to);
-    // Si promotion ordi, on sync la position
     if (move.promotion) board.position(game.fen());
 
     const historyEl = document.getElementById("move-history");
@@ -690,7 +686,6 @@ function generateRandomId() {
 
 function useHint() {
   if (!isPuzzleActive || isWaitingForRetry) return;
-  // Calcul indice basé sur avancement + longueur plan
   const hintIndex = moveIndex + planningMoves.length;
 
   if (hintIndex >= currentPuzzle.movesList.length) return;
@@ -906,7 +901,7 @@ function initStockfish() {
     .catch(console.error);
 }
 function parseAnalysis(line) {
-  /* ... */
+  // Vide intentionnellement (mode planning), à compléter si besoin
 }
 function updateEngineText(msg) {
   const el = document.getElementById("engine-text");
