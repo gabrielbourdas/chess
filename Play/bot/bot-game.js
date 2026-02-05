@@ -9,7 +9,7 @@ import {
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// --- CONFIGURATION FIREBASE (Identique à puzzle-logic.js) ---
+// --- CONFIGURATION FIREBASE ---
 const firebaseConfig = {
   apiKey: "AIzaSyBNBUO3JupohDCYAMs7Xf6kKgxnnFgPpVM",
   authDomain: "open-chess-2f3cf.firebaseapp.com",
@@ -33,16 +33,23 @@ var isEngineRunning = false;
 var playerColor = "white";
 var selectedSquare = null;
 
-// --- PARAMÈTRES DE DIFFICULTÉ ---
+// --- PARAMÈTRES DE DIFFICULTÉ (MIS A JOUR) ---
+// Index HTML -> { skill: Stockfish Skill Level (0-20), depth: Profondeur, label: Texte }
 const DIFFICULTY_SETTINGS = {
-  0: { depth: 2, label: "800 Elo" },
-  5: { depth: 5, label: "1200 Elo" },
-  10: { depth: 8, label: "1600 Elo" },
-  15: { depth: 12, label: "2000 Elo" },
-  20: { depth: 18, label: "2500+ Elo" },
+  0: { skill: 0, depth: 1, label: "800 (Débutant)" },
+  1: { skill: 2, depth: 2, label: "1000 (Apprenti)" },
+  2: { skill: 4, depth: 3, label: "1200 (Amateur)" },
+  3: { skill: 6, depth: 4, label: "1400 (Intermédiaire)" },
+  4: { skill: 8, depth: 6, label: "1600 (Confirmé)" },
+  5: { skill: 10, depth: 8, label: "1800 (Fort)" },
+  6: { skill: 12, depth: 10, label: "2000 (Expert)" },
+  7: { skill: 14, depth: 12, label: "2200 (Maître)" },
+  8: { skill: 17, depth: 14, label: "2400 (Maître Int.)" },
+  9: { skill: 19, depth: 16, label: "2500 (Grand Maître)" },
+  10: { skill: 20, depth: 22, label: "DÉBRIDÉ (Max)" },
 };
 
-var currentSkillLevel = 10;
+var currentSkillConfig = DIFFICULTY_SETTINGS[5]; // Par défaut : 1800
 var currentDepth = 8;
 
 // Variables pour les flèches (Clic Droit)
@@ -77,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initBoard("start", "white");
 
   // --- GESTION UTILISATEUR (FIREBASE) ---
-  // Cette partie récupère les infos et met à jour l'interface
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       const docRef = doc(db, "users", user.uid);
@@ -99,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
             avatarEl.style.backgroundImage = `url('${photoURL}')`;
           }
 
-          // 3. Mise à jour de l'Elo (On cherche 'elo' ou on met 1200)
+          // 3. Mise à jour de l'Elo
           const userRatingEl = document.getElementById("user-rating");
           if (userRatingEl) {
             const userElo = data.elo || data.currentElo || 1200;
@@ -130,12 +136,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const diffSelect = document.getElementById("difficulty-select");
   if (diffSelect) {
     diffSelect.addEventListener("change", () => startNewGame());
-    setDifficulty(diffSelect.value);
+    setDifficulty(diffSelect.value); // Appliquer la difficulté initiale
   }
 
   const colorSelect = document.getElementById("color-select");
   if (colorSelect) {
     colorSelect.addEventListener("change", () => startNewGame());
+  }
+
+  // --- EVENTS MODALE FIN DE PARTIE ---
+  const btnRestartModal = document.getElementById("btn-restart-modal");
+  if (btnRestartModal) btnRestartModal.addEventListener("click", startNewGame);
+
+  const btnCloseModal = document.getElementById("btn-close-modal");
+  if (btnCloseModal) {
+    btnCloseModal.addEventListener("click", () => {
+      document.getElementById("game-over-overlay").style.display = "none";
+    });
   }
 
   // Déblocage Audio
@@ -204,23 +221,25 @@ function setupBoardInteractions() {
   );
 }
 
-// --- LOGIQUE DIFFICULTÉ ---
-function setDifficulty(skillLevel) {
-  currentSkillLevel = parseInt(skillLevel);
-  const config = DIFFICULTY_SETTINGS[currentSkillLevel.toString()] || {
-    depth: 10,
-    label: "???",
-  };
+// --- LOGIQUE DIFFICULTÉ (CORRIGÉE) ---
+function setDifficulty(levelIndex) {
+  const config = DIFFICULTY_SETTINGS[levelIndex];
+  if (!config) return;
+
+  currentSkillConfig = config;
   currentDepth = config.depth;
 
   const display = document.getElementById("bot-difficulty-display");
   if (display) display.innerText = "Niveau: " + config.label;
 
   if (engine) {
-    engine.postMessage("setoption name Skill Level value " + currentSkillLevel);
-    const errProb = (20 - currentSkillLevel) * 5;
+    // Stockfish 'Skill Level' va de 0 à 20
+    engine.postMessage("setoption name Skill Level value " + config.skill);
+    // Probabilité d'erreur (décroissante avec le niveau)
+    // 20 - skill permet de réduire les erreurs à mesure que le skill augmente
+    const errProb = Math.max(0, (20 - config.skill) * 5);
     engine.postMessage(
-      "setoption name Skill Level Probability value " + Math.max(0, errProb),
+      "setoption name Skill Level Probability value " + errProb,
     );
   }
 }
@@ -241,6 +260,7 @@ function handleSquareClick(square) {
   const turn = game.turn();
   const myColor = playerColor.charAt(0);
 
+  // Empêche de jouer pendant le tour du bot
   if (turn !== myColor) return;
 
   if (piece && piece.color === turn) {
@@ -420,6 +440,7 @@ function initBoard(fen, orientation) {
     moveSpeed: 200,
     snapbackSpeed: 500,
     snapSpeed: 100,
+    trashSpeed: 100,
   };
 
   board = Chessboard("board", config);
@@ -437,30 +458,36 @@ function resizeSafe() {
   if (board) board.resize();
 }
 
-// --- MOUVEMENT & VALIDATION ---
+// --- MOUVEMENT & VALIDATION (CORRIGÉ) ---
 function handleUserMove(source, target, promotionChoice = null) {
   const piece = game.get(source);
   if (!piece) return "snapback";
 
-  const isPromotion =
-    piece.type === "p" &&
-    ((piece.color === "w" && target[1] === "8") ||
-      (piece.color === "b" && target[1] === "1"));
+  // 1. Vérifier la légalité du coup et de la promotion
+  const legalMoves = game.moves({ square: source, verbose: true });
 
-  if (isPromotion && !promotionChoice) {
+  const isValidPromotion = legalMoves.find(
+    (m) => m.to === target && m.flags.includes("p"),
+  );
+
+  // Si c'est une promotion LÉGALE et qu'on n'a pas encore choisi
+  if (isValidPromotion && !promotionChoice) {
     pendingMove = { source, target };
     showPromotionModal(piece.color);
     return "pending";
   }
 
+  // 2. Tenter le mouvement
   const move = game.move({
     from: source,
     to: target,
     promotion: promotionChoice || "q",
   });
 
+  // Si le coup est invalide (null), on annule
   if (move === null) return "snapback";
 
+  // 3. Succès
   board.position(game.fen());
   clearArrows();
   playSound(move.flags.includes("c") ? "capture" : "move");
@@ -474,7 +501,7 @@ function onDragStart(source, piece) {
   clearArrows();
   if (game.game_over() || isEngineRunning) return false;
 
-  // CORRECTION : On ne peut pas bouger les pièces si ce n'est pas notre couleur
+  // On ne peut pas bouger les pièces si ce n'est pas notre couleur
   if (piece.search(playerColor.charAt(0)) === -1) {
     return false;
   }
@@ -553,23 +580,69 @@ function updateGameUI() {
 function updateStatus(customMsg) {
   const statusEl = document.getElementById("status-text");
   if (!statusEl) return;
+
   if (customMsg) {
     statusEl.innerText = customMsg;
     return;
   }
 
   let status = "";
+  let gameOverTitle = "";
+  let gameOverReason = "";
+  let gameOverIcon = "🤝"; // Par défaut (Nul)
+
   const moveColor = game.turn() === "b" ? "Noirs" : "Blancs";
+
   if (game.in_checkmate()) {
-    status =
-      "Mat ! Les " + (moveColor === "Noirs" ? "Blancs" : "Noirs") + " gagnent.";
+    const winner = moveColor === "Noirs" ? "Les Blancs" : "Les Noirs";
+    status = `Mat ! ${winner} gagnent.`;
+
+    // Config Modale
+    gameOverTitle = "VICTOIRE !";
+    gameOverReason = `${winner} gagnent par échec et mat.`;
+    gameOverIcon = "🏆";
     playSound("notify");
-  } else if (game.in_draw()) status = "Match nul.";
-  else {
+
+    // Déclenchement Modale
+    showGameOverModal(gameOverTitle, gameOverReason, gameOverIcon);
+  } else if (game.in_draw()) {
+    status = "Match nul.";
+    gameOverTitle = "MATCH NUL";
+    gameOverIcon = "⚖️";
+
+    if (game.in_stalemate()) gameOverReason = "Pat (Stalemate)";
+    else if (game.in_threefold_repetition())
+      gameOverReason = "Répétition (3 fois)";
+    else if (game.insufficient_material())
+      gameOverReason = "Matériel insuffisant";
+    else gameOverReason = "Règle des 50 coups ou accord mutuel";
+
+    showGameOverModal(gameOverTitle, gameOverReason, gameOverIcon);
+  } else {
     status = game.turn() === "w" ? "Trait aux Blancs" : "Trait aux Noirs";
     if (game.in_check()) status += " (Échec)";
   }
+
   statusEl.innerText = status;
+}
+
+// Nouvelle fonction utilitaire pour afficher la modale
+function showGameOverModal(title, reason, icon) {
+  const modal = document.getElementById("game-over-overlay");
+  const titleEl = document.getElementById("game-over-title");
+  const reasonEl = document.getElementById("game-over-reason");
+  const iconEl = document.getElementById("game-over-icon");
+
+  if (modal && titleEl && reasonEl) {
+    titleEl.innerText = title;
+    reasonEl.innerText = reason;
+    if (iconEl) iconEl.innerText = icon;
+
+    // Petit délai pour laisser le dernier coup se jouer visuellement
+    setTimeout(() => {
+      modal.style.display = "flex";
+    }, 500);
+  }
 }
 
 function updateTurnIndicator() {
@@ -639,6 +712,10 @@ function startNewGame() {
   const colorSelectEl = document.getElementById("color-select");
   let chosenColorValue = colorSelectEl ? colorSelectEl.value : "white";
   const diffSelect = document.getElementById("difficulty-select");
+
+  // AJOUT : Cacher la modale si elle est ouverte
+  const modal = document.getElementById("game-over-overlay");
+  if (modal) modal.style.display = "none";
 
   // 1. Choix couleur (avec mise à jour UI pour Random)
   if (chosenColorValue === "random") {

@@ -39,7 +39,10 @@ const sounds = {
   capture: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Capture.mp3",
   ),
-  notify: new Audio(
+  mate: new Audio(
+    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/GenericNotify.mp3",
+  ),
+  success: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Victory.mp3",
   ),
   error: new Audio(
@@ -57,65 +60,49 @@ var isPuzzleActive = false;
 var isWaitingForRetry = false;
 var stockfish = null;
 var selectedSquare = null;
-
-// Variables Promotion
-var pendingMove = null; // { source, target }
-
-// Variables pour les flèches (Clic Droit)
+var pendingMove = null;
 var rightClickStart = null;
 var arrows = [];
 var boardOrientation = "white";
 
 // --- INITIALISATION ---
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Initialisation de base
   initBoard("start", "white");
   initStockfish();
-  initArrows(); // Prépare le SVG
+  initArrows();
 
   const boardEl = document.getElementById("board");
   if (boardEl) {
-    // --- GESTION CLICK GAUCHE (Jeu & Déplacement) ---
+    // CLIC GAUCHE
     boardEl.addEventListener("click", (e) => {
-      // Nettoyage visuel au clic gauche
       clearArrows();
-
       if (!isPuzzleActive || isWaitingForRetry) return;
-
       const square = getSquareFromEvent(e);
-
       if (square) {
         const piece = game.get(square);
         const isMyPiece = piece && piece.color === game.turn();
-
-        // Si ce n'est pas ma pièce, je traite le clic (potentiel mouvement)
-        if (!isMyPiece) {
-          handleSquareClick(square);
-        }
+        if (!isMyPiece) handleSquareClick(square);
       } else {
         removeSelection();
       }
     });
 
-    // --- GESTION CLICK DROIT (Flèches) - PRIORITAIRE ---
+    // CLIC DROIT
     boardEl.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       return false;
     });
-
     boardEl.addEventListener(
       "mousedown",
       (e) => {
         if (e.button === 2) {
           e.stopPropagation();
-          e.stopImmediatePropagation();
           const square = getSquareFromEvent(e);
           if (square) rightClickStart = square;
         }
       },
       { capture: true },
     );
-
     boardEl.addEventListener(
       "mouseup",
       (e) => {
@@ -132,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // 3. Hack audio mobile
+  // Audio Mobile Hack
   document.body.addEventListener(
     "click",
     () => {
@@ -149,43 +136,44 @@ document.addEventListener("DOMContentLoaded", () => {
     { once: true },
   );
 
-  // 4. Listeners Boutons
-  const btnNext = document.getElementById("btn-next");
-  if (btnNext) btnNext.addEventListener("click", loadRandomPuzzle);
+  setupButton("btn-retry", retryPuzzle);
+  setupButton("btn-hint", useHint);
 
-  const btnRetry = document.getElementById("btn-retry");
-  if (btnRetry) btnRetry.addEventListener("click", retryPuzzle);
+  setupButton("btn-result-action", () => {
+    const box = document.getElementById("sidebar-puzzle-result");
+    if (box && box.classList.contains("success")) {
+      loadRandomPuzzle();
+    } else {
+      retryPuzzle();
+    }
+  });
 
-  const btnHint = document.getElementById("btn-hint");
-  if (btnHint) btnHint.addEventListener("click", useHint);
-
-  // 5. Lancer le premier puzzle
   setTimeout(loadRandomPuzzle, 500);
 });
 
-// --- FONCTION UTILITAIRE : Trouver la case cliquée ---
+function setupButton(id, func) {
+  const btn = document.getElementById(id);
+  if (btn) btn.addEventListener("click", func);
+}
+
+// --- LOGIQUE SÉLECTION ---
 function getSquareFromEvent(e) {
   let target = e.target;
-  if (target.tagName === "IMG" && target.parentElement) {
+  if (target.tagName === "IMG" && target.parentElement)
     target = target.parentElement;
-  }
   const squareEl = target.closest('div[class*="square-"]');
   if (!squareEl) return null;
-  const classes = squareEl.className;
-  const match = classes.match(/square-([a-h][1-8])/);
+  const match = squareEl.className.match(/square-([a-h][1-8])/);
   return match ? match[1] : null;
 }
 
-// --- GESTION DU CLIC GAUCHE (Jeu) ---
 function handleSquareClick(square) {
   const piece = game.get(square);
   const turn = game.turn();
 
-  // CAS 1 : Clic sur une de NOS pièces (Sélection)
   if (piece && piece.color === turn) {
-    if (selectedSquare === square) {
-      removeSelection();
-    } else {
+    if (selectedSquare === square) removeSelection();
+    else {
       removeSelection();
       selectedSquare = square;
       highlightSquare(square);
@@ -194,28 +182,23 @@ function handleSquareClick(square) {
     return;
   }
 
-  // CAS 2 : Clic sur une case destination (Mouvement)
   if (selectedSquare) {
-    handleUserMove(selectedSquare, square);
+    handleUserMove(selectedSquare, square, null, false);
     removeSelection();
   }
 }
 
 function highlightSquare(square) {
-  const $board = $("#board");
-  $board.find(`.square-${square}`).addClass("selected-square");
+  $("#board").find(`.square-${square}`).addClass("selected-square");
 }
 
 function showMoveHints(square) {
   const moves = game.moves({ square: square, verbose: true });
   moves.forEach((move) => {
-    const $board = $("#board");
-    const $targetSquare = $board.find(`.square-${move.to}`);
-    if (move.flags.includes("c") || move.flags.includes("e")) {
-      $targetSquare.addClass("capture-hint");
-    } else {
-      $targetSquare.addClass("move-hint");
-    }
+    const $target = $("#board").find(`.square-${move.to}`);
+    if (move.flags.includes("c") || move.flags.includes("e"))
+      $target.addClass("capture-hint");
+    else $target.addClass("move-hint");
   });
 }
 
@@ -227,72 +210,484 @@ function removeSelection() {
   $board.find(".capture-hint").removeClass("capture-hint");
 }
 
-// --- GESTION DES FLÈCHES (CLIC DROIT) ---
-function initArrows() {
-  const boardEl = document.getElementById("board");
-  if (!boardEl) return;
+// --- COEUR DU SYSTÈME : MOVE ---
+function handleUserMove(
+  source,
+  target,
+  promotionChoice = null,
+  isDrop = false,
+) {
+  const piece = game.get(source);
+  if (!piece) return "snapback";
 
-  if (!document.getElementById("arrow-overlay")) {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("id", "arrow-overlay");
-    svg.setAttribute("class", "arrow-canvas");
-    svg.setAttribute("viewBox", "0 0 100 100");
+  const legalMoves = game.moves({ square: source, verbose: true });
+  const isValidPromotion = legalMoves.find(
+    (m) => m.to === target && m.flags.includes("p"),
+  );
 
-    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    const marker = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "marker",
-    );
-    marker.setAttribute("id", "arrowhead");
-    marker.setAttribute("markerWidth", "4");
-    marker.setAttribute("markerHeight", "4");
-    marker.setAttribute("refX", "2");
-    marker.setAttribute("refY", "2");
-    marker.setAttribute("orient", "auto");
-    const polygon = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "polygon",
-    );
-    polygon.setAttribute("points", "0 0, 4 2, 0 4");
-    polygon.setAttribute("fill", "#ffa500");
-    marker.appendChild(polygon);
-    defs.appendChild(marker);
-    svg.appendChild(defs);
+  if (isValidPromotion && !promotionChoice) {
+    pendingMove = { source, target };
+    showPromotionModal(piece.color);
+    return "pending";
+  }
 
-    boardEl.appendChild(svg);
+  const move = game.move({
+    from: source,
+    to: target,
+    promotion: promotionChoice || "q",
+  });
+
+  if (move === null) return "snapback";
+
+  if (!isDrop) {
+    board.move(source + "-" + target);
+  }
+
+  if (
+    isValidPromotion ||
+    move.flags.includes("k") ||
+    move.flags.includes("e")
+  ) {
+    board.position(game.fen());
+  }
+
+  clearArrows();
+  updateHistory();
+  startEvaluation(game.fen());
+
+  let attemptUCI = source + target;
+  if (move.promotion) attemptUCI += move.promotion;
+
+  const expectedMove = currentPuzzle.movesList[moveIndex];
+  if (attemptUCI === expectedMove) {
+    handleSuccess(move);
+    return true;
+  } else {
+    setTimeout(handleFailure, 300);
+    return true;
   }
 }
 
+// --- DRAG & DROP HANDLERS ---
+function onDragStart(source, piece) {
+  clearArrows();
+  if (!isPuzzleActive || isWaitingForRetry || game.game_over()) return false;
+  if (
+    (game.turn() === "w" && piece.search(/^b/) !== -1) ||
+    (game.turn() === "b" && piece.search(/^w/) !== -1)
+  )
+    return false;
+}
+
+function onDrop(source, target) {
+  if (source === target) {
+    handleSquareClick(source);
+    return;
+  }
+
+  const result = handleUserMove(source, target, null, true);
+
+  if (result === "pending") return;
+
+  if (result === "snapback") {
+    removeSelection();
+    return "snapback";
+  }
+
+  removeSelection();
+}
+
+// --- GESTION SUCCESS / FAILURE ---
+function showSidebarResult(status) {
+  const box = document.getElementById("sidebar-puzzle-result");
+  if (!box) return;
+
+  const icon = box.querySelector(".result-icon");
+  const title = box.querySelector(".result-title");
+  const btn = document.getElementById("btn-result-action");
+
+  box.classList.remove("success", "failure");
+
+  if (status === "success") {
+    box.classList.add("success");
+    if (icon) icon.innerText = "✅";
+    if (title) title.innerText = "Puzzle Réussi !";
+    if (btn) {
+      btn.innerText = "Puzzle Suivant ➡";
+      btn.className = "btn-game small primary";
+    }
+  } else {
+    box.classList.add("failure");
+    if (icon) icon.innerText = "❌";
+    if (title) title.innerText = "Mauvais Coup";
+    if (btn) {
+      btn.innerText = "Réessayer ↺";
+      btn.className = "btn-game small danger";
+    }
+  }
+  box.style.display = "flex";
+}
+
+// MODIFICATION PRINCIPALE ICI
+function handleSuccess(move) {
+  // 1. Vérifie si le puzzle est TERMINÉ par ce coup
+  const isPuzzleSolved = moveIndex + 1 >= currentPuzzle.movesList.length;
+
+  // 2. Logique Sonore
+  if (isPuzzleSolved) {
+    // SI TERMINÉ : On ne joue PAS le son de capture/move classique
+    // pour éviter qu'il ne masque le son de victoire.
+    if (game.in_checkmate()) {
+      playSound("mate");
+      setTimeout(() => playSound("success"), 1000); // Délai pour bien entendre le mat
+    } else {
+      playSound("success"); // Priorité absolue
+    }
+  } else {
+    // SI NON TERMINÉ : Sons classiques
+    if (game.in_checkmate()) {
+      playSound("mate");
+    } else if (move.flags.includes("c")) {
+      playSound("capture");
+    } else {
+      playSound("move");
+    }
+  }
+
+  moveIndex++;
+
+  // 3. Gestion de l'état du jeu
+  if (isPuzzleSolved) {
+    currentStreak++;
+    const streakEl = document.getElementById("streak-display");
+    if (streakEl) streakEl.innerText = currentStreak;
+
+    updateStats(true);
+    isPuzzleActive = false;
+    updateEngineText("");
+    showSidebarResult("success");
+    // Pas de playSound("success") ici, car déjà géré plus haut
+  } else {
+    isPuzzleActive = false;
+    setTimeout(() => {
+      const computerMoveStr = currentPuzzle.movesList[moveIndex];
+      makeComputerMove(computerMoveStr);
+      moveIndex++;
+      isPuzzleActive = true;
+      updateStatusWithTurn();
+    }, 600);
+  }
+}
+
+function handleFailure() {
+  playSound("error");
+  currentStreak = 0;
+  const streakEl = document.getElementById("streak-display");
+  if (streakEl) streakEl.innerText = 0;
+
+  updateStats(false);
+  showSidebarResult("failure");
+
+  isWaitingForRetry = true;
+  const btnRetry = document.getElementById("btn-retry");
+  if (btnRetry) btnRetry.style.display = "none";
+  const btnHint = document.getElementById("btn-hint");
+  if (btnHint) btnHint.style.display = "none";
+
+  updateEngineText("Analyse de l'erreur...");
+}
+
+// --- SETUP & LOAD ---
+async function loadRandomPuzzle() {
+  const box = document.getElementById("sidebar-puzzle-result");
+  if (box) box.style.display = "none";
+
+  const btnRetry = document.getElementById("btn-retry");
+  if (btnRetry) btnRetry.style.display = "none";
+  const btnHint = document.getElementById("btn-hint");
+  if (btnHint) btnHint.style.display = "block";
+
+  const promo = document.getElementById("promotion-overlay");
+  if (promo) promo.style.display = "none";
+
+  updateEngineText("");
+  isPuzzleActive = false;
+  isWaitingForRetry = false;
+  moveIndex = 0;
+  selectedSquare = null;
+  pendingMove = null;
+  clearArrows();
+  game.clear();
+  updateHistory();
+
+  const randomId = generateRandomId();
+  try {
+    const puzzlesRef = collection(db, "puzzles");
+    const q = query(puzzlesRef, where("__name__", ">=", randomId), limit(1));
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) setupPuzzle(snapshot.docs[0].data());
+    else loadRandomPuzzle();
+  } catch (error) {
+    console.error("Erreur:", error);
+  }
+}
+
+function setupPuzzle(data) {
+  currentPuzzle = data;
+  const streakEl = document.getElementById("streak-display");
+  if (streakEl) streakEl.innerText = currentStreak;
+  removeSelection();
+  clearArrows();
+
+  const themeEl = document.getElementById("theme-display");
+  if (themeEl && data.themes) {
+    themeEl.innerText = data.themes
+      .split(" ")
+      .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+      .join(", ");
+  }
+
+  const ratingEl = document.getElementById("puzzle-rating");
+  if (ratingEl) ratingEl.innerText = `Puzzle: ${data.rating || 1200}`;
+
+  const badgeEl = document.getElementById("difficulty-badge");
+  if (badgeEl) {
+    const elo = data.rating || 1200;
+    let label = "Moyen",
+      cssClass = "medium";
+    if (elo < 1000) {
+      label = "Débutant";
+      cssClass = "easy";
+    } else if (elo < 1200) {
+      label = "Facile";
+      cssClass = "easy";
+    } else if (elo < 1600) {
+      label = "Moyen";
+      cssClass = "medium";
+    } else {
+      label = "Difficile";
+      cssClass = "hard";
+    }
+    badgeEl.innerText = label;
+    badgeEl.className = `difficulty-badge ${cssClass}`;
+  }
+
+  game.load(data.fen);
+  const playerColor = game.turn() === "w" ? "black" : "white";
+  initBoard(data.fen, playerColor);
+  updateStatusWithTurn();
+  updateEngineText("");
+  updateHistory();
+
+  currentPuzzle.movesList = Array.isArray(data.moves)
+    ? data.moves
+    : data.moves.split(" ");
+
+  setTimeout(() => {
+    makeComputerMove(currentPuzzle.movesList[0]);
+    moveIndex = 1;
+    updateStatusWithTurn();
+    isPuzzleActive = true;
+  }, 500);
+}
+
+// --- UTILS & MOTEUR ---
+function makeComputerMove(moveStr) {
+  if (!moveStr) return;
+  const move = game.move({
+    from: moveStr.substring(0, 2),
+    to: moveStr.substring(2, 4),
+    promotion: moveStr.length > 4 ? moveStr[4] : "q",
+  });
+  if (move) {
+    board.move(move.from + "-" + move.to);
+    if (move.promotion) board.position(game.fen());
+    updateHistory();
+
+    if (game.in_checkmate()) {
+      playSound("mate");
+    } else if (move.flags.includes("c")) {
+      playSound("capture");
+    } else {
+      playSound("move");
+    }
+  }
+}
+
+function retryPuzzle() {
+  game.undo();
+  board.position(game.fen());
+  updateHistory();
+  removeSelection();
+  clearArrows();
+  pendingMove = null;
+
+  const box = document.getElementById("sidebar-puzzle-result");
+  if (box) box.style.display = "none";
+
+  const btnHint = document.getElementById("btn-hint");
+  if (btnHint) btnHint.style.display = "block";
+
+  isWaitingForRetry = false;
+  updateEngineText("");
+}
+
+function updateStatusWithTurn() {
+  const turn = game.turn() === "w" ? "Trait aux Blancs" : "Trait aux Noirs";
+  const statusText = document.getElementById("status-text");
+  if (statusText) statusText.innerText = turn;
+  const indicator = document.querySelector(".turn-indicator");
+  if (indicator) {
+    if (game.turn() === "w") {
+      indicator.classList.remove("black-turn");
+      indicator.classList.add("white-turn");
+    } else {
+      indicator.classList.remove("white-turn");
+      indicator.classList.add("black-turn");
+    }
+  }
+}
+
+function generateRandomId() {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < 5; i++)
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  return result;
+}
+
+function updateHistory() {
+  const historyEl = document.getElementById("move-history");
+  if (!historyEl) return;
+  const history = game.history();
+  if (history.length === 0) {
+    historyEl.innerHTML =
+      '<span style="color:#666; font-style:italic;">Début de partie</span>';
+    return;
+  }
+  let html = "";
+  for (let i = 0; i < history.length; i += 2) {
+    html += `<span>${i / 2 + 1}. ${history[i]} ${history[i + 1] || ""}</span> `;
+  }
+  historyEl.innerHTML = html;
+  historyEl.scrollTop = historyEl.scrollHeight;
+}
+
+function updateEngineText(msg) {
+  const el = document.getElementById("engine-text");
+  if (el) el.innerHTML = msg;
+}
+
+function playSound(type) {
+  if (sounds[type]) {
+    const s = sounds[type].cloneNode();
+    s.volume = 0.5;
+    s.play().catch(() => {});
+  }
+}
+
+// PROMOTION
+window.confirmPromotion = confirmPromotion;
+function showPromotionModal(color) {
+  const modal = document.getElementById("promotion-overlay");
+  const container = document.getElementById("promo-pieces-container");
+  if (!modal || !container) return;
+  container.innerHTML = "";
+  ["q", "r", "b", "n"].forEach((p) => {
+    const img = document.createElement("img");
+    img.src = `https://chessboardjs.com/img/chesspieces/wikipedia/${color}${p.toUpperCase()}.png`;
+    img.className = "promo-piece";
+    img.onclick = () => confirmPromotion(p);
+    container.appendChild(img);
+  });
+  modal.style.display = "flex";
+}
+function confirmPromotion(pieceChar) {
+  const modal = document.getElementById("promotion-overlay");
+  if (modal) modal.style.display = "none";
+  if (pendingMove) {
+    handleUserMove(pendingMove.source, pendingMove.target, pieceChar, false);
+    pendingMove = null;
+  }
+}
+
+// INIT BOARD
+function initBoard(fen, orientation) {
+  if (board) board.destroy();
+  boardOrientation = orientation;
+  board = Chessboard("board", {
+    draggable: true,
+    position: fen,
+    orientation: orientation,
+    onDragStart: onDragStart,
+    onDrop: onDrop,
+    pieceTheme:
+      "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
+    moveSpeed: 250,
+    snapbackSpeed: 500,
+    snapSpeed: 100,
+  });
+  const oldSvg = document.getElementById("arrow-overlay");
+  if (oldSvg) oldSvg.remove();
+  initArrows();
+  window.addEventListener("resize", () => {
+    if (board) board.resize();
+  });
+}
+
+// --- FLÈCHES ---
+function initArrows() {
+  const boardEl = document.getElementById("board");
+  if (!boardEl || document.getElementById("arrow-overlay")) return;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("id", "arrow-overlay");
+  svg.setAttribute("class", "arrow-canvas");
+  svg.setAttribute("viewBox", "0 0 100 100");
+  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+  const marker = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "marker",
+  );
+  marker.setAttribute("id", "arrowhead");
+  marker.setAttribute("markerWidth", "4");
+  marker.setAttribute("markerHeight", "4");
+  marker.setAttribute("refX", "2");
+  marker.setAttribute("refY", "2");
+  marker.setAttribute("orient", "auto");
+  const polygon = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "polygon",
+  );
+  polygon.setAttribute("points", "0 0, 4 2, 0 4");
+  polygon.setAttribute("fill", "#ffa500");
+  marker.appendChild(polygon);
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+  boardEl.appendChild(svg);
+}
 function handleRightClickAction(start, end) {
   const existingIndex = arrows.findIndex(
     (a) => a.start === start && a.end === end,
   );
-
-  if (existingIndex !== -1) {
-    arrows.splice(existingIndex, 1);
-  } else {
-    arrows.push({ start, end });
-  }
+  if (existingIndex !== -1) arrows.splice(existingIndex, 1);
+  else arrows.push({ start, end });
   renderArrows();
 }
-
 function clearArrows() {
   arrows = [];
   renderArrows();
 }
-
 function renderArrows() {
   const svg = document.getElementById("arrow-overlay");
   if (!svg) return;
-  while (svg.lastChild && svg.lastChild.tagName !== "defs") {
+  while (svg.lastChild && svg.lastChild.tagName !== "defs")
     svg.removeChild(svg.lastChild);
-  }
   arrows.forEach((arrow) => {
     if (arrow.start === arrow.end) drawCircle(svg, arrow.start);
     else drawArrow(svg, arrow.start, arrow.end);
   });
 }
-
 function getSquareCenter(square) {
   const files = "abcdefgh";
   const ranks = "12345678";
@@ -310,7 +705,6 @@ function getSquareCenter(square) {
   }
   return { x, y };
 }
-
 function drawCircle(svg, square) {
   const { x, y } = getSquareCenter(square);
   const circle = document.createElementNS(
@@ -324,7 +718,6 @@ function drawCircle(svg, square) {
   circle.setAttribute("opacity", "0.5");
   svg.appendChild(circle);
 }
-
 function drawArrow(svg, start, end) {
   const s = getSquareCenter(start);
   const e = getSquareCenter(end);
@@ -345,435 +738,22 @@ function drawArrow(svg, start, end) {
   svg.appendChild(line);
 }
 
-// --- LOGIQUE PLATEAU ---
-function initBoard(fen, orientation) {
-  if (board) board.destroy();
-  boardOrientation = orientation;
-
-  var config = {
-    draggable: true,
-    position: fen,
-    orientation: orientation,
-    onDragStart: onDragStart,
-    onDrop: onDrop,
-    pieceTheme:
-      "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
-    moveSpeed: 250,
-    snapbackSpeed: 500,
-    snapSpeed: 100,
-    trashSpeed: 100,
-  };
-  board = Chessboard("board", config);
-
-  const oldSvg = document.getElementById("arrow-overlay");
-  if (oldSvg) oldSvg.remove();
-  initArrows();
-
-  window.removeEventListener("resize", resizeSafe);
-  window.addEventListener("resize", resizeSafe);
-  setTimeout(resizeSafe, 100);
-}
-
-function resizeSafe() {
-  if (board) board.resize();
-}
-
-function updateHistory() {
-  const historyEl = document.getElementById("move-history");
-  const history = game.history();
-
-  if (history.length === 0) {
-    historyEl.innerHTML =
-      '<span style="color:#666; font-style:italic;">Début de partie</span>';
-    return;
-  }
-
-  let html = "";
-  for (let i = 0; i < history.length; i += 2) {
-    const moveNumber = i / 2 + 1;
-    const whiteMove = history[i];
-    const blackMove = history[i + 1] ? history[i + 1] : "";
-    html += `<span>${moveNumber}. ${whiteMove} ${blackMove}</span> `;
-  }
-  historyEl.innerHTML = html;
-  historyEl.scrollTop = historyEl.scrollHeight;
-}
-
-// --- LOGIQUE UNIFIÉE & PROMOTION ---
-
-function handleUserMove(source, target, promotionChoice = null) {
-  // 1. Détection Promotion
-  const piece = game.get(source);
-  const isPromotion =
-    piece.type === "p" &&
-    ((piece.color === "w" && target[1] === "8") ||
-      (piece.color === "b" && target[1] === "1"));
-
-  // Si c'est une promotion et qu'on n'a pas encore choisi
-  if (isPromotion && !promotionChoice) {
-    pendingMove = { source, target };
-    showPromotionModal(piece.color);
-    return "pending"; // On indique qu'on attend
-  }
-
-  const finalPromotion = promotionChoice || "q";
-
-  // 2. Tentative de mouvement
-  const move = game.move({
-    from: source,
-    to: target,
-    promotion: finalPromotion,
-  });
-
-  if (move === null) return "snapback";
-
-  // Mouvement valide sur le plateau
-  board.move(source + "-" + target);
-
-  // Important : on force la mise à jour pour afficher la pièce promue (Dame/Tour...)
-  if (isPromotion) board.position(game.fen());
-
-  clearArrows();
-  updateHistory();
-  startEvaluation(game.fen());
-
-  // 3. Validation de la solution du Puzzle
-  let attemptUCI = source + target;
-  if (move.promotion) attemptUCI += move.promotion; // ex: a7a8q
-
-  const expectedMove = currentPuzzle.movesList[moveIndex];
-
-  if (!expectedMove) return "snapback";
-
-  // On compare l'UCI complet (incluant la promotion si nécessaire)
-  // expectedMove est une string "e2e4" ou "a7a8q"
-  // Si le puzzle attend "a7a8q" et que l'utilisateur a fait "a7a8r", ce sera faux.
-  if (attemptUCI === expectedMove) {
-    handleSuccess(move);
-    return true;
-  } else {
-    setTimeout(() => {
-      handleFailure();
-    }, 300);
-    return true;
-  }
-}
-
-// --- GESTION MODALE PROMOTION ---
-// Ces fonctions doivent être accessibles globalement (si attachées via onclick dans le HTML généré)
-window.confirmPromotion = confirmPromotion;
-
-function showPromotionModal(color) {
-  const modal = document.getElementById("promotion-overlay");
-  const container = document.getElementById("promo-pieces-container");
-  if (!modal || !container) return;
-
-  container.innerHTML = "";
-  const pieces = ["q", "r", "b", "n"]; // Dame, Tour, Fou, Cavalier
-
-  pieces.forEach((p) => {
-    const img = document.createElement("img");
-    img.src = `https://chessboardjs.com/img/chesspieces/wikipedia/${color}${p.toUpperCase()}.png`;
-    img.className = "promo-piece";
-    img.onclick = () => confirmPromotion(p);
-    container.appendChild(img);
-  });
-
-  modal.style.display = "flex";
-}
-
-function confirmPromotion(pieceChar) {
-  document.getElementById("promotion-overlay").style.display = "none";
-
-  if (pendingMove) {
-    const { source, target } = pendingMove;
-    const result = handleUserMove(source, target, pieceChar);
-
-    // Si le mouvement échoue (mauvaise solution de puzzle), handleFailure gérera l'UI
-    // Si c'était illégal (snapback), on remet la pièce
-    if (result === "snapback") {
-      board.position(game.fen());
-    }
-    pendingMove = null;
-  }
-}
-
-// --- DRAG & DROP HANDLERS ---
-function onDragStart(source, piece, position, orientation) {
-  clearArrows();
-
-  if (!isPuzzleActive) return false;
-  if (isWaitingForRetry) return false;
-  if (game.game_over()) return false;
-
-  if (
-    (game.turn() === "w" && piece.search(/^b/) !== -1) ||
-    (game.turn() === "b" && piece.search(/^w/) !== -1)
-  ) {
-    return false;
-  }
-}
-
-function onDrop(source, target) {
-  if (source === target) {
-    handleSquareClick(source);
-    return;
-  }
-  const result = handleUserMove(source, target);
-
-  // Si on attend la promotion ("pending"), on ne fait rien (la pièce reste visuellement là où on l'a lâchée)
-  if (result === "pending") return;
-
-  if (result === "snapback") return "snapback";
-  removeSelection();
-}
-
-// --- JEU ---
-function retryPuzzle() {
-  game.undo();
-  board.position(game.fen());
-  updateHistory();
-  removeSelection();
-  clearArrows();
-  pendingMove = null; // Reset au cas où
-  document.getElementById("promotion-overlay").style.display = "none";
-
-  isWaitingForRetry = false;
-  document.getElementById("btn-retry").style.display = "none";
-  document.getElementById("btn-hint").style.display = "block";
-  updateEngineText("");
-
-  const fb = document.getElementById("feedback-area");
-  if (fb) {
-    fb.className = "feedback";
-    fb.innerHTML = "";
-  }
-}
-
-async function loadRandomPuzzle() {
-  const fb = document.getElementById("feedback-area");
-  if (fb) {
-    fb.className = "feedback";
-    fb.innerHTML = "";
-  }
-
-  document.getElementById("btn-retry").style.display = "none";
-  document.getElementById("btn-hint").style.display = "block";
-  document.getElementById("promotion-overlay").style.display = "none";
-  updateEngineText("");
-
-  isPuzzleActive = false;
-  isWaitingForRetry = false;
-  moveIndex = 0;
-  selectedSquare = null;
-  pendingMove = null;
-  clearArrows();
-  game.clear();
-  updateHistory();
-
-  const randomId = generateRandomId();
-  try {
-    const puzzlesRef = collection(db, "puzzles");
-    const q = query(puzzlesRef, where("__name__", ">=", randomId), limit(1));
-    const snapshot = await getDocs(q);
-
-    if (!snapshot.empty) {
-      setupPuzzle(snapshot.docs[0].data());
-    } else {
-      loadRandomPuzzle();
-    }
-  } catch (error) {
-    console.error("Erreur:", error);
-  }
-}
-
-function setupPuzzle(data) {
-  currentPuzzle = data;
-  document.getElementById("streak-display").innerText = currentStreak;
-  removeSelection();
-  clearArrows();
-
-  const themeEl = document.getElementById("theme-display");
-  if (themeEl && data.themes) {
-    themeEl.innerText = data.themes
-      .split(" ")
-      .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
-      .join(", ");
-  }
-
-  const elo = data.rating ? data.rating : 1200;
-  const ratingEl = document.getElementById("puzzle-rating");
-  if (ratingEl) ratingEl.innerText = `Puzzle: ${elo}`;
-
-  const badgeEl = document.getElementById("difficulty-badge");
-  if (badgeEl) {
-    let label = "Moyen",
-      cssClass = "medium";
-    if (elo < 1000) {
-      label = "Débutant";
-      cssClass = "easy";
-    } else if (elo < 1200) {
-      label = "Facile";
-      cssClass = "easy";
-    } else if (elo < 1450) {
-      label = "Moyen";
-      cssClass = "medium";
-    } else if (elo < 1600) {
-      label = "Difficile";
-      cssClass = "hard";
-    } else {
-      label = "Expert";
-      cssClass = "expert";
-    }
-    badgeEl.innerText = label;
-    badgeEl.className = `difficulty-badge ${cssClass}`;
-  }
-
-  game.load(data.fen);
-
-  const initialTurn = game.turn();
-  const playerColor = initialTurn === "w" ? "black" : "white";
-  initBoard(data.fen, playerColor);
-
-  updateStatusWithTurn();
-  updateEngineText("");
-  updateHistory();
-
-  let movesList = Array.isArray(data.moves)
-    ? data.moves
-    : data.moves.split(" ");
-  currentPuzzle.movesList = movesList;
-
-  setTimeout(() => {
-    const computerMoveStr = movesList[0];
-    makeComputerMove(computerMoveStr);
-    moveIndex = 1;
-    updateStatusWithTurn();
-    isPuzzleActive = true;
-  }, 500);
-}
-
-function handleSuccess(move) {
-  if (move.flags.includes("c")) playSound("capture");
-  else playSound("move");
-
-  moveIndex++;
-
-  if (moveIndex >= currentPuzzle.movesList.length) {
-    currentStreak++;
-    document.getElementById("streak-display").innerText = currentStreak;
-    updateStats(true);
-    isPuzzleActive = false;
-    updateEngineText("");
-
-    const fb = document.getElementById("feedback-area");
-    if (fb) {
-      fb.innerHTML = "Puzzle réussi ! 🎉";
-      fb.className = "feedback success visible";
-    }
-    playSound("notify");
-  } else {
-    isPuzzleActive = false;
-    setTimeout(() => {
-      const computerMoveStr = currentPuzzle.movesList[moveIndex];
-      makeComputerMove(computerMoveStr);
-      moveIndex++;
-      isPuzzleActive = true;
-      updateStatusWithTurn();
-    }, 600);
-  }
-}
-
-function handleFailure() {
-  playSound("error");
-  currentStreak = 0;
-  document.getElementById("streak-display").innerText = 0;
-  updateStats(false);
-
-  const fb = document.getElementById("feedback-area");
-  if (fb) {
-    fb.innerHTML = "Mauvais coup 🚫";
-    fb.className = "feedback error visible";
-  }
-
-  isWaitingForRetry = true;
-  document.getElementById("btn-retry").style.display = "block";
-  document.getElementById("btn-hint").style.display = "none";
-  updateEngineText("Analyse de l'erreur...");
-}
-
-function makeComputerMove(moveStr) {
-  if (!moveStr) return;
-  const from = moveStr.substring(0, 2);
-  const to = moveStr.substring(2, 4);
-  const promotion = moveStr.length > 4 ? moveStr[4] : "q";
-
-  const move = game.move({ from: from, to: to, promotion: promotion });
-
-  if (move) {
-    board.move(from + "-" + to);
-    // Si l'ordi fait une promotion, on update la position
-    if (move.promotion) board.position(game.fen());
-    updateHistory();
-    if (move.flags.includes("c")) playSound("capture");
-    else playSound("move");
-  }
-}
-
-function updateStatusWithTurn() {
-  const turn = game.turn() === "w" ? "Trait aux Blancs" : "Trait aux Noirs";
-  const statusText = document.getElementById("status-text");
-  const indicator = document.querySelector(".turn-indicator");
-
-  if (statusText) statusText.innerText = turn;
-
-  if (indicator) {
-    if (game.turn() === "w") {
-      indicator.classList.remove("black-turn");
-      indicator.classList.add("white-turn");
-    } else {
-      indicator.classList.remove("white-turn");
-      indicator.classList.add("black-turn");
-    }
-  }
-}
-
-function playSound(type) {
-  if (sounds[type]) {
-    const s = sounds[type].cloneNode();
-    s.volume = 0.5;
-    s.play().catch(() => {});
-  }
-}
-
-function generateRandomId() {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < 5; i++)
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  return result;
-}
-
 function useHint() {
   if (!isPuzzleActive || isWaitingForRetry) return;
   const correctMove = currentPuzzle.movesList[moveIndex];
   if (!correctMove) return;
-
   const source = correctMove.substring(0, 2);
   const target = correctMove.substring(2, 4);
-
   const $board = $("#board");
   $board.find(".square-" + source).addClass("hint-square");
   $board.find(".square-" + target).addClass("hint-square");
-
   setTimeout(() => {
     $board.find(".square-" + source).removeClass("hint-square");
     $board.find(".square-" + target).removeClass("hint-square");
   }, 1500);
 }
 
-// --- STATS & USER ---
+// AUTH & STATS
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     const docRef = doc(db, "users", user.uid);
@@ -784,25 +764,13 @@ onAuthStateChanged(auth, async (user) => {
         const nameEl = document.getElementById("user-name");
         if (nameEl) nameEl.textContent = data.pseudo || "Joueur";
         const avatarEl = document.getElementById("user-avatar");
-        if (avatarEl) {
-          const photoURL =
-            user.photoURL ||
-            `https://api.dicebear.com/9.x/adventurer/svg?seed=${data.pseudo || "User"}`;
-          avatarEl.style.backgroundImage = `url('${photoURL}')`;
-        }
-        const userRatingEl = document.getElementById("user-rating");
-        if (userRatingEl) {
-          const userElo = data.currentPuzzleElo || 1200;
-          userRatingEl.innerText = `Joueur: ${userElo}`;
-        }
+        if (avatarEl && user.photoURL)
+          avatarEl.style.backgroundImage = `url('${user.photoURL}')`;
+        const ratingEl = document.getElementById("user-rating");
+        if (ratingEl)
+          ratingEl.innerText = `Joueur: ${data.currentPuzzleElo || 1200}`;
       }
-    } catch (e) {
-      console.error("Erreur Profil:", e);
-    }
-  } else {
-    document.getElementById("user-name").textContent = "Invité";
-    const userRatingEl = document.getElementById("user-rating");
-    if (userRatingEl) userRatingEl.innerText = "Joueur: 800";
+    } catch (e) {}
   }
 });
 
@@ -818,31 +786,25 @@ async function updateStats(isWin) {
   } catch (error) {}
 }
 
-// --- STOCKFISH SETUP ---
 function initStockfish() {
-  const stockfishUrl =
-    "https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.0/stockfish.js";
-  fetch(stockfishUrl)
-    .then((response) => response.text())
-    .then((scriptContent) => {
-      const blob = new Blob([scriptContent], {
-        type: "application/javascript",
-      });
-      const workerUrl = URL.createObjectURL(blob);
-      stockfish = new Worker(workerUrl);
+  fetch(
+    "https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.0/stockfish.js",
+  )
+    .then((r) => r.text())
+    .then((c) => {
+      const b = new Blob([c], { type: "application/javascript" });
+      stockfish = new Worker(URL.createObjectURL(b));
       stockfish.postMessage("uci");
-      stockfish.onmessage = (event) => {
-        const line = event.data;
+      stockfish.onmessage = (e) => {
         if (
-          line.startsWith("info") &&
-          line.includes("score") &&
-          line.includes("pv")
-        ) {
-          parseAnalysis(line);
-        }
+          e.data.startsWith("info") &&
+          e.data.includes("score") &&
+          e.data.includes("pv")
+        )
+          parseAnalysis(e.data);
       };
     })
-    .catch((err) => console.error("Erreur SF:", err));
+    .catch(console.error);
 }
 
 function parseAnalysis(line) {
@@ -857,36 +819,25 @@ function parseAnalysis(line) {
 
   let bestMoveSAN = bestMoveUCI;
   if (bestMoveUCI) {
-    const tempGame = new Chess(game.fen());
-    const move = tempGame.move({
+    const t = new Chess(game.fen());
+    const m = t.move({
       from: bestMoveUCI.substring(0, 2),
       to: bestMoveUCI.substring(2, 4),
       promotion: "q",
     });
-    if (move) bestMoveSAN = move.san;
+    if (m) bestMoveSAN = m.san;
   }
 
   const textEl = document.getElementById("engine-text");
+  if (!textEl) return;
 
   if (type === "mate") {
-    textEl.innerHTML = `<span class="analysis-blunder">Attention !</span> Mat en ${Math.abs(value)}. <br>L'adversaire va jouer <span class="refutation-move">${bestMoveSAN}</span>.`;
-    return;
-  }
-
-  if (value > 400) {
-    textEl.innerHTML = `<span class="analysis-blunder">Gaffe décisive.</span><br>Vous êtes perdant. Réponse : <span class="refutation-move">${bestMoveSAN}</span>.`;
-  } else if (value > 150) {
-    textEl.innerHTML = `<span class="analysis-blunder">Erreur.</span><br>Avantage perdu. Réponse : <span class="refutation-move">${bestMoveSAN}</span>.`;
-  } else if (value > 0) {
-    textEl.innerHTML = `Imprécis.<br>L'adversaire égalise avec <span class="refutation-move">${bestMoveSAN}</span>.`;
+    textEl.innerHTML = `<span class="analysis-blunder">Attention !</span> Mat en ${Math.abs(value)}.`;
+  } else if (value > 200) {
+    textEl.innerHTML = `Gaffe. <span class="refutation-move">${bestMoveSAN}</span> gagne.`;
   } else {
-    textEl.innerHTML = `Ce n'est pas le meilleur coup tactique.`;
+    textEl.innerHTML = `Imprécis. Meilleur coup : <span class="refutation-move">${bestMoveSAN}</span>`;
   }
-}
-
-function updateEngineText(msg) {
-  const el = document.getElementById("engine-text");
-  if (el) el.innerHTML = msg;
 }
 
 function startEvaluation(fen) {

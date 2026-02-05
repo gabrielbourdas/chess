@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="../../css/nav.css" />
     <link rel="stylesheet" href="../../css/style.css" />
-    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./style.css" />
 
     <style>
       .game-controls {
@@ -97,6 +97,22 @@
                 <div class="promotion-pieces" id="promo-pieces-container"></div>
               </div>
             </div>
+
+            <div id="game-over-overlay">
+              <div class="game-over-modal">
+                <div class="game-over-icon" id="game-over-icon">🏆</div>
+                <h2 id="game-over-title">PARTIE TERMINÉE</h2>
+                <p id="game-over-reason">Les Blancs gagnent par échec et mat</p>
+                <div class="game-over-actions">
+                  <button id="btn-restart-modal" class="btn-game primary">
+                    Nouvelle Partie
+                  </button>
+                  <button id="btn-close-modal" class="btn-game secondary">
+                    Fermer
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="player-info">
@@ -119,13 +135,19 @@
 
           <div class="game-controls">
             <div class="control-group">
-              <label for="difficulty-select">Niveau (ELO estimé)</label>
+              <label for="difficulty-select">Niveau (Estimation Elo)</label>
               <select id="difficulty-select" class="game-select">
-                <option value="0">Débutant (800 Elo)</option>
-                <option value="5">Amateur (1200 Elo)</option>
-                <option value="10" selected>Intermédiaire (1600 Elo)</option>
-                <option value="15">Club (2000 Elo)</option>
-                <option value="20">Grand Maître (2500+ Elo)</option>
+                <option value="0">Débutant (800)</option>
+                <option value="1">Apprenti (1000)</option>
+                <option value="2">Amateur (1200)</option>
+                <option value="3">Intermédiaire (1400)</option>
+                <option value="4">Confirmé (1600)</option>
+                <option value="5" selected>Fort (1800)</option>
+                <option value="6">Expert (2000)</option>
+                <option value="7">Maître (2200)</option>
+                <option value="8">Maître Int. (2400)</option>
+                <option value="9">Grand Maître (2500)</option>
+                <option value="10">🔥 DÉBRIDÉ (Max)</option>
               </select>
             </div>
 

@@ -230,7 +230,7 @@
 }
 
 /* =========================================
-   4. ANALYSE & FEEDBACK
+   4. ANALYSE (ENGINE)
    ========================================= */
 .engine-feedback-box {
   background: var(--bg-tertiary);
@@ -279,39 +279,80 @@
   border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
-.feedback {
-  padding: 1rem;
-  border-radius: 2px;
-  text-align: center;
+/* =========================================
+   5. RESULTAT SIDEBAR (ANIMÉ)
+   ========================================= */
+.sidebar-result-box {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 1rem;
+  display: none; /* Caché par défaut */
+  align-items: center;
+  gap: 15px;
+  animation: slideInSidebar 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sidebar-result-box.success {
+  border-left: 4px solid #2ecc71;
+  background: linear-gradient(
+    90deg,
+    rgba(46, 204, 113, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+.sidebar-result-box.failure {
+  border-left: 4px solid #e74c3c;
+  background: linear-gradient(
+    90deg,
+    rgba(231, 76, 60, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+.result-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.result-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.result-title {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9rem;
   letter-spacing: 1px;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  display: none;
 }
 
-.feedback.visible {
-  opacity: 1;
-  transform: translateY(0);
-  display: block;
-}
-
-.feedback.success {
-  background: rgba(46, 204, 113, 0.1);
+.sidebar-result-box.success .result-title {
   color: #2ecc71;
-  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+.sidebar-result-box.failure .result-title {
+  color: #e74c3c;
 }
 
-.feedback.error {
-  background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
-  border: 1px solid rgba(231, 76, 60, 0.3);
+/* Animation Sidebar */
+@keyframes slideInSidebar {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* =========================================
-   5. HISTORIQUE
+   6. HISTORIQUE
    ========================================= */
 .history-container {
   background: var(--bg-tertiary);
@@ -359,7 +400,7 @@
 }
 
 /* =========================================
-   6. BOUTONS
+   7. BOUTONS
    ========================================= */
 .controls {
   margin-top: auto;
@@ -379,6 +420,16 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: var(--font-body);
+}
+
+/* Petit bouton (pour la notif sidebar) */
+.btn-game.small {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  width: auto;
+  align-self: flex-start;
+  margin-top: 5px;
+  letter-spacing: 1px;
 }
 
 .btn-game.primary {
@@ -421,7 +472,7 @@
 }
 
 /* =========================================
-   7. INDICATEURS & FLÈCHES
+   8. INDICATEURS & FLÈCHES
    ========================================= */
 
 .selected-square {
@@ -432,7 +483,7 @@
   box-shadow: inset 0 0 0 4px #ffd700 !important;
 }
 
-/* --- POINTS DE DEPLACEMENT (Utilisation de background-image) --- */
+/* --- POINTS DE DEPLACEMENT --- */
 .move-hint {
   background-image: radial-gradient(rgba(0, 0, 0, 0.2) 19%, transparent 20%);
 }
@@ -454,15 +505,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  /* CRUCIAL : Laisse passer les clics GAUCHE vers les pièces */
   pointer-events: none;
-  /* Z-Index élevé pour être visible, mais on gère le clic droit en JS */
   z-index: 1000;
   opacity: 0.8;
 }
 
 /* --- CLICK-THROUGH --- */
-/* Important : ces éléments ne doivent pas bloquer le clic sur la case */
 .board-glow-effect,
 .highlight1-32417,
 .highlight2-9c5d2 {
@@ -498,8 +546,9 @@
 .board-container {
   cursor: pointer;
 }
+
 /* =========================================
-   8. INTERFACE DE PROMOTION (MODALE)
+   9. INTERFACE DE PROMOTION (MODALE)
    ========================================= */
 #promotion-overlay {
   position: absolute;
@@ -508,8 +557,8 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 2000; /* Au-dessus des pièces et flèches */
-  display: none; /* Caché par défaut */
+  z-index: 2000;
+  display: none;
   justify-content: center;
   align-items: center;
 }

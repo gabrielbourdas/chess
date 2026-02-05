@@ -562,3 +562,86 @@
     opacity: 1;
   }
 }
+
+/* =========================================
+   9. MODALE FIN DE PARTIE (GAME OVER)
+   ========================================= */
+#game-over-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85); /* Fond très sombre pour focus */
+  z-index: 2100; /* Au-dessus de tout */
+  display: none; /* Caché par défaut */
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px); /* Effet flou pro */
+}
+
+.game-over-modal {
+  background: var(--bg-secondary); /* Couleur de fond du thème */
+  border: 2px solid var(--accent-gold); /* Bordure dorée */
+  padding: 2.5rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 90%;
+  width: 400px;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); /* Lueur dorée */
+  animation: slideUpFade 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.game-over-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+  animation: bounceSlow 2s infinite ease-in-out;
+}
+
+#game-over-title {
+  font-family: var(--font-heading);
+  color: var(--accent-gold);
+  font-size: 1.8rem;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#game-over-reason {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  font-family: var(--font-body);
+  line-height: 1.4;
+}
+
+.game-over-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Animations */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bounceSlow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

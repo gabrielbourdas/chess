@@ -418,17 +418,20 @@ function handleFailureBatch(stepIndex) {
   updateEngineText("Analysez la séquence...");
 }
 
-// --- LOGIQUE UNIFIÉE (MOVE & BATCH) ---
+// --- LOGIQUE UNIFIÉE (MOVE & BATCH) CORRIGÉE ---
 function handleUserMove(source, target, promotionChoice = null) {
-  // 1. Détection de la Promotion
+  // Sécurité
   const piece = game.get(source);
-  const isPromotion =
-    piece &&
-    piece.type === "p" &&
-    ((piece.color === "w" && target[1] === "8") ||
-      (piece.color === "b" && target[1] === "1"));
+  if (!piece) return "snapback";
 
-  if (isPromotion && !promotionChoice) {
+  // 1. Détection de la Promotion via les coups légaux
+  const legalMoves = game.moves({ square: source, verbose: true });
+  const isValidPromotion = legalMoves.find(
+    (m) => m.to === target && m.flags.includes("p"),
+  );
+
+  // Si c'est une promotion LÉGALE et qu'on n'a pas encore choisi
+  if (isValidPromotion && !promotionChoice) {
     pendingMove = { source, target };
     showPromotionModal(piece.color);
     return "pending";
@@ -443,10 +446,11 @@ function handleUserMove(source, target, promotionChoice = null) {
     promotion: finalPromotion,
   });
 
-  if (move === null) return "snapback"; // Retourne snapback comme dans puzzle-logic
+  if (move === null) return "snapback";
 
   board.move(source + "-" + target);
-  if (isPromotion) board.position(game.fen());
+  // Force la mise à jour si promotion pour voir la pièce
+  if (isValidPromotion || move.promotion) board.position(game.fen());
 
   // Spécifique à ce fichier : Ajout à la liste de planification
   planningMoves.push(move);
