@@ -33,24 +33,30 @@ var isEngineRunning = false;
 var playerColor = "white";
 var selectedSquare = null;
 
-// --- PARAMÈTRES DE DIFFICULTÉ (MIS A JOUR) ---
-// Index HTML -> { skill: Stockfish Skill Level (0-20), depth: Profondeur, label: Texte }
+// --- PARAMÈTRES DE DIFFICULTÉ CALIBRÉS ---
+// 'uciElo' : Force le moteur à simuler ce Elo (erreurs volontaires).
+// 'skill' : Niveau de compétence brut (fallback).
+// 'time' : Temps de réflexion max en ms.
 const DIFFICULTY_SETTINGS = {
-  0: { skill: 0, depth: 1, label: "800 (Débutant)" },
-  1: { skill: 2, depth: 2, label: "1000 (Apprenti)" },
-  2: { skill: 4, depth: 3, label: "1200 (Amateur)" },
-  3: { skill: 6, depth: 4, label: "1400 (Intermédiaire)" },
-  4: { skill: 8, depth: 6, label: "1600 (Confirmé)" },
-  5: { skill: 10, depth: 8, label: "1800 (Fort)" },
-  6: { skill: 12, depth: 10, label: "2000 (Expert)" },
-  7: { skill: 14, depth: 12, label: "2200 (Maître)" },
-  8: { skill: 17, depth: 14, label: "2400 (Maître Int.)" },
-  9: { skill: 19, depth: 16, label: "2500 (Grand Maître)" },
-  10: { skill: 20, depth: 22, label: "DÉBRIDÉ (Max)" },
+  // Niveaux Débutants (Simulation d'erreurs humaines)
+  0: { uciElo: 600, skill: 0, time: 50, label: "Débutant (600)" },
+  1: { uciElo: 800, skill: 1, time: 100, label: "Apprenti (800)" },
+  2: { uciElo: 1000, skill: 2, time: 200, label: "Amateur (1000)" },
+  3: { uciElo: 1200, skill: 3, time: 300, label: "Intermédiaire (1200)" },
+
+  // Niveaux Compétitifs (Jeu plus solide)
+  4: { uciElo: 1400, skill: 5, time: 600, label: "Confirmé (1400)" },
+  5: { uciElo: 1600, skill: 8, time: 800, label: "Club (1600)" },
+  6: { uciElo: 1800, skill: 12, time: 1000, label: "Fort (1800)" },
+
+  // Niveaux Experts (Force brute débloquée)
+  7: { uciElo: 2200, skill: 20, time: 1200, label: "Maître (2200)" },
+  8: { uciElo: 2500, skill: 20, time: 1500, label: "Grand Maître (2500)" },
+  9: { uciElo: 2800, skill: 20, time: 2000, label: "Légende (2800)" },
+  10: { uciElo: 3000, skill: 20, time: 3000, label: "👽 DÉBRIDÉ (Max)" },
 };
 
-var currentSkillConfig = DIFFICULTY_SETTINGS[5]; // Par défaut : 1800
-var currentDepth = 8;
+var currentConfig = DIFFICULTY_SETTINGS[5]; // Par défaut : 1600
 
 // Variables pour les flèches (Clic Droit)
 var rightClickStart = null;
@@ -60,7 +66,7 @@ var boardOrientation = "white";
 // Promotion
 var pendingMove = null;
 
-// Sons
+// --- SYSTÈME AUDIO ---
 const sounds = {
   move: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Move.mp3",
@@ -70,6 +76,12 @@ const sounds = {
   ),
   notify: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Victory.mp3",
+  ),
+  mate: new Audio(
+    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/GenericNotify.mp3",
+  ),
+  check: new Audio(
+    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/GenericNotify.mp3",
   ),
   error: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Error.mp3",
@@ -91,12 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-
-          // 1. Mise à jour du Nom
           const nameEl = document.getElementById("user-name");
           if (nameEl) nameEl.textContent = data.pseudo || "Joueur";
-
-          // 2. Mise à jour de l'Avatar
           const avatarEl = document.getElementById("user-avatar");
           if (avatarEl) {
             const photoURL =
@@ -104,8 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
               `https://api.dicebear.com/9.x/adventurer/svg?seed=${data.pseudo || "User"}`;
             avatarEl.style.backgroundImage = `url('${photoURL}')`;
           }
-
-          // 3. Mise à jour de l'Elo
           const userRatingEl = document.getElementById("user-rating");
           if (userRatingEl) {
             const userElo = data.elo || data.currentElo || 1200;
@@ -116,10 +122,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Erreur Profil:", e);
       }
     } else {
-      // Mode Invité
       const nameEl = document.getElementById("user-name");
       if (nameEl) nameEl.textContent = "Invité";
-
       const userRatingEl = document.getElementById("user-rating");
       if (userRatingEl) userRatingEl.innerText = "ELO: 800";
     }
@@ -132,11 +136,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnUndo = document.getElementById("btn-undo");
   if (btnUndo) btnUndo.addEventListener("click", undoMove);
 
+  const btnCopy = document.getElementById("btn-copy-pgn");
+  if (btnCopy) {
+    btnCopy.addEventListener("click", () => {
+      const pgn = game.pgn();
+      navigator.clipboard.writeText(pgn).then(() => {
+        const originalText = btnCopy.innerHTML;
+        btnCopy.innerHTML = "✅ Copié !";
+        btnCopy.classList.add("copied");
+        setTimeout(() => {
+          btnCopy.innerHTML = originalText;
+          btnCopy.classList.remove("copied");
+        }, 2000);
+      });
+    });
+  }
+
   // --- EVENTS SELECTEURS ---
   const diffSelect = document.getElementById("difficulty-select");
   if (diffSelect) {
     diffSelect.addEventListener("change", () => startNewGame());
-    setDifficulty(diffSelect.value); // Appliquer la difficulté initiale
+    setDifficulty(diffSelect.value);
   }
 
   const colorSelect = document.getElementById("color-select");
@@ -179,7 +199,6 @@ function setupBoardInteractions() {
   const boardEl = document.getElementById("board");
   if (!boardEl) return;
 
-  // Clic Gauche
   boardEl.addEventListener("click", (e) => {
     clearArrows();
     if (isEngineRunning || game.game_over()) return;
@@ -188,7 +207,6 @@ function setupBoardInteractions() {
     else removeSelection();
   });
 
-  // Clic Droit
   boardEl.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     return false;
@@ -221,30 +239,37 @@ function setupBoardInteractions() {
   );
 }
 
-// --- LOGIQUE DIFFICULTÉ (CORRIGÉE) ---
+// --- LOGIQUE DIFFICULTÉ INTELLIGENTE ---
 function setDifficulty(levelIndex) {
   const config = DIFFICULTY_SETTINGS[levelIndex];
   if (!config) return;
 
-  currentSkillConfig = config;
-  currentDepth = config.depth;
+  currentConfig = config;
 
   const display = document.getElementById("bot-difficulty-display");
   if (display) display.innerText = "Niveau: " + config.label;
 
   if (engine) {
-    // Stockfish 'Skill Level' va de 0 à 20
+    // 1. On active la limitation de force
+    engine.postMessage("setoption name UCI_LimitStrength value true");
+
+    // 2. On définit l'ELO cible (c'est le paramètre le plus important)
+    engine.postMessage("setoption name UCI_Elo value " + config.uciElo);
+
+    // 3. On ajuste aussi le Skill Level pour les versions de Stockfish qui ignorent UCI_Elo
     engine.postMessage("setoption name Skill Level value " + config.skill);
-    // Probabilité d'erreur (décroissante avec le niveau)
-    // 20 - skill permet de réduire les erreurs à mesure que le skill augmente
-    const errProb = Math.max(0, (20 - config.skill) * 5);
+
+    // 4. On ajoute de la probabilité d'erreur pour les bas niveaux
+    // Si Elo < 1500, on augmente la probabilité de faire une bêtise
+    const errProb =
+      config.uciElo < 1500 ? 100 : Math.max(0, (20 - config.skill) * 5);
     engine.postMessage(
       "setoption name Skill Level Probability value " + errProb,
     );
   }
 }
 
-// --- FONCTIONS CLICK-TO-MOVE ---
+// --- UTILITAIRES DE CASES & HIGHLIGHT ---
 function getSquareFromEvent(e) {
   let target = e.target;
   if (target.tagName === "IMG" && target.parentElement)
@@ -255,12 +280,23 @@ function getSquareFromEvent(e) {
   return match ? match[1] : null;
 }
 
+function highlightLastMove(source, target) {
+  $("#board").find(".highlight-last-move").removeClass("highlight-last-move");
+  if (source && target) {
+    $("#board")
+      .find(".square-" + source)
+      .addClass("highlight-last-move");
+    $("#board")
+      .find(".square-" + target)
+      .addClass("highlight-last-move");
+  }
+}
+
 function handleSquareClick(square) {
   const piece = game.get(square);
   const turn = game.turn();
   const myColor = playerColor.charAt(0);
 
-  // Empêche de jouer pendant le tour du bot
   if (turn !== myColor) return;
 
   if (piece && piece.color === turn) {
@@ -458,50 +494,62 @@ function resizeSafe() {
   if (board) board.resize();
 }
 
-// --- MOUVEMENT & VALIDATION (CORRIGÉ) ---
+// === GESTION INTELLIGENTE DES SONS DE MOUVEMENT ===
+function playMoveSound(move) {
+  if (game.in_checkmate()) return;
+
+  if (game.in_check()) {
+    playSound("check");
+    return;
+  }
+
+  if (move.flags.includes("c") || move.flags.includes("e")) {
+    playSound("capture");
+    return;
+  }
+
+  playSound("move");
+}
+
+// --- MOUVEMENT & VALIDATION ---
 function handleUserMove(source, target, promotionChoice = null) {
   const piece = game.get(source);
   if (!piece) return "snapback";
 
-  // 1. Vérifier la légalité du coup et de la promotion
   const legalMoves = game.moves({ square: source, verbose: true });
 
   const isValidPromotion = legalMoves.find(
     (m) => m.to === target && m.flags.includes("p"),
   );
 
-  // Si c'est une promotion LÉGALE et qu'on n'a pas encore choisi
   if (isValidPromotion && !promotionChoice) {
     pendingMove = { source, target };
     showPromotionModal(piece.color);
     return "pending";
   }
 
-  // 2. Tenter le mouvement
   const move = game.move({
     from: source,
     to: target,
     promotion: promotionChoice || "q",
   });
 
-  // Si le coup est invalide (null), on annule
   if (move === null) return "snapback";
 
-  // 3. Succès
   board.position(game.fen());
   clearArrows();
-  playSound(move.flags.includes("c") ? "capture" : "move");
+  highlightLastMove(source, target);
+
+  playMoveSound(move);
+
   updateGameUI();
   askEngineForMove();
   return true;
 }
 
-// --- DRAG & DROP ---
 function onDragStart(source, piece) {
   clearArrows();
   if (game.game_over() || isEngineRunning) return false;
-
-  // On ne peut pas bouger les pièces si ce n'est pas notre couleur
   if (piece.search(playerColor.charAt(0)) === -1) {
     return false;
   }
@@ -522,11 +570,21 @@ function onSnapEnd() {
   board.position(game.fen());
 }
 
-// --- LOGIQUE STOCKFISH ---
+// --- LOGIQUE STOCKFISH OPTIMISÉE ---
 function initEngine() {
   if (typeof Worker !== "undefined") {
     engine = new Worker("./stockfish.js");
     engine.postMessage("uci");
+
+    // Optimisation Hash & Threads
+    setTimeout(() => {
+      engine.postMessage("setoption name Hash value 32");
+      engine.postMessage("setoption name Threads value 2");
+
+      // Active le mode LimitStrength par défaut pour éviter le mode bourrin
+      engine.postMessage("setoption name UCI_LimitStrength value true");
+    }, 100);
+
     engine.onmessage = function (event) {
       const line = event.data;
       if (line.startsWith("bestmove")) {
@@ -545,12 +603,20 @@ function askEngineForMove() {
   isEngineRunning = true;
   updateStatus("L'IA réfléchit...");
 
-  const delay = Math.max(500, Math.random() * 1000);
+  // Délai humain minimal pour les coups trop rapides
+  const minDelay = Math.max(400, Math.random() * 600);
 
   setTimeout(() => {
     engine.postMessage("position fen " + game.fen());
-    engine.postMessage("go depth " + currentDepth);
-  }, delay);
+
+    // UTILISATION DE LA CONFIGURATION ACTUELLE
+    // Le temps (time) est défini dans DIFFICULTY_SETTINGS
+    const movetime = currentConfig.time;
+
+    // On envoie simplement la limite de temps.
+    // Stockfish se débrouillera avec UCI_Elo et UCI_LimitStrength pour faire des erreurs.
+    engine.postMessage(`go movetime ${movetime}`);
+  }, minDelay);
 }
 
 function makeEngineMove(moveSan) {
@@ -563,14 +629,15 @@ function makeEngineMove(moveSan) {
 
   if (move) {
     board.position(game.fen());
-    playSound(move.flags.includes("c") ? "capture" : "move");
+    highlightLastMove(from, to);
+    playMoveSound(move);
     clearArrows();
     updateGameUI();
     isEngineRunning = false;
   }
 }
 
-// --- UI ---
+// --- UI & MODALES FIN DE JEU ---
 function updateGameUI() {
   updateStatus();
   updateHistory();
@@ -589,34 +656,44 @@ function updateStatus(customMsg) {
   let status = "";
   let gameOverTitle = "";
   let gameOverReason = "";
-  let gameOverIcon = "🤝"; // Par défaut (Nul)
+  let gameOverIcon = "🤝";
 
   const moveColor = game.turn() === "b" ? "Noirs" : "Blancs";
 
   if (game.in_checkmate()) {
-    const winner = moveColor === "Noirs" ? "Les Blancs" : "Les Noirs";
-    status = `Mat ! ${winner} gagnent.`;
+    const loserColorFull = game.turn() === "w" ? "white" : "black";
+    const winnerName = loserColorFull === "white" ? "Les Noirs" : "Les Blancs";
 
-    // Config Modale
-    gameOverTitle = "VICTOIRE !";
-    gameOverReason = `${winner} gagnent par échec et mat.`;
-    gameOverIcon = "🏆";
-    playSound("notify");
+    // DETECTION VICTOIRE / DEFAITE
+    if (playerColor !== loserColorFull) {
+      // Le joueur a gagné
+      gameOverTitle = "VICTOIRE !";
+      gameOverReason = `Magnifique ! Vous avez battu l'IA (${currentConfig.label}).`;
+      gameOverIcon = "🏆";
+      playSound("mate");
+    } else {
+      // Le joueur a perdu
+      gameOverTitle = "DÉFAITE...";
+      gameOverReason = `Dommage... L'IA (${currentConfig.label}) a gagné.`;
+      gameOverIcon = "💀";
+      playSound("error");
+    }
 
-    // Déclenchement Modale
+    status = `Mat ! ${winnerName} gagnent.`;
     showGameOverModal(gameOverTitle, gameOverReason, gameOverIcon);
   } else if (game.in_draw()) {
     status = "Match nul.";
     gameOverTitle = "MATCH NUL";
     gameOverIcon = "⚖️";
 
-    if (game.in_stalemate()) gameOverReason = "Pat (Stalemate)";
+    if (game.in_stalemate()) gameOverReason = "Pat (Roi bloqué sans échec)";
     else if (game.in_threefold_repetition())
-      gameOverReason = "Répétition (3 fois)";
+      gameOverReason = "Répétition (3 fois la même position)";
     else if (game.insufficient_material())
-      gameOverReason = "Matériel insuffisant";
+      gameOverReason = "Matériel insuffisant pour mater";
     else gameOverReason = "Règle des 50 coups ou accord mutuel";
 
+    playSound("mate");
     showGameOverModal(gameOverTitle, gameOverReason, gameOverIcon);
   } else {
     status = game.turn() === "w" ? "Trait aux Blancs" : "Trait aux Noirs";
@@ -626,7 +703,6 @@ function updateStatus(customMsg) {
   statusEl.innerText = status;
 }
 
-// Nouvelle fonction utilitaire pour afficher la modale
 function showGameOverModal(title, reason, icon) {
   const modal = document.getElementById("game-over-overlay");
   const titleEl = document.getElementById("game-over-title");
@@ -638,7 +714,15 @@ function showGameOverModal(title, reason, icon) {
     reasonEl.innerText = reason;
     if (iconEl) iconEl.innerText = icon;
 
-    // Petit délai pour laisser le dernier coup se jouer visuellement
+    // Changement de couleur du titre selon le résultat
+    if (title === "DÉFAITE...") {
+      titleEl.style.color = "#e74c3c"; // Rouge
+    } else if (title === "VICTOIRE !") {
+      titleEl.style.color = "#2ecc71"; // Vert
+    } else {
+      titleEl.style.color = "#d4af37"; // Or (Nul)
+    }
+
     setTimeout(() => {
       modal.style.display = "flex";
     }, 500);
@@ -713,11 +797,9 @@ function startNewGame() {
   let chosenColorValue = colorSelectEl ? colorSelectEl.value : "white";
   const diffSelect = document.getElementById("difficulty-select");
 
-  // AJOUT : Cacher la modale si elle est ouverte
   const modal = document.getElementById("game-over-overlay");
   if (modal) modal.style.display = "none";
 
-  // 1. Choix couleur (avec mise à jour UI pour Random)
   if (chosenColorValue === "random") {
     const isWhite = Math.random() < 0.5;
     playerColor = isWhite ? "white" : "black";
@@ -726,23 +808,22 @@ function startNewGame() {
     playerColor = chosenColorValue;
   }
 
-  // 2. Reset classique
   game.reset();
   selectedSquare = null;
   removeSelection();
   clearArrows();
+
+  $("#board").find(".highlight-last-move").removeClass("highlight-last-move");
+
   isEngineRunning = false;
 
-  // 3. Init Plateau
   initBoard("start", playerColor);
 
-  // 4. Init Moteur
   engine.postMessage("ucinewgame");
   if (diffSelect) setDifficulty(diffSelect.value);
 
   updateGameUI();
 
-  // 5. Si joueur est noir, l'IA (blanc) joue
   if (playerColor === "black") {
     askEngineForMove();
   }
@@ -755,5 +836,14 @@ function undoMove() {
   board.position(game.fen());
   removeSelection();
   clearArrows();
+
+  const history = game.history({ verbose: true });
+  if (history.length > 0) {
+    const lastMove = history[history.length - 1];
+    highlightLastMove(lastMove.from, lastMove.to);
+  } else {
+    $("#board").find(".highlight-last-move").removeClass("highlight-last-move");
+  }
+
   updateGameUI();
 }

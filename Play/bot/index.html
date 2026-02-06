@@ -10,11 +10,13 @@
       rel="stylesheet"
       href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
     />
+
     <link rel="stylesheet" href="../../css/nav.css" />
     <link rel="stylesheet" href="../../css/style.css" />
     <link rel="stylesheet" href="./style.css" />
 
     <style>
+      /* Styles spécifiques à cette page (Contrôles IA) */
       .game-controls {
         display: flex;
         flex-direction: column;
@@ -39,6 +41,11 @@
         border: 1px solid var(--border-subtle);
         color: var(--text-primary);
         border-radius: 4px;
+        font-family: var(--font-body);
+        cursor: pointer;
+      }
+      .game-select:hover {
+        border-color: var(--accent-gold);
       }
       .game-status-message {
         font-weight: bold;
@@ -82,8 +89,10 @@
               "
             ></div>
             <div class="details">
-              <span class="name">Robot</span>
-              <span id="bot-difficulty-display" class="rating">Niveau: 1</span>
+              <span class="name">Stockfish 16 (IA)</span>
+              <span id="bot-difficulty-display" class="rating"
+                >Niveau: Club (1600)</span
+              >
             </div>
           </div>
 
@@ -130,53 +139,60 @@
 
         <div class="game-sidebar">
           <div class="sidebar-header">
-            <div class="streak-container">🎮 Partie contre l'IA</div>
+            <div class="streak-container">🎮 Paramètres de Partie</div>
           </div>
 
           <div class="game-controls">
             <div class="control-group">
-              <label for="difficulty-select">Niveau (Estimation Elo)</label>
+              <label for="difficulty-select">Niveau de difficulté</label>
               <select id="difficulty-select" class="game-select">
-                <option value="0">Débutant (800)</option>
-                <option value="1">Apprenti (1000)</option>
-                <option value="2">Amateur (1200)</option>
-                <option value="3">Intermédiaire (1400)</option>
-                <option value="4">Confirmé (1600)</option>
-                <option value="5" selected>Fort (1800)</option>
-                <option value="6">Expert (2000)</option>
-                <option value="7">Maître (2200)</option>
-                <option value="8">Maître Int. (2400)</option>
-                <option value="9">Grand Maître (2500)</option>
-                <option value="10">🔥 DÉBRIDÉ (Max)</option>
+                <option value="0">Niveau 1 : Débutant (600 Elo)</option>
+                <option value="1">Niveau 2 : Apprenti (800 Elo)</option>
+                <option value="2">Niveau 3 : Amateur (1000 Elo)</option>
+                <option value="3">Niveau 4 : Intermédiaire (1200 Elo)</option>
+
+                <option value="4">Niveau 5 : Confirmé (1400 Elo)</option>
+                <option value="5" selected>Niveau 6 : Club (1600 Elo)</option>
+                <option value="6">Niveau 7 : Fort (1800 Elo)</option>
+
+                <option value="7">Niveau 8 : Maître (2200 Elo)</option>
+                <option value="8">Niveau 9 : Grand Maître (2500 Elo)</option>
+                <option value="9">Niveau 10 : Légende (2800 Elo)</option>
+                <option value="10">💀 Niveau 11 : DÉBRIDÉ (Max)</option>
               </select>
             </div>
 
             <div class="control-group">
               <label for="color-select">Votre couleur</label>
               <select id="color-select" class="game-select">
-                <option value="white">Blancs</option>
-                <option value="black">Noirs</option>
-                <option value="random">Aléatoire</option>
+                <option value="white">Blancs (Commencer)</option>
+                <option value="black">Noirs (Défendre)</option>
+                <option value="random">Aléatoire 🎲</option>
               </select>
             </div>
 
             <button id="btn-new-game" class="btn-game primary">
-              Nouvelle Partie
+              Lancer la partie
             </button>
           </div>
 
           <div class="turn-indicator">
             <div class="turn-icon"></div>
-            <span id="status-text">En attente...</span>
+            <span id="status-text">Prêt à jouer</span>
           </div>
 
           <div id="game-end-message" class="game-status-message"></div>
 
           <div class="history-container">
-            <div class="history-header">Historique</div>
+            <div class="history-header">
+              <span>Historique</span>
+              <button id="btn-copy-pgn" class="btn-copy" title="Copier le PGN">
+                📋 Copier
+              </button>
+            </div>
             <div id="move-history" class="move-history-content">
               <span style="color: #666; font-style: italic"
-                >Début de partie</span
+                >Les coups s'afficheront ici...</span
               >
             </div>
           </div>
@@ -184,9 +200,6 @@
           <div class="controls">
             <button id="btn-undo" class="btn-game secondary">
               ↩ Annuler un coup
-            </button>
-            <button id="btn-resign" class="btn-game danger">
-              🏳 Abandonner
             </button>
           </div>
         </div>
