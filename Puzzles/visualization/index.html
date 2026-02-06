@@ -63,77 +63,87 @@
           </div>
         </div>
 
-        <div class="game-sidebar">
-          <div class="theme-container">
-            <span class="theme-label">THÈMES :</span>
-            <div id="theme-display" class="theme-display"></div>
-          </div>
-
-          <div class="sidebar-header">
-            <div class="streak-container">
-              🔥 Série : <span id="streak-display">0</span>
-            </div>
-
-            <div class="puzzle-meta-group">
-              <span id="puzzle-rating" class="puzzle-rating-tag"
-                >Puzzle: ...</span
-              >
-              <div id="difficulty-badge" class="difficulty-badge medium">
-                Normal
+        <div class="sidebar-wrapper">
+          <div class="sidebar-card action-panel">
+            <div class="sidebar-header">
+              <div class="streak-container">
+                🔥 Série : <span id="streak-display">0</span>
+              </div>
+              <div class="puzzle-meta-group">
+                <span id="puzzle-rating" class="puzzle-rating-tag"
+                  >Puzzle: ...</span
+                >
+                <div id="difficulty-badge" class="difficulty-badge medium">
+                  Normal
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="turn-indicator">
-            <div class="turn-icon"></div>
-            <span id="status-text">Chargement...</span>
-          </div>
-
-          <div id="planning-area" class="planning-container">
-            <div class="planning-header">Séquence calculée :</div>
-            <div id="planning-list" class="planning-list">
-              <span class="empty-plan">Jouez votre coup...</span>
+            <div class="turn-indicator">
+              <div class="turn-icon"></div>
+              <span id="status-text">À vous de jouer</span>
             </div>
-            <div class="planning-controls">
-              <button id="btn-undo-plan" class="btn-game secondary small">
-                Corriger
-              </button>
+
+            <div class="planning-box">
+              <div class="planning-header">Séquence planifiée :</div>
+              <div id="planning-list" class="planning-list">
+                <span class="empty-plan"
+                  >Jouez les coups sur l'échiquier...</span
+                >
+              </div>
+            </div>
+
+            <div id="engine-feedback" class="engine-feedback-box">
+              <span class="engine-icon">🤖</span>
+              <span id="engine-text">Analysez la position...</span>
+            </div>
+
+            <div id="sidebar-puzzle-result" class="sidebar-result-box">
+              <div class="result-icon"></div>
+              <div class="result-content">
+                <div class="result-title"></div>
+                <button id="btn-result-action" class="btn-game small"></button>
+              </div>
+            </div>
+
+            <div class="controls">
               <button id="btn-validate-plan" class="btn-game primary">
-                VALIDER LA SÉQUENCE
+                ✅ Valider la séquence
+              </button>
+
+              <div class="sub-controls">
+                <button id="btn-undo-plan" class="btn-game secondary">
+                  ↩ Annuler
+                </button>
+                <button id="btn-hint" class="btn-game secondary">
+                  💡 Indice
+                </button>
+              </div>
+
+              <button
+                id="btn-retry"
+                class="btn-game danger"
+                style="display: none"
+              >
+                🔄 Réessayer
               </button>
             </div>
           </div>
 
-          <div id="engine-feedback" class="engine-feedback-box">
-            <span class="engine-icon">🤖</span>
-            <span id="engine-text">Analyse prête...</span>
-          </div>
-
-          <div class="history-container">
-            <div class="history-header">Historique Réel</div>
-            <div id="move-history" class="move-history-content">
-              <span style="color: #666; font-style: italic"
-                >Début de partie</span
-              >
+          <div class="sidebar-card info-panel">
+            <div class="history-container">
+              <div class="history-header">Partie d'origine</div>
+              <div id="move-history" class="move-history-content">
+                <span style="color: #666; font-style: italic"
+                  >Début de partie</span
+                >
+              </div>
             </div>
-          </div>
 
-          <div id="feedback-area" class="feedback"></div>
-
-          <div class="controls">
-            <button id="btn-hint" class="btn-game secondary">💡 Indice</button>
-
-            <button
-              id="btn-retry"
-              class="btn-game danger"
-              style="display: none"
-            >
-              🔄 Réessayer
-            </button>
-
-            <button id="btn-next" class="btn-game primary">
-              Puzzle Suivant ➡
-            </button>
+            <div class="theme-container">
+              <span class="theme-label">THÈMES :</span>
+              <div id="theme-display" class="theme-display"></div>
+            </div>
           </div>
         </div>
       </div>

@@ -31,7 +31,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// --- SONS ---
+// --- SYSTÈME AUDIO GLOBAL ROBUSTE ---
 const sounds = {
   move: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Move.mp3",
@@ -39,16 +39,22 @@ const sounds = {
   capture: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Capture.mp3",
   ),
+  // MODIFICATION ICI : On utilise un lien Lichess fiable pour éviter le blocage.
+  // "GenericNotify.mp3" est le son par défaut.
+  // Si vous avez le fichier "game-end.mp3" de chess.com en local, remplacez le lien ci-dessous par : "./audio/game-end.mp3"
   mate: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/GenericNotify.mp3",
-  ),
-  success: new Audio(
-    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Victory.mp3",
   ),
   error: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Error.mp3",
   ),
 };
+
+// Variable pour suivre le son actuellement joué
+let currentAudio = null;
+
+// Réglage du volume initial
+Object.values(sounds).forEach((s) => (s.volume = 0.5));
 
 // --- GLOBALES ---
 var board = null;
@@ -64,12 +70,18 @@ var pendingMove = null;
 var rightClickStart = null;
 var arrows = [];
 var boardOrientation = "white";
+var resultTimeout = null;
 
 // --- INITIALISATION ---
 document.addEventListener("DOMContentLoaded", () => {
   initBoard("start", "white");
   initStockfish();
   initArrows();
+
+  // Fix visuel
+  setTimeout(() => {
+    if (board) board.resize();
+  }, 200);
 
   const boardEl = document.getElementById("board");
   if (boardEl) {
@@ -119,26 +131,11 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Audio Mobile Hack
-  document.body.addEventListener(
-    "click",
-    () => {
-      if (sounds.move) {
-        sounds.move
-          .play()
-          .then(() => {
-            sounds.move.pause();
-            sounds.move.currentTime = 0;
-          })
-          .catch(() => {});
-      }
-    },
-    { once: true },
-  );
+  // Hack Audio : Débloquer les sons au premier clic utilisateur
+  document.body.addEventListener("click", unlockAudio, { once: true });
 
   setupButton("btn-retry", retryPuzzle);
   setupButton("btn-hint", useHint);
-
   setupButton("btn-result-action", () => {
     const box = document.getElementById("sidebar-puzzle-result");
     if (box && box.classList.contains("success")) {
@@ -151,9 +148,81 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(loadRandomPuzzle, 500);
 });
 
+function unlockAudio() {
+  // On joue et coupe instantanément pour réveiller le moteur audio du navigateur
+  Object.values(sounds).forEach((s) => {
+    const p = s.play();
+    if (p !== undefined) {
+      p.then(() => {
+        s.pause();
+        s.currentTime = 0;
+      }).catch(() => {});
+    }
+  });
+}
+
 function setupButton(id, func) {
   const btn = document.getElementById(id);
   if (btn) btn.addEventListener("click", func);
+}
+
+// --- FONCTION SONORE CORRIGÉE ET SÉCURISÉE ---
+function playSound(type, waitForCurrent = false) {
+  const newSound = sounds[type];
+  if (!newSound) return;
+
+  // Si on doit attendre que le son actuel se termine
+  if (waitForCurrent && currentAudio && !currentAudio.paused) {
+    // On attend la fin du son actuel avant de jouer le nouveau
+    const onEnded = () => {
+      currentAudio.removeEventListener("ended", onEnded);
+      playSound(type, false);
+    };
+    currentAudio.addEventListener("ended", onEnded);
+    return;
+  }
+
+  // 1. Si un son joue déjà et qu'on ne doit pas attendre, on l'arrête proprement
+  if (currentAudio && !waitForCurrent) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+
+  // 2. On définit le nouveau son comme étant l'actif
+  currentAudio = newSound;
+
+  // 3. Réglage volume standard
+  currentAudio.volume = 0.5;
+
+  // 4. Lecture sécurisée (avec gestion des Promesses pour éviter le crash)
+  const playPromise = currentAudio.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch((error) => {
+      // Cette erreur survient si on coupe un son trop vite (interruption)
+      // Ou si le fichier est introuvable (403/404)
+      console.warn("Audio play interrupted or failed:", error);
+    });
+  }
+}
+
+// Détermine quel son jouer immédiatement (Action physique)
+function playMoveSound(move) {
+  // PRIORITÉ 1 : MAT (Doit être vérifié AVANT la capture)
+  // Utilise le son défini dans sounds.mate
+  if (game.in_checkmate()) {
+    playSound("mate");
+    return;
+  }
+
+  // PRIORITÉ 2 : PRISE (Capture)
+  if (move.flags.includes("c") || move.flags.includes("e")) {
+    playSound("capture");
+    return;
+  }
+
+  // PRIORITÉ 3 : DÉPLACEMENT STANDARD
+  playSound("move");
 }
 
 // --- LOGIQUE SÉLECTION ---
@@ -210,7 +279,7 @@ function removeSelection() {
   $board.find(".capture-hint").removeClass("capture-hint");
 }
 
-// --- COEUR DU SYSTÈME : MOVE ---
+// --- COEUR DU JEU ---
 function handleUserMove(
   source,
   target,
@@ -220,6 +289,7 @@ function handleUserMove(
   const piece = game.get(source);
   if (!piece) return "snapback";
 
+  // 1. Validation
   const legalMoves = game.moves({ square: source, verbose: true });
   const isValidPromotion = legalMoves.find(
     (m) => m.to === target && m.flags.includes("p"),
@@ -231,18 +301,18 @@ function handleUserMove(
     return "pending";
   }
 
+  // 2. Moteur
   const move = game.move({
     from: source,
     to: target,
     promotion: promotionChoice || "q",
   });
-
   if (move === null) return "snapback";
 
+  // 3. UI
   if (!isDrop) {
     board.move(source + "-" + target);
   }
-
   if (
     isValidPromotion ||
     move.flags.includes("k") ||
@@ -251,53 +321,105 @@ function handleUserMove(
     board.position(game.fen());
   }
 
+  // 4. SON DU MOUVEMENT (Immédiat)
+  playMoveSound(move);
+
   clearArrows();
   updateHistory();
   startEvaluation(game.fen());
 
+  // 5. Validation Puzzle
   let attemptUCI = source + target;
   if (move.promotion) attemptUCI += move.promotion;
 
+  if (
+    !currentPuzzle ||
+    !currentPuzzle.movesList ||
+    moveIndex >= currentPuzzle.movesList.length
+  ) {
+    return true;
+  }
+
   const expectedMove = currentPuzzle.movesList[moveIndex];
+
+  // Nettoyer tout délai précédent
+  if (resultTimeout) clearTimeout(resultTimeout);
+
   if (attemptUCI === expectedMove) {
-    handleSuccess(move);
+    // BON COUP
+    handleCorrectMove();
     return true;
   } else {
-    setTimeout(handleFailure, 300);
+    // MAUVAIS COUP -> Séquence Erreur
+    resultTimeout = setTimeout(handleFailure, 800);
     return true;
   }
 }
 
-// --- DRAG & DROP HANDLERS ---
-function onDragStart(source, piece) {
-  clearArrows();
-  if (!isPuzzleActive || isWaitingForRetry || game.game_over()) return false;
-  if (
-    (game.turn() === "w" && piece.search(/^b/) !== -1) ||
-    (game.turn() === "b" && piece.search(/^w/) !== -1)
-  )
-    return false;
+function handleCorrectMove() {
+  moveIndex++;
+
+  // FIN DU PUZZLE ?
+  if (moveIndex >= currentPuzzle.movesList.length) {
+    // OUI : Séquence Victoire
+    if (resultTimeout) clearTimeout(resultTimeout);
+    handleVictory();
+  } else {
+    // NON : Ordi joue
+    isPuzzleActive = false;
+    setTimeout(() => {
+      const computerMoveStr = currentPuzzle.movesList[moveIndex];
+      makeComputerMove(computerMoveStr);
+      moveIndex++;
+
+      // Check Fin après coup ordi
+      if (moveIndex >= currentPuzzle.movesList.length) {
+        if (resultTimeout) clearTimeout(resultTimeout);
+        handleVictory();
+      } else {
+        isPuzzleActive = true;
+        updateStatusWithTurn();
+      }
+    }, 600);
+  }
 }
 
-function onDrop(source, target) {
-  if (source === target) {
-    handleSquareClick(source);
-    return;
-  }
+// --- GESTIONNAIRES FINAUX ---
 
-  const result = handleUserMove(source, target, null, true);
+function handleVictory() {
+  // Pas de son "success" ici, seulement l'affichage visuel
+  currentStreak++;
+  const streakEl = document.getElementById("streak-display");
+  if (streakEl) streakEl.innerText = currentStreak;
 
-  if (result === "pending") return;
-
-  if (result === "snapback") {
-    removeSelection();
-    return "snapback";
-  }
-
-  removeSelection();
+  updateStats(true);
+  isPuzzleActive = false;
+  updateEngineText("");
+  showSidebarResult("success");
 }
 
-// --- GESTION SUCCESS / FAILURE ---
+function handleFailure() {
+  // On joue le son d'erreur
+  playSound("error");
+
+  // Puis on affiche l'interface
+  currentStreak = 0;
+  const streakEl = document.getElementById("streak-display");
+  if (streakEl) streakEl.innerText = 0;
+
+  updateStats(false);
+  showSidebarResult("failure");
+
+  isWaitingForRetry = true;
+  const btnRetry = document.getElementById("btn-retry");
+  if (btnRetry) btnRetry.style.display = "none";
+  const btnHint = document.getElementById("btn-hint");
+  if (btnHint) btnHint.style.display = "none";
+
+  updateEngineText("Analyse de l'erreur...");
+}
+
+// --- UI SIDEBAR ---
 function showSidebarResult(status) {
   const box = document.getElementById("sidebar-puzzle-result");
   if (!box) return;
@@ -328,85 +450,79 @@ function showSidebarResult(status) {
   box.style.display = "flex";
 }
 
-// MODIFICATION PRINCIPALE ICI
-function handleSuccess(move) {
-  // 1. Vérifie si le puzzle est TERMINÉ par ce coup
-  const isPuzzleSolved = moveIndex + 1 >= currentPuzzle.movesList.length;
+// --- DRAG & DROP ---
+function onDragStart(source, piece) {
+  clearArrows();
+  if (!isPuzzleActive || isWaitingForRetry || game.game_over()) return false;
+  if (
+    (game.turn() === "w" && piece.search(/^b/) !== -1) ||
+    (game.turn() === "b" && piece.search(/^w/) !== -1)
+  )
+    return false;
+}
 
-  // 2. Logique Sonore
-  if (isPuzzleSolved) {
-    // SI TERMINÉ : On ne joue PAS le son de capture/move classique
-    // pour éviter qu'il ne masque le son de victoire.
-    if (game.in_checkmate()) {
-      playSound("mate");
-      setTimeout(() => playSound("success"), 1000); // Délai pour bien entendre le mat
-    } else {
-      playSound("success"); // Priorité absolue
-    }
-  } else {
-    // SI NON TERMINÉ : Sons classiques
-    if (game.in_checkmate()) {
-      playSound("mate");
-    } else if (move.flags.includes("c")) {
-      playSound("capture");
-    } else {
-      playSound("move");
-    }
+function onDrop(source, target) {
+  if (source === target) {
+    handleSquareClick(source);
+    return;
   }
+  const result = handleUserMove(source, target, null, true);
+  if (result === "pending") return;
+  if (result === "snapback") {
+    removeSelection();
+    return "snapback";
+  }
+  removeSelection();
+}
 
-  moveIndex++;
+// --- COUP ORDI ---
+function makeComputerMove(moveStr) {
+  if (!moveStr) return;
+  const move = game.move({
+    from: moveStr.substring(0, 2),
+    to: moveStr.substring(2, 4),
+    promotion: moveStr.length > 4 ? moveStr[4] : "q",
+  });
+  if (move) {
+    board.move(move.from + "-" + move.to);
+    if (move.promotion) board.position(game.fen());
+    updateHistory();
 
-  // 3. Gestion de l'état du jeu
-  if (isPuzzleSolved) {
-    currentStreak++;
-    const streakEl = document.getElementById("streak-display");
-    if (streakEl) streakEl.innerText = currentStreak;
-
-    updateStats(true);
-    isPuzzleActive = false;
-    updateEngineText("");
-    showSidebarResult("success");
-    // Pas de playSound("success") ici, car déjà géré plus haut
-  } else {
-    isPuzzleActive = false;
-    setTimeout(() => {
-      const computerMoveStr = currentPuzzle.movesList[moveIndex];
-      makeComputerMove(computerMoveStr);
-      moveIndex++;
-      isPuzzleActive = true;
-      updateStatusWithTurn();
-    }, 600);
+    // Son Ordi
+    playMoveSound(move);
   }
 }
 
-function handleFailure() {
-  playSound("error");
-  currentStreak = 0;
-  const streakEl = document.getElementById("streak-display");
-  if (streakEl) streakEl.innerText = 0;
+// --- RESTART ---
+function retryPuzzle() {
+  if (resultTimeout) clearTimeout(resultTimeout);
 
-  updateStats(false);
-  showSidebarResult("failure");
+  game.undo();
+  board.position(game.fen());
+  updateHistory();
+  removeSelection();
+  clearArrows();
+  pendingMove = null;
 
-  isWaitingForRetry = true;
-  const btnRetry = document.getElementById("btn-retry");
-  if (btnRetry) btnRetry.style.display = "none";
-  const btnHint = document.getElementById("btn-hint");
-  if (btnHint) btnHint.style.display = "none";
-
-  updateEngineText("Analyse de l'erreur...");
-}
-
-// --- SETUP & LOAD ---
-async function loadRandomPuzzle() {
   const box = document.getElementById("sidebar-puzzle-result");
   if (box) box.style.display = "none";
+  const btnHint = document.getElementById("btn-hint");
+  if (btnHint) btnHint.style.display = "block";
 
+  isWaitingForRetry = false;
+  updateEngineText("");
+}
+
+// --- LOAD PUZZLE ---
+async function loadRandomPuzzle() {
+  if (resultTimeout) clearTimeout(resultTimeout);
+
+  const box = document.getElementById("sidebar-puzzle-result");
+  if (box) box.style.display = "none";
   const btnRetry = document.getElementById("btn-retry");
   if (btnRetry) btnRetry.style.display = "none";
   const btnHint = document.getElementById("btn-hint");
   if (btnHint) btnHint.style.display = "block";
-
   const promo = document.getElementById("promotion-overlay");
   if (promo) promo.style.display = "none";
 
@@ -479,9 +595,11 @@ function setupPuzzle(data) {
   updateEngineText("");
   updateHistory();
 
-  currentPuzzle.movesList = Array.isArray(data.moves)
-    ? data.moves
-    : data.moves.split(" ");
+  if (Array.isArray(data.moves)) {
+    currentPuzzle.movesList = data.moves;
+  } else {
+    currentPuzzle.movesList = data.moves.trim().split(/\s+/);
+  }
 
   setTimeout(() => {
     makeComputerMove(currentPuzzle.movesList[0]);
@@ -489,47 +607,6 @@ function setupPuzzle(data) {
     updateStatusWithTurn();
     isPuzzleActive = true;
   }, 500);
-}
-
-// --- UTILS & MOTEUR ---
-function makeComputerMove(moveStr) {
-  if (!moveStr) return;
-  const move = game.move({
-    from: moveStr.substring(0, 2),
-    to: moveStr.substring(2, 4),
-    promotion: moveStr.length > 4 ? moveStr[4] : "q",
-  });
-  if (move) {
-    board.move(move.from + "-" + move.to);
-    if (move.promotion) board.position(game.fen());
-    updateHistory();
-
-    if (game.in_checkmate()) {
-      playSound("mate");
-    } else if (move.flags.includes("c")) {
-      playSound("capture");
-    } else {
-      playSound("move");
-    }
-  }
-}
-
-function retryPuzzle() {
-  game.undo();
-  board.position(game.fen());
-  updateHistory();
-  removeSelection();
-  clearArrows();
-  pendingMove = null;
-
-  const box = document.getElementById("sidebar-puzzle-result");
-  if (box) box.style.display = "none";
-
-  const btnHint = document.getElementById("btn-hint");
-  if (btnHint) btnHint.style.display = "block";
-
-  isWaitingForRetry = false;
-  updateEngineText("");
 }
 
 function updateStatusWithTurn() {
@@ -579,15 +656,7 @@ function updateEngineText(msg) {
   if (el) el.innerHTML = msg;
 }
 
-function playSound(type) {
-  if (sounds[type]) {
-    const s = sounds[type].cloneNode();
-    s.volume = 0.5;
-    s.play().catch(() => {});
-  }
-}
-
-// PROMOTION
+// --- PROMOTION ---
 window.confirmPromotion = confirmPromotion;
 function showPromotionModal(color) {
   const modal = document.getElementById("promotion-overlay");
@@ -612,7 +681,7 @@ function confirmPromotion(pieceChar) {
   }
 }
 
-// INIT BOARD
+// --- INIT BOARD ---
 function initBoard(fen, orientation) {
   if (board) board.destroy();
   boardOrientation = orientation;

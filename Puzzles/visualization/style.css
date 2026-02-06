@@ -1,5 +1,5 @@
 /* =========================================
-   STYLE : PUZZLES TACTIQUES (FINAL + BATCH)
+   STYLE : PUZZLES (MODE CALCUL) - FINAL
    ========================================= */
 
 /* --- 1. LAYOUT PRINCIPAL --- */
@@ -41,7 +41,7 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
   overflow: hidden;
   cursor: pointer;
-  position: relative;
+  position: relative; /* IMPORTANT pour le positionnement des flèches SVG */
 }
 
 .player-info {
@@ -83,49 +83,43 @@
 }
 
 /* =========================================
-   3. SIDEBAR & CONTROLES
+   3. SIDEBAR (STRUCTURE DIVISÉE)
    ========================================= */
-.game-sidebar {
+
+/* Conteneur principal de la colonne de droite */
+.sidebar-wrapper {
   flex: 1;
-  background: var(--bg-secondary);
-  padding: 2rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.5rem; /* Espace entre les deux cartes */
   position: sticky;
   top: 120px;
+  min-width: 300px;
+}
+
+/* Style de base pour les cartes (Action & Info) */
+.sidebar-card {
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.theme-container {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-direction: column;
 }
 
-.theme-label {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  color: var(--accent-gold);
-  font-size: 0.75rem;
-  letter-spacing: 1px;
+/* Carte du haut (Planning, Boutons, Status) */
+.action-panel {
+  gap: 1rem;
 }
 
-.theme-display {
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  margin-bottom: 0;
-  flex: 1;
-  font-style: italic;
-  text-transform: capitalize;
-  letter-spacing: 0.5px;
+/* Carte du bas (Historique original, Thèmes) */
+.info-panel {
+  gap: 1rem;
+  flex-grow: 1;
 }
+
+/* --- Éléments internes de la sidebar --- */
 
 .sidebar-header {
   display: flex;
@@ -160,6 +154,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Badges Difficulté */
 .difficulty-badge {
   padding: 6px 12px;
   border-radius: 2px;
@@ -169,34 +164,29 @@
   letter-spacing: 1.5px;
   font-family: var(--font-body);
 }
-
 .difficulty-badge.easy {
   background: rgba(46, 204, 113, 0.15);
   color: #2ecc71;
   border: 1px solid rgba(46, 204, 113, 0.3);
 }
-
 .difficulty-badge.medium {
   background: rgba(212, 175, 55, 0.15);
   color: #d4af37;
   border: 1px solid rgba(212, 175, 55, 0.3);
 }
-
 .difficulty-badge.hard {
   background: rgba(230, 126, 34, 0.15);
   color: #e67e22;
   border: 1px solid rgba(230, 126, 34, 0.3);
 }
-
 .difficulty-badge.expert {
   background: rgba(155, 89, 182, 0.15);
   color: #9b59b6;
   border: 1px solid rgba(155, 89, 182, 0.3);
-  box-shadow: 0 0 10px rgba(155, 89, 182, 0.2);
 }
 
+/* Indicateur de tour */
 .turn-indicator {
-  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -230,69 +220,55 @@
 }
 
 /* =========================================
-   NOUVEAU : ZONE DE PLANIFICATION (BATCH)
+   4. ZONE DE PLANIFICATION (SPÉCIFIQUE MODE CALCUL)
    ========================================= */
-.planning-container {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--accent-gold);
+.planning-box {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed var(--border-subtle);
   border-radius: 4px;
-  padding: 15px;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 10px;
 }
 
 .planning-header {
   font-family: var(--font-heading);
-  color: var(--accent-gold);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
   text-transform: uppercase;
+  margin-bottom: 8px;
   letter-spacing: 1px;
-  font-weight: 700;
 }
 
 .planning-list {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
-  padding: 10px;
-  min-height: 40px;
-  font-family: "Courier New", monospace;
-  color: #fff;
-  font-size: 0.9rem;
-  line-height: 1.5;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
+  min-height: 30px;
+  align-items: center;
 }
 
 .empty-plan {
-  color: var(--text-secondary);
   font-style: italic;
-  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
 
+/* Style des coups planifiés (injecté par JS) */
 .planned-move-item {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.planning-controls {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-game.small {
-  padding: 8px;
-  font-size: 0.7rem;
-  width: auto;
-  flex: 1;
+  background: var(--bg-tertiary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid; /* Couleur définie inline par JS */
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.2s ease;
 }
 
 /* =========================================
-   4. ANALYSE & FEEDBACK
+   5. FEEDBACK ENGINE & RÉSULTAT
    ========================================= */
 .engine-feedback-box {
   background: var(--bg-tertiary);
@@ -300,11 +276,10 @@
   border-left: 3px solid var(--accent-gold);
   border-radius: 2px;
   padding: 15px;
-  margin-bottom: 1rem;
   display: flex;
   align-items: flex-start;
   gap: 15px;
-  min-height: 70px;
+  min-height: 60px;
 }
 
 .engine-icon {
@@ -319,68 +294,171 @@
   color: var(--text-secondary);
 }
 
-.analysis-blunder {
-  color: #e74c3c !important;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
+/* Sidebar Result (Caché par défaut) */
+.sidebar-result-box {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 15px;
+  display: none; /* JS le passe en flex */
+  align-items: center;
+  gap: 15px;
+  animation: slideInSidebar 0.3s ease;
 }
 
-.analysis-best {
-  color: #2ecc71 !important;
-  font-weight: 600;
+.sidebar-result-box.success {
+  border-left: 4px solid #2ecc71;
+  background: linear-gradient(
+    90deg,
+    rgba(46, 204, 113, 0.1) 0%,
+    transparent 100%
+  );
 }
 
-.refutation-move {
-  background: rgba(212, 175, 55, 0.1);
-  padding: 2px 6px;
-  border-radius: 2px;
-  font-family: "Courier New", monospace;
-  color: var(--accent-gold);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+.sidebar-result-box.failure {
+  border-left: 4px solid #e74c3c;
+  background: linear-gradient(
+    90deg,
+    rgba(231, 76, 60, 0.1) 0%,
+    transparent 100%
+  );
 }
 
-.feedback {
-  padding: 1rem;
-  border-radius: 2px;
-  text-align: center;
+.result-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.result-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.result-title {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  display: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9rem;
 }
 
-.feedback.visible {
-  opacity: 1;
-  transform: translateY(0);
-  display: block;
-}
-
-.feedback.success {
-  background: rgba(46, 204, 113, 0.1);
+.sidebar-result-box.success .result-title {
   color: #2ecc71;
-  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+.sidebar-result-box.failure .result-title {
+  color: #e74c3c;
 }
 
-.feedback.error {
-  background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
-  border: 1px solid rgba(231, 76, 60, 0.3);
+@keyframes slideInSidebar {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* =========================================
-   5. HISTORIQUE
+   6. CONTROLES & BOUTONS
+   ========================================= */
+.controls {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.sub-controls {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.sub-controls button {
+  flex: 1;
+}
+
+.btn-game {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 2px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-body);
+}
+
+.btn-game.small {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  width: auto;
+  align-self: flex-start;
+  margin-top: 5px;
+}
+
+/* Bouton VALIDATION (Vert) */
+#btn-validate-plan.primary {
+  background: #27ae60;
+  color: white;
+  border: 1px solid #27ae60;
+  font-size: 0.9rem;
+  padding: 1.1rem;
+}
+#btn-validate-plan.primary:hover {
+  background: #2ecc71;
+  box-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
+}
+
+/* Bouton Standard (Or) */
+.btn-game.primary {
+  background: var(--accent-gold);
+  color: #000;
+  border: 1px solid var(--accent-gold);
+}
+.btn-game.primary:hover {
+  background: transparent;
+  color: var(--accent-gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+/* Bouton Secondaire */
+.btn-game.secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+.btn-game.secondary:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Bouton Danger */
+.btn-game.danger {
+  background: rgba(231, 76, 60, 0.1);
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+.btn-game.danger:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+}
+
+/* =========================================
+   7. INFO PANEL (HISTORIQUE & THÈMES)
    ========================================= */
 .history-container {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-subtle);
   border-radius: 2px;
   padding: 10px 15px;
-  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -390,12 +468,10 @@
   font-family: var(--font-body);
   font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
   color: var(--text-secondary);
   font-weight: 600;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding-bottom: 5px;
-  margin-bottom: 5px;
 }
 
 .move-history-content {
@@ -407,11 +483,6 @@
   overflow-y: auto;
   word-spacing: 5px;
 }
-
-.move-history-content span {
-  display: inline-block;
-}
-
 .move-history-content::-webkit-scrollbar {
   width: 4px;
 }
@@ -420,81 +491,39 @@
   border-radius: 2px;
 }
 
-/* =========================================
-   6. BOUTONS
-   ========================================= */
-.controls {
-  margin-top: auto;
+.theme-container {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.btn-game {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 2px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: var(--font-body);
-}
-
-.btn-game.primary {
-  background: var(--accent-gold);
-  color: #000;
-  border: 1px solid var(--accent-gold);
-}
-
-.btn-game.primary:hover {
-  background: transparent;
+.theme-label {
+  font-family: var(--font-heading);
+  font-weight: 700;
   color: var(--accent-gold);
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+  font-size: 0.75rem;
 }
 
-.btn-game.secondary {
-  background: transparent;
+.theme-display {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
   color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
-}
-
-.btn-game.secondary:hover {
-  border-color: var(--text-primary);
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.btn-game.danger {
-  background: rgba(231, 76, 60, 0.1);
-  color: #ffffff;
-  border: 1px solid #ffffff;
-  transition: all 0.2s ease;
-}
-
-.btn-game.danger:hover {
-  background: #554a4a;
-  color: #fff;
-  border-color: #ffffff;
-  box-shadow: none;
-  transform: translateY(-2px);
+  font-style: italic;
+  text-transform: capitalize;
 }
 
 /* =========================================
-   7. INDICATEURS & FLÈCHES
+   8. VISUELS JEU (HIGHLIGHTS & PROMOTION)
    ========================================= */
-
 .selected-square {
   box-shadow: inset 0 0 0 4px #ffd700 !important;
 }
 
 .hint-square {
-  box-shadow: inset 0 0 0 4px #ffd700 !important;
+  box-shadow: inset 0 0 0 4px #2ecc71 !important;
 }
 
-/* --- POINTS DE DEPLACEMENT --- */
 .move-hint {
   background-image: radial-gradient(rgba(0, 0, 0, 0.2) 19%, transparent 20%);
 }
@@ -509,7 +538,6 @@
   );
 }
 
-/* --- CANVAS DES FLÈCHES (SVG) --- */
 .arrow-canvas {
   position: absolute;
   top: 0;
@@ -521,45 +549,7 @@
   opacity: 0.8;
 }
 
-/* --- CLICK-THROUGH --- */
-.board-glow-effect,
-.highlight1-32417,
-.highlight2-9c5d2 {
-  pointer-events: none !important;
-}
-
-/* Fix responsive */
-@media (max-width: 900px) {
-  .game-area {
-    flex-direction: column;
-    align-items: center;
-  }
-  .board-wrapper,
-  .game-sidebar {
-    width: 100%;
-    max-width: 500px;
-    flex: none;
-  }
-  .game-sidebar {
-    position: static;
-  }
-}
-
-.chessboard-moving-piece {
-  z-index: 9999 !important;
-  opacity: 1 !important;
-  pointer-events: none;
-}
-.square-55d63 img {
-  opacity: 1 !important;
-  transition: none !important;
-}
-.board-container {
-  cursor: pointer;
-}
-/* =========================================
-   8. INTERFACE DE PROMOTION (MODALE)
-   ========================================= */
+/* Modal Promotion */
 #promotion-overlay {
   position: absolute;
   top: 0;
@@ -567,8 +557,8 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 2000; /* Au-dessus des pièces et flèches */
-  display: none; /* Caché par défaut */
+  z-index: 2000;
+  display: none;
   justify-content: center;
   align-items: center;
 }
@@ -584,10 +574,8 @@
 
 .promotion-title {
   margin: 0 0 10px 0;
-  font-family: var(--font-body);
   font-weight: 600;
   color: #333;
-  font-size: 0.9rem;
 }
 
 .promotion-pieces {
@@ -599,13 +587,10 @@
   width: 50px;
   height: 50px;
   cursor: pointer;
-  border-radius: 4px;
-  transition:
-    transform 0.1s,
-    background 0.1s;
   background-color: #f0f0f0;
+  border-radius: 4px;
+  transition: transform 0.1s;
 }
-
 .promo-piece:hover {
   transform: scale(1.1);
   background-color: #e0e0e0;
@@ -619,5 +604,38 @@
   to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+/* --- CLICK-THROUGH FIX --- */
+.board-glow-effect,
+.highlight1-32417,
+.highlight2-9c5d2 {
+  pointer-events: none !important;
+}
+.chessboard-moving-piece {
+  z-index: 9999 !important;
+  pointer-events: none;
+}
+.square-55d63 img {
+  transition: none !important;
+}
+
+/* =========================================
+   9. RESPONSIVE
+   ========================================= */
+@media (max-width: 900px) {
+  .game-area {
+    flex-direction: column;
+    align-items: center;
+  }
+  .board-wrapper,
+  .sidebar-wrapper {
+    width: 100%;
+    max-width: 500px;
+    flex: none;
+  }
+  .sidebar-wrapper {
+    position: static;
   }
 }

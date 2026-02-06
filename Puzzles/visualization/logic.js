@@ -33,7 +33,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// --- SONS ---
+// --- SONS CORRIGÉS ---
 const sounds = {
   move: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Move.mp3",
@@ -41,8 +41,9 @@ const sounds = {
   capture: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Capture.mp3",
   ),
+  // On utilise GenericNotify pour le succès (son "sec")
   notify: new Audio(
-    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Victory.mp3",
+    "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/GenericNotify.mp3",
   ),
   error: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Error.mp3",
@@ -86,21 +87,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!boardEl) {
     console.error("ERREUR : Élément #board introuvable dans le HTML");
   } else {
-    // --- GESTION CLICK GAUCHE (Alignée sur puzzle-logic.js) ---
+    // --- GESTION CLICK GAUCHE ---
     boardEl.addEventListener("click", (e) => {
-      // 1. Nettoyage visuel immédiat
       clearArrows();
-
       if (!isPuzzleActive || isWaitingForRetry) return;
 
       const square = getSquareFromEvent(e);
-
       if (square) {
         const piece = game.get(square);
-        // Important : Si c'est MA pièce, on laisse faire le onDrop (click = drop sur place)
-        // Sinon (case vide ou ennemie), on traite le clic pour un mouvement potentiel
         const isMyPiece = piece && piece.color === game.turn();
-
         if (!isMyPiece) {
           handleSquareClick(square);
         }
@@ -143,11 +138,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Listeners Boutons
-  setupButton("btn-next", loadRandomPuzzle);
-  setupButton("btn-retry", retryPuzzle);
   setupButton("btn-hint", useHint);
   setupButton("btn-validate-plan", validatePlanning);
   setupButton("btn-undo-plan", undoLastPlan);
+
+  // Bouton unique "Action" (Succès -> Suivant / Échec -> Réessayer)
+  setupButton("btn-result-action", () => {
+    const box = document.getElementById("sidebar-puzzle-result");
+    if (box && box.classList.contains("success")) {
+      loadRandomPuzzle();
+    } else {
+      retryPuzzle();
+    }
+  });
 
   // Hack Audio Mobile
   document.body.addEventListener(
@@ -175,7 +178,39 @@ function setupButton(id, func) {
   if (btn) btn.addEventListener("click", func);
 }
 
-// --- LOGIQUE SELECTION (Tirée de puzzle-logic.js) ---
+// --- NOUVELLE UI RÉSULTAT (Identique à l'autre page) ---
+function showSidebarResult(status) {
+  const box = document.getElementById("sidebar-puzzle-result");
+  if (!box) return;
+
+  const icon = box.querySelector(".result-icon");
+  const title = box.querySelector(".result-title");
+  const btn = document.getElementById("btn-result-action");
+
+  // Reset classes
+  box.classList.remove("success", "failure");
+  box.style.display = "flex";
+
+  if (status === "success") {
+    box.classList.add("success");
+    if (icon) icon.innerText = "✅";
+    if (title) title.innerText = "Calcul Réussi !";
+    if (btn) {
+      btn.innerText = "Puzzle Suivant ➡";
+      btn.className = "btn-game small primary";
+    }
+  } else {
+    box.classList.add("failure");
+    if (icon) icon.innerText = "❌";
+    if (title) title.innerText = "Erreur de Calcul";
+    if (btn) {
+      btn.innerText = "Réessayer ↺";
+      btn.className = "btn-game small danger";
+    }
+  }
+}
+
+// --- LOGIQUE SELECTION ---
 function handleSquareClick(square) {
   const piece = game.get(square);
   const turn = game.turn();
@@ -201,14 +236,12 @@ function handleSquareClick(square) {
 }
 
 function selectSquare(square) {
-  // Alias pour garder la compatibilité interne si besoin
   handleSquareClick(square);
 }
 
-// --- UTILITAIRES DOM (Copie exacte de puzzle-logic.js) ---
+// --- UTILITAIRES DOM ---
 function getSquareFromEvent(e) {
   let target = e.target;
-  // Gestion du cas où on clique sur l'image
   if (target.tagName === "IMG" && target.parentElement) {
     target = target.parentElement;
   }
@@ -337,7 +370,8 @@ function validatePlanning() {
   function playNextStep() {
     if (step >= planningMoves.length) {
       if (step + 1 >= currentPuzzle.movesList.length) {
-        // Puzzle fini
+        // Puzzle fini, calcul correct mais peut-être pas jusqu'au bout s'il reste des coups
+        // Pour simplifier, on considère que si la séquence planifiée est bonne, c'est gagné.
       } else {
         updateEngineText("Séquence correcte mais incomplète.");
         isPuzzleActive = true;
@@ -350,7 +384,7 @@ function validatePlanning() {
     const expectedMoveUCI = currentPuzzle.movesList[puzzleIndexToCheck];
 
     if (!expectedMoveUCI) {
-      handleFailureBatch(step);
+      handleFailureBatch();
       return;
     }
 
@@ -370,18 +404,17 @@ function validatePlanning() {
       step++;
 
       if (moveIndex >= currentPuzzle.movesList.length) {
+        // VICTOIRE
         currentStreak++;
         const streakEl = document.getElementById("streak-display");
         if (streakEl) streakEl.innerText = currentStreak;
 
         updateStats(true);
         updateEngineText("");
-        const fb = document.getElementById("feedback-area");
-        if (fb) {
-          fb.innerHTML = "Calcul correct ! 🎉";
-          fb.className = "feedback success visible";
-        }
+
+        // Affichage UI via la nouvelle sidebar
         playSound("notify");
+        showSidebarResult("success");
 
         planningMoves = [];
         updatePlanningUI();
@@ -389,38 +422,29 @@ function validatePlanning() {
         setTimeout(playNextStep, 600);
       }
     } else {
-      handleFailureBatch(step);
+      handleFailureBatch();
     }
   }
   playNextStep();
 }
 
-function handleFailureBatch(stepIndex) {
+function handleFailureBatch() {
   playSound("error");
   currentStreak = 0;
   const streakEl = document.getElementById("streak-display");
   if (streakEl) streakEl.innerText = 0;
   updateStats(false);
 
-  const fb = document.getElementById("feedback-area");
-  if (fb) {
-    if (stepIndex % 2 === 0) {
-      fb.innerHTML = "Erreur de calcul sur VOTRE coup 🚫";
-    } else {
-      fb.innerHTML = "Mauvaise anticipation de la défense 🚫";
-    }
-    fb.className = "feedback error visible";
-  }
+  // Affichage UI via la nouvelle sidebar
+  showSidebarResult("failure");
 
   isWaitingForRetry = true;
-  document.getElementById("btn-retry").style.display = "block";
   document.getElementById("btn-hint").style.display = "none";
   updateEngineText("Analysez la séquence...");
 }
 
-// --- LOGIQUE UNIFIÉE (MOVE & BATCH) CORRIGÉE ---
+// --- LOGIQUE UNIFIÉE (MOVE & BATCH) ---
 function handleUserMove(source, target, promotionChoice = null) {
-  // Sécurité
   const piece = game.get(source);
   if (!piece) return "snapback";
 
@@ -449,7 +473,6 @@ function handleUserMove(source, target, promotionChoice = null) {
   if (move === null) return "snapback";
 
   board.move(source + "-" + target);
-  // Force la mise à jour si promotion pour voir la pièce
   if (isValidPromotion || move.promotion) board.position(game.fen());
 
   // Spécifique à ce fichier : Ajout à la liste de planification
@@ -469,13 +492,12 @@ function onDragStart(source, piece, position, orientation) {
   if (isWaitingForRetry) return false;
   if (game.game_over()) return false;
 
-  // En mode planning, on peut jouer les deux couleurs à condition que ce soit leur tour
+  // En mode planning, on peut jouer les deux couleurs
   if (game.turn() === "w" && piece.search(/^b/) !== -1) return false;
   if (game.turn() === "b" && piece.search(/^w/) !== -1) return false;
 }
 
 function onDrop(source, target) {
-  // CORRECTION MAJEURE : Si on lâche sur la même case, c'est un CLIC de sélection
   if (source === target) {
     handleSquareClick(source);
     return;
@@ -507,15 +529,13 @@ function retryPuzzle() {
 
   isWaitingForRetry = false;
   isPuzzleActive = true;
-  document.getElementById("btn-retry").style.display = "none";
+
+  // Réinitialiser la sidebar résultat
+  const box = document.getElementById("sidebar-puzzle-result");
+  if (box) box.style.display = "none";
+
   document.getElementById("btn-hint").style.display = "block";
   updateEngineText("");
-
-  const fb = document.getElementById("feedback-area");
-  if (fb) {
-    fb.className = "feedback";
-    fb.innerHTML = "";
-  }
 }
 
 async function loadRandomPuzzle() {
@@ -525,13 +545,10 @@ async function loadRandomPuzzle() {
   const modal = document.getElementById("promotion-overlay");
   if (modal) modal.style.display = "none";
 
-  const fb = document.getElementById("feedback-area");
-  if (fb) {
-    fb.className = "feedback";
-    fb.innerHTML = "";
-  }
+  // Cacher la sidebar résultat
+  const box = document.getElementById("sidebar-puzzle-result");
+  if (box) box.style.display = "none";
 
-  document.getElementById("btn-retry").style.display = "none";
   document.getElementById("btn-hint").style.display = "block";
   updateEngineText("");
 
