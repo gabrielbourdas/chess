@@ -3,280 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Chess - Analyse</title>
-    <link rel="icon" href="../../img/logo.png" type="image/x-icon" />
+    <title>Jouer contre l'IA - Open Chess</title>
+    <link rel="icon" href="/img/logo.png" type="image/x-icon" />
 
     <link
       rel="stylesheet"
       href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
     />
 
-    <link rel="stylesheet" href="../../css/nav.css" />
-    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../css/nav.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="./style.css" />
 
     <style>
-      /* --- 1. LAYOUT PRINCIPAL --- */
-      .game-main {
-        padding-top: 100px;
-        display: flex;
-        justify-content: center;
-        min-height: 100vh;
-      }
-      .game-area {
-        display: flex;
-        gap: 30px;
-        width: 100%;
-        max-width: 1200px;
-        padding: 0 20px;
-        align-items: flex-start;
-      }
-
-      /* --- 2. PLATEAU + EVAL --- */
-      .analysis-board-wrapper {
-        flex: 1.5;
-        display: flex;
-        flex-direction: row;
-        gap: 15px;
-        min-width: 400px;
-      }
-      .board-container {
-        flex: 1;
-        position: relative;
-        width: 100%;
-        min-height: 500px;
-        aspect-ratio: 1/1;
-      }
-      #board {
-        width: 100%;
-        height: 100%;
-      }
-
-      /* Barre d'évaluation */
-      .eval-bar-container {
-        width: 30px;
-        background-color: #2c2a28;
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column-reverse;
-        height: 500px;
-        max-height: 100%;
-      }
-      .eval-bar-fill {
-        width: 100%;
-        height: 50%;
-        background-color: #fff;
-        transition: height 0.5s;
-      }
-      .eval-text {
-        position: absolute;
-        width: 100%;
-        text-align: center;
-        font-size: 10px;
-        font-weight: bold;
-        z-index: 10;
-        left: 0;
-      }
-      .eval-text.top {
-        top: 4px;
-        color: #fff;
-        text-shadow: 0 1px 2px #000;
-      }
-      .eval-text.bottom {
-        bottom: 4px;
-        color: #333;
-      }
-
-      .arrow-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 100;
-      }
-
-      /* --- 3. SIDEBAR --- */
-      .game-sidebar {
-        flex: 1;
-        max-width: 400px;
-        background: rgba(30, 30, 30, 0.6);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-        padding: 20px;
+      /* Styles spécifiques à cette page (Contrôles IA) */
+      .game-controls {
         display: flex;
         flex-direction: column;
         gap: 15px;
-      }
-      .sidebar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 10px;
-        color: white;
-      }
-
-      /* BOITE FEEDBACK */
-      .engine-feedback-box {
-        background: rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.03);
         padding: 15px;
-        border-radius: 6px;
-        color: #ddd;
-        border-left: 4px solid #888;
-        font-size: 0.95rem;
-        min-height: 80px;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-      .analysis-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 5px;
-      }
-
-      /* NAVIGATION */
-      .nav-row {
-        display: flex;
-        gap: 5px;
-        justify-content: center;
-      }
-      .btn-game {
-        border: none;
         border-radius: 4px;
-        cursor: pointer;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: 0.2s;
-        font-family: inherit;
+        border: 1px solid var(--border-subtle);
       }
-      .btn-game.primary {
-        background: #d4af37;
-        color: black;
-        font-weight: bold;
-        padding: 10px;
-      }
-      .btn-game.primary:hover {
-        background: #f1c40f;
-      }
-      .btn-game.secondary {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      .btn-game.secondary:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-      .btn-game.compact {
-        padding: 8px;
-        flex: 1;
-        min-width: 0;
-        font-size: 1.1rem;
-      }
-      .btn-game.danger {
-        background: rgba(231, 76, 60, 0.2);
-        color: #e74c3c;
-        padding: 10px;
-        width: 100%;
-      }
-      .btn-game.danger:hover {
-        background: rgba(231, 76, 60, 0.4);
-      }
-
-      /* INPUT ZONE (PGN) */
-      .pgn-section label {
+      .control-group label {
         display: block;
-        color: #888;
+        color: var(--text-secondary);
         font-size: 0.8rem;
         margin-bottom: 5px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font-family: var(--font-heading);
       }
-      .pgn-textarea {
+      .game-select {
         width: 100%;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 10px;
+        padding: 8px;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-primary);
         border-radius: 4px;
-        min-height: 100px; /* Un peu plus grand puisqu'il est seul */
-        font-family: monospace;
-        resize: vertical;
+        font-family: var(--font-body);
+        cursor: pointer;
       }
-
-      /* BADGES */
-      .move-badge {
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        text-transform: uppercase;
+      .game-select:hover {
+        border-color: var(--accent-gold);
+      }
+      .game-status-message {
         font-weight: bold;
-        color: #000;
-        display: inline-block;
-      }
-      .badge-best {
-        background-color: #2ecc71;
-        color: white;
-      }
-      .badge-good {
-        background-color: #96c93d;
-        color: black;
-      }
-      .badge-info {
-        background-color: #3498db;
-        color: white;
-      }
-      .badge-blunder {
-        background-color: #e74c3c;
-        color: white;
-      }
-
-      /* Spinner pour le mode coach */
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      .spinner {
-        display: inline-block;
-        animation: spin 2s linear infinite;
-      }
-
-      @media (max-width: 900px) {
-        .game-area {
-          flex-direction: column;
-          align-items: center;
-        }
-        .analysis-board-wrapper {
-          flex-direction: column;
-          width: 100%;
-        }
-        .board-container {
-          min-height: 350px;
-        }
-        .eval-bar-container {
-          width: 100%;
-          height: 30px;
-          flex-direction: row;
-        }
-        .eval-bar-fill {
-          height: 100%;
-          width: 50%;
-        }
-        .game-sidebar {
-          width: 100%;
-          max-width: none;
-        }
+        text-align: center;
+        margin-top: 10px;
+        min-height: 20px;
       }
     </style>
   </head>
@@ -288,9 +63,9 @@
           >OPEN CHESS<span class="dot">.</span></a
         >
         <ul class="nav-links">
-          <li><a href="../../Play/index.html">Jouer</a></li>
+          <li><a href="../../Play/index.html" class="active">Jouer</a></li>
           <li><a href="../../Puzzles/index.html">Défis</a></li>
-          <li><a href="index.html" class="active">Analyser</a></li>
+          <li><a href="../../Analyse/index.html">Analyser</a></li>
           <li><a href="../../Learn/index.html">Apprendre</a></li>
         </ul>
         <div class="nav-actions">
@@ -304,95 +79,125 @@
 
     <main class="game-main">
       <div class="game-area">
-        <div class="board-wrapper analysis-board-wrapper">
-          <div class="eval-bar-container">
-            <span id="eval-score" class="eval-text top">0.0</span>
-            <div id="eval-fill" class="eval-bar-fill"></div>
-            <span class="eval-text bottom"></span>
+        <div class="board-wrapper">
+          <div class="player-info">
+            <div
+              class="avatar"
+              style="
+                background-image: url(&quot;https://api.dicebear.com/9.x/bottts/svg?seed=Stockfish&quot;);
+                background-size: cover;
+              "
+            ></div>
+            <div class="details">
+              <span class="name">Stockfish 16 (IA)</span>
+              <span id="bot-difficulty-display" class="rating"
+                >Niveau: Club (1600)</span
+              >
+            </div>
           </div>
+
           <div class="board-container">
-            <div id="board"></div>
-            <div id="arrow-overlay" class="arrow-overlay"></div>
+            <div class="board-glow-effect"></div>
+            <div id="board" class="board-placeholder"></div>
+
+            <div id="promotion-overlay">
+              <div class="promotion-modal">
+                <p class="promotion-title">Choisir une pièce</p>
+                <div class="promotion-pieces" id="promo-pieces-container"></div>
+              </div>
+            </div>
+
+            <div id="game-over-overlay">
+              <div class="game-over-modal">
+                <div class="game-over-icon" id="game-over-icon">🏆</div>
+                <h2 id="game-over-title">PARTIE TERMINÉE</h2>
+                <p id="game-over-reason">Les Blancs gagnent par échec et mat</p>
+                <div class="game-over-actions">
+                  <button id="btn-restart-modal" class="btn-game primary">
+                    Nouvelle Partie
+                  </button>
+                  <button id="btn-close-modal" class="btn-game secondary">
+                    Fermer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="player-info">
+            <div
+              id="user-avatar"
+              class="avatar"
+              style="background-size: cover; background-position: center"
+            ></div>
+            <div class="details">
+              <span id="user-name" class="name">Joueur</span>
+              <span id="user-rating" class="rating">Humain</span>
+            </div>
           </div>
         </div>
 
         <div class="game-sidebar">
           <div class="sidebar-header">
-            <div class="streak-container">🔎 Analyse</div>
-            <div class="puzzle-meta-group">
-              <span
-                class="status-badge"
-                style="
-                  color: #58cc02;
-                  background: rgba(88, 204, 2, 0.1);
-                  padding: 4px 8px;
-                  border-radius: 4px;
-                  font-size: 0.8rem;
-                "
-              >
-                Stockfish Prêt
-              </span>
-            </div>
+            <div class="streak-container">🎮 Paramètres de Partie</div>
           </div>
 
-          <div id="feedback-box" class="engine-feedback-box">
-            <div class="analysis-header">
-              <span class="engine-icon">🤖</span>
-              <span id="analysis-badge" class="move-badge badge-info"
-                >Info</span
-              >
+          <div class="game-controls">
+            <div class="analysis-summary">
+              <div class="eval-bar-container">
+                <div id="eval-score">0.0</div>
+                <div id="eval-gauge"><div id="eval-fill"></div></div>
+              </div>
             </div>
-            <div id="engine-text" style="line-height: 1.4">
-              En attente d'une position...
-            </div>
-          </div>
 
-          <div class="nav-row">
-            <button
-              id="btn-start"
-              class="btn-game secondary compact"
-              title="Début"
-            >
-              |&lt;
-            </button>
-            <button
-              id="btn-prev"
-              class="btn-game secondary compact"
-              title="Précédent"
-            >
-              &lt;
-            </button>
-            <button
-              id="btn-next"
-              class="btn-game secondary compact"
-              title="Suivant"
-            >
-              &gt;
-            </button>
-            <button id="btn-end" class="btn-game secondary compact" title="Fin">
-              &gt;|
+            <div class="control-group">
+              <label>Moteur Stockfish 16</label>
+              <div id="engine-status" class="status-tag">Initialisation...</div>
+            </div>
+
+            <div class="control-group">
+              <label>Meilleure ligne (PV)</label>
+              <div id="best-line" class="best-line-display">-</div>
+            </div>
+
+            <button id="btn-clear-board" class="btn-game secondary">
+              Réinitialiser
             </button>
           </div>
 
-          <div class="pgn-section">
-            <label for="pgn-input">Historique de la partie</label>
-            <div class="input-group">
-              <textarea
-                id="pgn-input"
-                class="pgn-textarea"
-                placeholder="Jouez des coups ou collez un PGN ici..."
-              ></textarea>
-              <button
-                id="btn-load-pgn"
-                class="btn-game primary"
-                style="margin-top: 5px; width: 100%"
-              >
-                CHARGER LA PARTIE
+          <div class="navigation-controls">
+            <button id="nav-start" class="btn-nav">«</button>
+            <button id="nav-prev" class="btn-nav">‹</button>
+            <button id="nav-next" class="btn-nav">›</button>
+            <button id="nav-end" class="btn-nav">»</button>
+          </div>
+
+          <div class="turn-indicator">
+            <div class="turn-icon"></div>
+            <span id="status-text">Prêt à jouer</span>
+          </div>
+
+          <div id="game-end-message" class="game-status-message"></div>
+
+          <div class="history-container">
+            <div class="history-header">
+              <span>Historique</span>
+              <button id="btn-copy-pgn" class="btn-copy" title="Copier le PGN">
+                📋 Copier
               </button>
             </div>
+            <div id="move-history" class="move-history-content">
+              <span style="color: #666; font-style: italic"
+                >Les coups s'afficheront ici...</span
+              >
+            </div>
           </div>
 
-          <button id="btn-reset" class="btn-game danger">RÉINITIALISER</button>
+          <div class="controls">
+            <button id="btn-undo" class="btn-game secondary">
+              ↩ Annuler un coup
+            </button>
+          </div>
         </div>
       </div>
     </main>

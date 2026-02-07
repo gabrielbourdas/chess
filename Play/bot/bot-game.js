@@ -475,7 +475,7 @@ function initBoard(fen, orientation) {
     draggable: true,
     position: fen,
     orientation: boardOrientation,
-    pieceTheme: "../../img/wiki/{piece}.png",
+    pieceTheme: "../../img/wiki/{piece}.png", // Chemin modifié
     onDragStart: onDragStart,
     onDrop: onDrop,
     onSnapEnd: onSnapEnd,
@@ -579,7 +579,8 @@ function onSnapEnd() {
 // --- LOGIQUE STOCKFISH OPTIMISÉE ---
 function initEngine() {
   if (typeof Worker !== "undefined") {
-    engine = new Worker("./stockfish.js");
+    // MODIFICATION ICI : Chemin relatif vers le fichier JS du worker
+    engine = new Worker("../../js/stockfish.js");
     engine.postMessage("uci");
 
     // Optimisation Hash & Threads
@@ -772,6 +773,7 @@ function showPromotionModal(color) {
   container.innerHTML = "";
   ["q", "r", "b", "n"].forEach((p) => {
     const img = document.createElement("img");
+    // MODIFICATION ICI : Chemin modifié pour les pièces de promotion
     img.src = `../../img/wiki/${color}${p.toUpperCase()}.png`;
     img.className = "promo-piece";
     img.onclick = () => confirmPromotion(p);
