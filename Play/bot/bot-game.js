@@ -34,9 +34,6 @@ var playerColor = "white";
 var selectedSquare = null;
 
 // --- PARAMÈTRES DE DIFFICULTÉ CALIBRÉS ---
-// 'uciElo' : Force le moteur à simuler ce Elo (erreurs volontaires).
-// 'skill' : Niveau de compétence brut (fallback).
-// 'time' : Temps de réflexion max en ms.
 const DIFFICULTY_SETTINGS = {
   // Niveaux Débutants (Simulation d'erreurs humaines)
   0: { uciElo: 600, skill: 0, time: 50, label: "Débutant (600)" },
@@ -95,37 +92,54 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialisation du plateau (Blancs par défaut)
   initBoard("start", "white");
 
-  // --- GESTION UTILISATEUR (FIREBASE) ---
+  // --- GESTION UTILISATEUR & AVATAR (LOGIQUE MISE À JOUR) ---
   onAuthStateChanged(auth, async (user) => {
+    const avatarEl = document.getElementById("user-avatar");
+    const nameEl = document.getElementById("user-name");
+    const ratingEl = document.getElementById("user-rating");
+
     if (user) {
+      // 1. On cherche le document utilisateur dans Firestore
       const docRef = doc(db, "users", user.uid);
       try {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          const nameEl = document.getElementById("user-name");
+
+          // A. Nom
           if (nameEl) nameEl.textContent = data.pseudo || "Joueur";
-          const avatarEl = document.getElementById("user-avatar");
+
+          // B. Avatar (PRIORITÉ À L'IMAGE BASE64 DANS FIRESTORE)
           if (avatarEl) {
-            const photoURL =
-              user.photoURL ||
-              `https://api.dicebear.com/9.x/adventurer/svg?seed=${data.pseudo || "User"}`;
-            avatarEl.style.backgroundImage = `url('${photoURL}')`;
+            if (data.photoURL) {
+              // Si une image est stockée en Base64 dans la BDD, on l'utilise
+              avatarEl.style.backgroundImage = `url('${data.photoURL}')`;
+            } else if (user.photoURL) {
+              // Sinon image Google Auth
+              avatarEl.style.backgroundImage = `url('${user.photoURL}')`;
+            } else {
+              // Sinon Dicebear
+              const seed = data.pseudo || "User";
+              avatarEl.style.backgroundImage = `url('https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}')`;
+            }
           }
-          const userRatingEl = document.getElementById("user-rating");
-          if (userRatingEl) {
-            const userElo = data.elo || data.currentElo || 1200;
-            userRatingEl.innerText = `ELO: ${userElo}`;
+
+          // C. Elo
+          if (ratingEl) {
+            const userElo = data.currentPuzzleElo || data.elo || 1200;
+            ratingEl.innerText = `ELO: ${userElo}`;
           }
         }
       } catch (e) {
         console.error("Erreur Profil:", e);
       }
     } else {
-      const nameEl = document.getElementById("user-name");
+      // Mode Invité
       if (nameEl) nameEl.textContent = "Invité";
-      const userRatingEl = document.getElementById("user-rating");
-      if (userRatingEl) userRatingEl.innerText = "ELO: 800";
+      if (ratingEl) ratingEl.innerText = "Non classé";
+      if (avatarEl) {
+        avatarEl.style.backgroundImage = `url('https://api.dicebear.com/9.x/adventurer/svg?seed=Guest')`;
+      }
     }
   });
 
@@ -250,17 +264,9 @@ function setDifficulty(levelIndex) {
   if (display) display.innerText = "Niveau: " + config.label;
 
   if (engine) {
-    // 1. On active la limitation de force
     engine.postMessage("setoption name UCI_LimitStrength value true");
-
-    // 2. On définit l'ELO cible (c'est le paramètre le plus important)
     engine.postMessage("setoption name UCI_Elo value " + config.uciElo);
-
-    // 3. On ajuste aussi le Skill Level pour les versions de Stockfish qui ignorent UCI_Elo
     engine.postMessage("setoption name Skill Level value " + config.skill);
-
-    // 4. On ajoute de la probabilité d'erreur pour les bas niveaux
-    // Si Elo < 1500, on augmente la probabilité de faire une bêtise
     const errProb =
       config.uciElo < 1500 ? 100 : Math.max(0, (20 - config.skill) * 5);
     engine.postMessage(
@@ -580,8 +586,6 @@ function initEngine() {
     setTimeout(() => {
       engine.postMessage("setoption name Hash value 32");
       engine.postMessage("setoption name Threads value 2");
-
-      // Active le mode LimitStrength par défaut pour éviter le mode bourrin
       engine.postMessage("setoption name UCI_LimitStrength value true");
     }, 100);
 
@@ -608,13 +612,7 @@ function askEngineForMove() {
 
   setTimeout(() => {
     engine.postMessage("position fen " + game.fen());
-
-    // UTILISATION DE LA CONFIGURATION ACTUELLE
-    // Le temps (time) est défini dans DIFFICULTY_SETTINGS
     const movetime = currentConfig.time;
-
-    // On envoie simplement la limite de temps.
-    // Stockfish se débrouillera avec UCI_Elo et UCI_LimitStrength pour faire des erreurs.
     engine.postMessage(`go movetime ${movetime}`);
   }, minDelay);
 }
@@ -714,13 +712,12 @@ function showGameOverModal(title, reason, icon) {
     reasonEl.innerText = reason;
     if (iconEl) iconEl.innerText = icon;
 
-    // Changement de couleur du titre selon le résultat
     if (title === "DÉFAITE...") {
-      titleEl.style.color = "#e74c3c"; // Rouge
+      titleEl.style.color = "#e74c3c";
     } else if (title === "VICTOIRE !") {
-      titleEl.style.color = "#2ecc71"; // Vert
+      titleEl.style.color = "#2ecc71";
     } else {
-      titleEl.style.color = "#d4af37"; // Or (Nul)
+      titleEl.style.color = "#d4af37";
     }
 
     setTimeout(() => {

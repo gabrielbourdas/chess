@@ -69,9 +69,15 @@ var arrows = [];
 var boardOrientation = "white";
 var resultTimeout = null;
 
-// --- GLOBALES TIMER (NOUVEAU) ---
+// --- NOUVELLES VARIABLES STATS (SPRINT) ---
+var bestSprintElo = 0;
+var sprintSolved = 0;
+var sprintStreak = 0;
+
+// --- GLOBALES TIMER ---
 var puzzleTimer = null;
 const TIME_LIMIT = 30; // 30 secondes par puzzle
+var timeLeft = TIME_LIMIT;
 
 // --- INITIALISATION ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -135,16 +141,27 @@ document.addEventListener("DOMContentLoaded", () => {
   // Hack Audio : Débloquer les sons au premier clic utilisateur
   document.body.addEventListener("click", unlockAudio, { once: true });
 
-  setupButton("btn-retry", retryPuzzle);
   setupButton("btn-hint", useHint);
+
+  // --- MODIFICATION 1 : LOGIQUE DES BOUTONS INVERSÉE ---
+
+  // Le bouton extérieur (id="btn-retry" dans le HTML) sert maintenant à passer au SUIVANT
+  setupButton("btn-retry", () => {
+    loadRandomPuzzle();
+  });
+
+  // Le bouton intérieur (id="btn-result-action") est contextuel
   setupButton("btn-result-action", () => {
     const box = document.getElementById("sidebar-puzzle-result");
-    if (box && box.classList.contains("success")) {
-      loadRandomPuzzle();
-    } else {
+    // Si c'est un échec, le bouton intérieur sert à RÉESSAYER
+    if (box && box.classList.contains("failure")) {
       retryPuzzle();
+    } else {
+      // Sinon (succès), il sert à passer au SUIVANT
+      loadRandomPuzzle();
     }
   });
+  // -----------------------------------------------------
 
   setTimeout(loadRandomPuzzle, 500);
 });
@@ -367,7 +384,7 @@ function handleCorrectMove() {
 // --- GESTIONNAIRES FINAUX & TIMER ---
 
 function handleVictory() {
-  stopTimer(); // ARRÊT TIMER
+  stopTimer();
 
   currentStreak++;
   const streakEl = document.getElementById("streak-display");
@@ -380,35 +397,40 @@ function handleVictory() {
 }
 
 function handleFailure() {
-  stopTimer(); // ARRÊT TIMER
+  stopTimer();
 
   playSound("error");
 
-  currentStreak = 0;
-  const streakEl = document.getElementById("streak-display");
-  if (streakEl) streakEl.innerText = 0;
-
-  updateStats(false);
   showSidebarResult("failure");
 
   isWaitingForRetry = true;
-  const btnRetry = document.getElementById("btn-retry");
-  if (btnRetry) btnRetry.style.display = "none";
   const btnHint = document.getElementById("btn-hint");
   if (btnHint) btnHint.style.display = "none";
 
-  // Si le message d'erreur n'est pas déjà "Temps écoulé" (mis par le timer), on met l'analyse
+  // --- MODIFICATION 2 : BOUTON EXTERIEUR DEVIENT "SUIVANT" ---
+  const btnRetry = document.getElementById("btn-retry");
+  if (btnRetry) {
+    btnRetry.style.display = "block";
+    btnRetry.innerText = "Puzzle Suivant ➡"; // Change le texte
+    btnRetry.className = "btn-game primary"; // Met en avant (vert/or) au lieu de danger
+  }
+  // -----------------------------------------------------------
+
   const engineText = document.getElementById("engine-text");
   if (engineText && !engineText.innerText.includes("Temps")) {
     updateEngineText("Analyse de l'erreur...");
   }
 }
 
-// --- FONCTIONS TIMER SPRINT (NOUVEAU) ---
+// --- FONCTIONS TIMER SPRINT ---
 
-function startTimer() {
+function startTimer(reset = true) {
   stopTimer(); // Sécurité
-  let timeLeft = TIME_LIMIT;
+
+  if (reset) {
+    timeLeft = TIME_LIMIT;
+  }
+
   updateTimerDisplay(timeLeft);
 
   const timerContainer = document.getElementById("timer-container");
@@ -440,7 +462,6 @@ function stopTimer() {
 function updateTimerDisplay(seconds) {
   const el = document.getElementById("time-display");
   if (el) {
-    // Ajoute un zéro devant si < 10 (ex: 09)
     el.innerText = seconds < 10 ? `0${seconds}` : seconds;
   }
 }
@@ -471,14 +492,17 @@ function showSidebarResult(status) {
       btn.className = "btn-game small primary";
     }
   } else {
+    // --- MODIFICATION 3 : LE BOUTON INTERIEUR DEVIENT "REESSAYER" ---
     box.classList.add("failure");
     if (icon) icon.innerText = "❌";
     if (title) title.innerText = "Raté / Temps écoulé";
     if (btn) {
-      btn.innerText = "Réessayer ↺";
+      btn.innerText = "Réessayer ↺"; // C'est ici qu'on inverse
       btn.className = "btn-game small danger";
     }
   }
+  // ---------------------------------------------------------------
+
   box.style.display = "flex";
 }
 
@@ -539,27 +563,38 @@ function retryPuzzle() {
   const btnHint = document.getElementById("btn-hint");
   if (btnHint) btnHint.style.display = "block";
 
+  // On cache le bouton "Suivant" (extérieur) quand on réessaie
+  const btnRetry = document.getElementById("btn-retry");
+  if (btnRetry) btnRetry.style.display = "none";
+
   isWaitingForRetry = false;
   updateEngineText("");
 
-  // Relancer le timer pour le nouvel essai
-  startTimer();
+  // Relancer le timer sans reset
+  startTimer(false);
 }
 
 // --- LOAD PUZZLE ---
 async function loadRandomPuzzle() {
-  stopTimer(); // Arrêter le timer précédent pendant le chargement
+  stopTimer();
 
   if (resultTimeout) clearTimeout(resultTimeout);
 
   const box = document.getElementById("sidebar-puzzle-result");
   if (box) box.style.display = "none";
+
+  // On cache le bouton extérieur au chargement
   const btnRetry = document.getElementById("btn-retry");
   if (btnRetry) btnRetry.style.display = "none";
+
   const btnHint = document.getElementById("btn-hint");
   if (btnHint) btnHint.style.display = "block";
   const promo = document.getElementById("promotion-overlay");
   if (promo) promo.style.display = "none";
+
+  // --- RESET TEXTE AU CHARGEMENT ---
+  const ratingEl = document.getElementById("puzzle-rating");
+  if (ratingEl) ratingEl.innerText = "Puzzle: ...";
 
   updateEngineText("");
   isPuzzleActive = false;
@@ -598,14 +633,30 @@ function setupPuzzle(data) {
       .join(", ");
   }
 
+  // --- MISE À JOUR DU BADGE ET TEXTE ---
+  const elo = data.rating || 1200;
   const ratingEl = document.getElementById("puzzle-rating");
-  if (ratingEl) ratingEl.innerText = `Puzzle: ${data.rating || 1200}`;
+  if (ratingEl) ratingEl.innerText = `Difficulté: ${elo}`;
 
   const badgeEl = document.getElementById("difficulty-badge");
   if (badgeEl) {
-    // Mode Sprint par défaut pour le badge
-    badgeEl.innerText = "SPRINT ⚡";
-    badgeEl.className = "difficulty-badge expert";
+    let label = "Moyen",
+      cssClass = "medium";
+    if (elo < 1000) {
+      label = "Débutant";
+      cssClass = "easy";
+    } else if (elo < 1200) {
+      label = "Facile";
+      cssClass = "easy";
+    } else if (elo < 1600) {
+      label = "Moyen";
+      cssClass = "medium";
+    } else {
+      label = "Difficile";
+      cssClass = "hard";
+    }
+    badgeEl.innerText = label;
+    badgeEl.className = `difficulty-badge ${cssClass}`;
   }
 
   game.load(data.fen);
@@ -627,8 +678,8 @@ function setupPuzzle(data) {
     updateStatusWithTurn();
     isPuzzleActive = true;
 
-    // DÉMARRAGE DU TIMER ICI
-    startTimer();
+    // DÉMARRAGE DU TIMER
+    startTimer(true);
   }, 500);
 }
 
@@ -845,7 +896,7 @@ function useHint() {
   }, 1500);
 }
 
-// AUTH & STATS
+// AUTH & STATS (MODIFIÉ POUR LE SPRINT)
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     const docRef = doc(db, "users", user.uid);
@@ -861,6 +912,11 @@ onAuthStateChanged(auth, async (user) => {
         const ratingEl = document.getElementById("user-rating");
         if (ratingEl)
           ratingEl.innerText = `Joueur: ${data.currentPuzzleElo || 1200}`;
+
+        // Charger les stats Sprint depuis la DB
+        bestSprintElo = data.bestSprintElo || 0;
+        sprintSolved = data.sprintSolved || 0;
+        sprintStreak = data.sprintStreak || 0;
       }
     } catch (e) {}
   }
@@ -868,14 +924,49 @@ onAuthStateChanged(auth, async (user) => {
 
 async function updateStats(isWin) {
   const user = auth.currentUser;
+
+  // 1. Mise à jour Locale (pour la session en cours)
+  if (isWin) {
+    sprintSolved++;
+
+    // Record Streak (Sprint)
+    if (currentStreak > sprintStreak) {
+      sprintStreak = currentStreak;
+    }
+
+    // Record Elo (Sprint)
+    const pRating = currentPuzzle.rating || 0;
+    if (pRating > bestSprintElo) {
+      bestSprintElo = pRating;
+    }
+  }
+  // En cas d'échec, currentStreak est reset ailleurs, on ne touche pas au record sprintStreak
+
+  // 2. Sauvegarde Firestore
   if (!user) return;
   const userRef = doc(db, "users", user.uid);
   try {
-    const updates = isWin
-      ? { puzzlesSolved: increment(1), puzzleStreak: increment(1) }
-      : { puzzleStreak: 0 };
+    let updates = {};
+    if (isWin) {
+      updates = {
+        // Stats génériques
+        puzzlesSolved: increment(1),
+        puzzleStreak: increment(1),
+
+        // NOUVELLES STATS SPRINT
+        sprintSolved: increment(1),
+        sprintStreak: sprintStreak, // On sauvegarde le record
+        bestSprintElo: bestSprintElo, // On sauvegarde le record
+      };
+    } else {
+      // Si on échoue, on ne reset QUE le puzzleStreak générique
+      // On ne touche PAS au sprintStreak qui est un record
+      updates = { puzzleStreak: 0 };
+    }
     await setDoc(userRef, updates, { merge: true });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Erreur save stats sprint:", error);
+  }
 }
 
 function initStockfish() {

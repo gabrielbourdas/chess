@@ -39,9 +39,6 @@ const sounds = {
   capture: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Capture.mp3",
   ),
-  // MODIFICATION ICI : On utilise un lien Lichess fiable pour éviter le blocage.
-  // "GenericNotify.mp3" est le son par défaut.
-  // Si vous avez le fichier "game-end.mp3" de chess.com en local, remplacez le lien ci-dessous par : "./audio/game-end.mp3"
   mate: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/GenericNotify.mp3",
   ),
@@ -134,22 +131,32 @@ document.addEventListener("DOMContentLoaded", () => {
   // Hack Audio : Débloquer les sons au premier clic utilisateur
   document.body.addEventListener("click", unlockAudio, { once: true });
 
-  setupButton("btn-retry", retryPuzzle);
   setupButton("btn-hint", useHint);
+
+  // --- MODIFICATION 1 : LOGIQUE DES BOUTONS INVERSÉE ---
+
+  // Le bouton extérieur (id="btn-retry") sert maintenant à passer au SUIVANT
+  setupButton("btn-retry", () => {
+    loadRandomPuzzle();
+  });
+
+  // Le bouton intérieur (id="btn-result-action") gère le contexte
   setupButton("btn-result-action", () => {
     const box = document.getElementById("sidebar-puzzle-result");
-    if (box && box.classList.contains("success")) {
-      loadRandomPuzzle();
-    } else {
+    // Si c'est un échec, le bouton intérieur sert à RÉESSAYER
+    if (box && box.classList.contains("failure")) {
       retryPuzzle();
+    } else {
+      // Sinon (succès), il sert à passer au SUIVANT
+      loadRandomPuzzle();
     }
   });
+  // -----------------------------------------------------
 
   setTimeout(loadRandomPuzzle, 500);
 });
 
 function unlockAudio() {
-  // On joue et coupe instantanément pour réveiller le moteur audio du navigateur
   Object.values(sounds).forEach((s) => {
     const p = s.play();
     if (p !== undefined) {
@@ -166,14 +173,12 @@ function setupButton(id, func) {
   if (btn) btn.addEventListener("click", func);
 }
 
-// --- FONCTION SONORE CORRIGÉE ET SÉCURISÉE ---
+// --- FONCTION SONORE ---
 function playSound(type, waitForCurrent = false) {
   const newSound = sounds[type];
   if (!newSound) return;
 
-  // Si on doit attendre que le son actuel se termine
   if (waitForCurrent && currentAudio && !currentAudio.paused) {
-    // On attend la fin du son actuel avant de jouer le nouveau
     const onEnded = () => {
       currentAudio.removeEventListener("ended", onEnded);
       playSound(type, false);
@@ -182,46 +187,31 @@ function playSound(type, waitForCurrent = false) {
     return;
   }
 
-  // 1. Si un son joue déjà et qu'on ne doit pas attendre, on l'arrête proprement
   if (currentAudio && !waitForCurrent) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
 
-  // 2. On définit le nouveau son comme étant l'actif
   currentAudio = newSound;
-
-  // 3. Réglage volume standard
   currentAudio.volume = 0.5;
 
-  // 4. Lecture sécurisée (avec gestion des Promesses pour éviter le crash)
   const playPromise = currentAudio.play();
-
   if (playPromise !== undefined) {
     playPromise.catch((error) => {
-      // Cette erreur survient si on coupe un son trop vite (interruption)
-      // Ou si le fichier est introuvable (403/404)
       console.warn("Audio play interrupted or failed:", error);
     });
   }
 }
 
-// Détermine quel son jouer immédiatement (Action physique)
 function playMoveSound(move) {
-  // PRIORITÉ 1 : MAT (Doit être vérifié AVANT la capture)
-  // Utilise le son défini dans sounds.mate
   if (game.in_checkmate()) {
     playSound("mate");
     return;
   }
-
-  // PRIORITÉ 2 : PRISE (Capture)
   if (move.flags.includes("c") || move.flags.includes("e")) {
     playSound("capture");
     return;
   }
-
-  // PRIORITÉ 3 : DÉPLACEMENT STANDARD
   playSound("move");
 }
 
@@ -321,12 +311,11 @@ function handleUserMove(
     board.position(game.fen());
   }
 
-  // 4. SON DU MOUVEMENT (Immédiat)
+  // 4. SON DU MOUVEMENT
   playMoveSound(move);
 
   clearArrows();
   updateHistory();
-  startEvaluation(game.fen());
 
   // 5. Validation Puzzle
   let attemptUCI = source + target;
@@ -342,15 +331,13 @@ function handleUserMove(
 
   const expectedMove = currentPuzzle.movesList[moveIndex];
 
-  // Nettoyer tout délai précédent
   if (resultTimeout) clearTimeout(resultTimeout);
 
   if (attemptUCI === expectedMove) {
-    // BON COUP
     handleCorrectMove();
     return true;
   } else {
-    // MAUVAIS COUP -> Séquence Erreur
+    // ERREUR DÉTECTÉE
     resultTimeout = setTimeout(handleFailure, 800);
     return true;
   }
@@ -359,20 +346,16 @@ function handleUserMove(
 function handleCorrectMove() {
   moveIndex++;
 
-  // FIN DU PUZZLE ?
   if (moveIndex >= currentPuzzle.movesList.length) {
-    // OUI : Séquence Victoire
     if (resultTimeout) clearTimeout(resultTimeout);
     handleVictory();
   } else {
-    // NON : Ordi joue
     isPuzzleActive = false;
     setTimeout(() => {
       const computerMoveStr = currentPuzzle.movesList[moveIndex];
       makeComputerMove(computerMoveStr);
       moveIndex++;
 
-      // Check Fin après coup ordi
       if (moveIndex >= currentPuzzle.movesList.length) {
         if (resultTimeout) clearTimeout(resultTimeout);
         handleVictory();
@@ -387,7 +370,6 @@ function handleCorrectMove() {
 // --- GESTIONNAIRES FINAUX ---
 
 function handleVictory() {
-  // Pas de son "success" ici, seulement l'affichage visuel
   currentStreak++;
   const streakEl = document.getElementById("streak-display");
   if (streakEl) streakEl.innerText = currentStreak;
@@ -399,10 +381,8 @@ function handleVictory() {
 }
 
 function handleFailure() {
-  // On joue le son d'erreur
   playSound("error");
 
-  // Puis on affiche l'interface
   currentStreak = 0;
   const streakEl = document.getElementById("streak-display");
   if (streakEl) streakEl.innerText = 0;
@@ -411,12 +391,22 @@ function handleFailure() {
   showSidebarResult("failure");
 
   isWaitingForRetry = true;
-  const btnRetry = document.getElementById("btn-retry");
-  if (btnRetry) btnRetry.style.display = "none";
+
+  // On cache l'indice
   const btnHint = document.getElementById("btn-hint");
   if (btnHint) btnHint.style.display = "none";
 
-  updateEngineText("Analyse de l'erreur...");
+  // --- MODIFICATION 2 : BOUTON EXTERIEUR DEVIENT "SUIVANT" ---
+  const btnRetry = document.getElementById("btn-retry");
+  if (btnRetry) {
+    btnRetry.style.display = "block";
+    btnRetry.innerText = "Puzzle Suivant ➡"; // Change le texte
+    btnRetry.className = "btn-game primary"; // Met en avant (vert/or)
+  }
+  // -----------------------------------------------------------
+
+  updateEngineText("🔍 Recherche de la réfutation...");
+  startEvaluation(game.fen());
 }
 
 // --- UI SIDEBAR ---
@@ -439,9 +429,10 @@ function showSidebarResult(status) {
       btn.className = "btn-game small primary";
     }
   } else {
+    // --- MODIFICATION 3 : LE BOUTON INTERIEUR DEVIENT "REESSAYER" ---
     box.classList.add("failure");
     if (icon) icon.innerText = "❌";
-    if (title) title.innerText = "Mauvais Coup";
+    if (title) title.innerText = "Raté";
     if (btn) {
       btn.innerText = "Réessayer ↺";
       btn.className = "btn-game small danger";
@@ -487,8 +478,6 @@ function makeComputerMove(moveStr) {
     board.move(move.from + "-" + move.to);
     if (move.promotion) board.position(game.fen());
     updateHistory();
-
-    // Son Ordi
     playMoveSound(move);
   }
 }
@@ -509,6 +498,10 @@ function retryPuzzle() {
   const btnHint = document.getElementById("btn-hint");
   if (btnHint) btnHint.style.display = "block";
 
+  // IMPORTANT : On cache le bouton "Suivant" (extérieur) quand on réessaie
+  const btnRetry = document.getElementById("btn-retry");
+  if (btnRetry) btnRetry.style.display = "none";
+
   isWaitingForRetry = false;
   updateEngineText("");
 }
@@ -519,12 +512,19 @@ async function loadRandomPuzzle() {
 
   const box = document.getElementById("sidebar-puzzle-result");
   if (box) box.style.display = "none";
+
+  // On cache le bouton extérieur au chargement
   const btnRetry = document.getElementById("btn-retry");
   if (btnRetry) btnRetry.style.display = "none";
+
   const btnHint = document.getElementById("btn-hint");
   if (btnHint) btnHint.style.display = "block";
   const promo = document.getElementById("promotion-overlay");
   if (promo) promo.style.display = "none";
+
+  // MODIF: Réinitialiser le texte pour le chargement
+  const ratingEl = document.getElementById("puzzle-rating");
+  if (ratingEl) ratingEl.innerText = "Puzzle: ...";
 
   updateEngineText("");
   isPuzzleActive = false;
@@ -563,12 +563,13 @@ function setupPuzzle(data) {
       .join(", ");
   }
 
+  // MODIFIÉ : Affichage final de la difficulté une fois chargé
+  const elo = data.rating || 1200;
   const ratingEl = document.getElementById("puzzle-rating");
-  if (ratingEl) ratingEl.innerText = `Puzzle: ${data.rating || 1200}`;
+  if (ratingEl) ratingEl.innerText = `Difficulté: ${elo}`;
 
   const badgeEl = document.getElementById("difficulty-badge");
   if (badgeEl) {
-    const elo = data.rating || 1200;
     let label = "Moyen",
       cssClass = "medium";
     if (elo < 1000) {
@@ -835,82 +836,150 @@ onAuthStateChanged(auth, async (user) => {
         const avatarEl = document.getElementById("user-avatar");
         if (avatarEl && user.photoURL)
           avatarEl.style.backgroundImage = `url('${user.photoURL}')`;
+        // SUPPRESSION DE L'AFFICHAGE DU JOUEUR (On n'affiche plus "ELO Joueur")
         const ratingEl = document.getElementById("user-rating");
-        if (ratingEl)
-          ratingEl.innerText = `Joueur: ${data.currentPuzzleElo || 1200}`;
+        if (ratingEl) ratingEl.innerText = "";
       }
     } catch (e) {}
   }
 });
 
+// --- MISE À JOUR INTELLIGENTE DES STATS ---
 async function updateStats(isWin) {
   const user = auth.currentUser;
   if (!user) return;
+
   const userRef = doc(db, "users", user.uid);
+
   try {
-    const updates = isWin
-      ? { puzzlesSolved: increment(1), puzzleStreak: increment(1) }
-      : { puzzleStreak: 0 };
+    // 1. On récupère les stats actuelles
+    const docSnap = await getDoc(userRef);
+    const data = docSnap.exists() ? docSnap.data() : {};
+
+    let updates = {};
+    let currentStreak = data.puzzleStreak || 0;
+    let currentBestStreak = data.bestPuzzleStreak || 0;
+
+    // SÉCURITÉ : Si la série actuelle est déjà supérieure au record stocké (ex: bug ou ancien compte),
+    // on met à jour le record en mémoire tout de suite.
+    if (currentStreak > currentBestStreak) {
+      currentBestStreak = currentStreak;
+      updates.bestPuzzleStreak = currentBestStreak;
+    }
+
+    if (isWin) {
+      // --- VICTOIRE ---
+      updates.puzzlesSolved = increment(1);
+
+      const newStreak = currentStreak + 1;
+      updates.puzzleStreak = newStreak;
+
+      // Est-ce un nouveau record ?
+      if (newStreak > currentBestStreak) {
+        updates.bestPuzzleStreak = newStreak;
+      }
+
+      // Check Elo Max (Basé sur la difficulté du puzzle RÉUSSI)
+      if (currentPuzzle && currentPuzzle.rating) {
+        const puzzleRating = parseInt(currentPuzzle.rating);
+        const currentBestElo = data.bestPuzzleElo || 0;
+
+        if (puzzleRating > currentBestElo) {
+          updates.bestPuzzleElo = puzzleRating;
+        }
+      }
+    } else {
+      // --- DÉFAITE ---
+      // Avant de remettre à 0, on s'assure d'avoir sauvegardé le record
+      // (Géré par le bloc SÉCURITÉ au début de la fonction)
+
+      updates.puzzleStreak = 0;
+    }
+
+    // 2. On envoie tout à la base de données
     await setDoc(userRef, updates, { merge: true });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Erreur update stats:", error);
+  }
 }
 
+// ============================================
+//   STOCKFISH ENGINE (LOCAL)
+// ============================================
+
 function initStockfish() {
-  fetch(
-    "https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.0/stockfish.js",
-  )
-    .then((r) => r.text())
-    .then((c) => {
-      const b = new Blob([c], { type: "application/javascript" });
-      stockfish = new Worker(URL.createObjectURL(b));
-      stockfish.postMessage("uci");
-      stockfish.onmessage = (e) => {
-        if (
-          e.data.startsWith("info") &&
-          e.data.includes("score") &&
-          e.data.includes("pv")
-        )
-          parseAnalysis(e.data);
-      };
-    })
-    .catch(console.error);
+  // MODIF: Utilisation du chemin local relatif
+  stockfish = new Worker("../../js/stockfish.js");
+
+  stockfish.postMessage("uci");
+  stockfish.onmessage = (e) => {
+    if (
+      e.data.startsWith("info") &&
+      e.data.includes("score") &&
+      e.data.includes("pv")
+    ) {
+      parseAnalysis(e.data);
+    }
+  };
+}
+
+function startEvaluation(fen) {
+  if (!stockfish) return;
+  stockfish.postMessage("stop"); // Arrête l'analyse précédente
+  stockfish.postMessage(`position fen ${fen}`);
+  stockfish.postMessage("go depth 15"); // Profondeur suffisante pour la tactique
 }
 
 function parseAnalysis(line) {
+  // On ne montre l'analyse que si on est en attente d'un "retry" (donc après une erreur)
   if (!isWaitingForRetry) return;
+
   const parts = line.split(" ");
+
+  // Score
   let scoreIndex = parts.indexOf("score");
   if (scoreIndex === -1) return;
-  let type = parts[scoreIndex + 1];
+
+  let type = parts[scoreIndex + 1]; // "cp" (pions) ou "mate"
   let value = parseInt(parts[scoreIndex + 2]);
+
+  // Meilleur coup (pour l'adversaire, car c'est son tour après votre erreur)
   let pvIndex = parts.indexOf("pv");
   let bestMoveUCI = pvIndex !== -1 ? parts[pvIndex + 1] : null;
 
+  // Traduction UCI -> SAN (ex: e7e5 -> e5)
   let bestMoveSAN = bestMoveUCI;
   if (bestMoveUCI) {
-    const t = new Chess(game.fen());
-    const m = t.move({
-      from: bestMoveUCI.substring(0, 2),
-      to: bestMoveUCI.substring(2, 4),
-      promotion: "q",
-    });
-    if (m) bestMoveSAN = m.san;
+    try {
+      const tempGame = new Chess(game.fen());
+      const m = tempGame.move({
+        from: bestMoveUCI.substring(0, 2),
+        to: bestMoveUCI.substring(2, 4),
+        promotion: bestMoveUCI.length > 4 ? bestMoveUCI[4] : "q",
+      });
+      if (m) bestMoveSAN = m.san;
+    } catch (e) {}
   }
 
   const textEl = document.getElementById("engine-text");
   if (!textEl) return;
 
-  if (type === "mate") {
-    textEl.innerHTML = `<span class="analysis-blunder">Attention !</span> Mat en ${Math.abs(value)}.`;
-  } else if (value > 200) {
-    textEl.innerHTML = `Gaffe. <span class="refutation-move">${bestMoveSAN}</span> gagne.`;
-  } else {
-    textEl.innerHTML = `Imprécis. Meilleur coup : <span class="refutation-move">${bestMoveSAN}</span>`;
-  }
-}
+  // --- LOGIQUE D'EXPLICATION ---
+  // Stockfish analyse pour le joueur dont c'est le tour (l'adversaire).
+  // Un score positif signifie que l'adversaire gagne.
 
-function startEvaluation(fen) {
-  if (!stockfish) return;
-  stockfish.postMessage(`position fen ${fen}`);
-  stockfish.postMessage("go depth 15");
+  let message = "";
+
+  if (type === "mate") {
+    message = `❌ <strong>Gaffe !</strong> L'adversaire a un mat en ${Math.abs(value)} via <span class="refutation-move" style="color:#e74c3c; font-weight:bold;">${bestMoveSAN}</span>.`;
+  } else if (value > 200) {
+    message = `❌ <strong>Ça ne marche pas.</strong> L'adversaire répond <span class="refutation-move" style="color:#e74c3c; font-weight:bold;">${bestMoveSAN}</span> et gagne du matériel.`;
+  } else if (value > 50) {
+    message = `❌ <strong>Imprécis.</strong> L'adversaire prend l'avantage avec <span class="refutation-move" style="color:#e74c3c; font-weight:bold;">${bestMoveSAN}</span>.`;
+  } else {
+    // Si score proche de 0 ou négatif (cas bizarre en puzzle), on donne juste le coup
+    message = `❌ Mauvais coup. L'adversaire répondrait <span class="refutation-move" style="color:#e74c3c; font-weight:bold;">${bestMoveSAN}</span>.`;
+  }
+
+  textEl.innerHTML = message;
 }

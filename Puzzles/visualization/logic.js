@@ -33,7 +33,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// --- SONS CORRIGÉS ---
+// --- SONS ---
 const sounds = {
   move: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Move.mp3",
@@ -41,7 +41,6 @@ const sounds = {
   capture: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/Capture.mp3",
   ),
-  // On utilise GenericNotify pour le succès (son "sec")
   notify: new Audio(
     "https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/standard/GenericNotify.mp3",
   ),
@@ -63,6 +62,11 @@ var isPuzzleActive = false;
 var isWaitingForRetry = false;
 var stockfish = null;
 var selectedSquare = null;
+
+// --- VARIABLES STATS (VISU) ---
+var bestVisuElo = 0;
+var visuSolved = 0;
+var visuStreak = 0;
 
 // Variables Promotion
 var pendingMove = null;
@@ -142,13 +146,20 @@ document.addEventListener("DOMContentLoaded", () => {
   setupButton("btn-validate-plan", validatePlanning);
   setupButton("btn-undo-plan", undoLastPlan);
 
-  // Bouton unique "Action" (Succès -> Suivant / Échec -> Réessayer)
+  // Bouton Suivant (Remplace Valider en cas d'échec/succès)
+  setupButton("btn-next-puzzle", () => {
+    loadRandomPuzzle();
+  });
+
+  // Le bouton intérieur (id="btn-result-action") gère le contexte
   setupButton("btn-result-action", () => {
     const box = document.getElementById("sidebar-puzzle-result");
-    if (box && box.classList.contains("success")) {
-      loadRandomPuzzle();
-    } else {
+    // Si c'est un échec, le bouton intérieur sert à RÉESSAYER
+    if (box && box.classList.contains("failure")) {
       retryPuzzle();
+    } else {
+      // Sinon (succès), il sert à passer au SUIVANT
+      loadRandomPuzzle();
     }
   });
 
@@ -178,7 +189,7 @@ function setupButton(id, func) {
   if (btn) btn.addEventListener("click", func);
 }
 
-// --- NOUVELLE UI RÉSULTAT (Identique à l'autre page) ---
+// --- UI RÉSULTAT ---
 function showSidebarResult(status) {
   const box = document.getElementById("sidebar-puzzle-result");
   if (!box) return;
@@ -187,7 +198,6 @@ function showSidebarResult(status) {
   const title = box.querySelector(".result-title");
   const btn = document.getElementById("btn-result-action");
 
-  // Reset classes
   box.classList.remove("success", "failure");
   box.style.display = "flex";
 
@@ -200,6 +210,7 @@ function showSidebarResult(status) {
       btn.className = "btn-game small primary";
     }
   } else {
+    // ÉCHEC : Le bouton DANS la boîte permet de réessyer
     box.classList.add("failure");
     if (icon) icon.innerText = "❌";
     if (title) title.innerText = "Erreur de Calcul";
@@ -215,7 +226,6 @@ function handleSquareClick(square) {
   const piece = game.get(square);
   const turn = game.turn();
 
-  // CAS 1 : Clic sur une de NOS pièces -> Sélection
   if (piece && piece.color === turn) {
     if (selectedSquare === square) {
       removeSelection();
@@ -228,7 +238,6 @@ function handleSquareClick(square) {
     return;
   }
 
-  // CAS 2 : Clic sur une case destination -> Mouvement
   if (selectedSquare) {
     handleUserMove(selectedSquare, square);
     removeSelection();
@@ -287,7 +296,7 @@ function showPromotionModal(color) {
   if (!modal || !container) return;
 
   container.innerHTML = "";
-  const pieces = ["q", "r", "b", "n"]; // Dame, Tour, Fou, Cavalier
+  const pieces = ["q", "r", "b", "n"];
 
   pieces.forEach((p) => {
     const img = document.createElement("img");
@@ -370,8 +379,7 @@ function validatePlanning() {
   function playNextStep() {
     if (step >= planningMoves.length) {
       if (step + 1 >= currentPuzzle.movesList.length) {
-        // Puzzle fini, calcul correct mais peut-être pas jusqu'au bout s'il reste des coups
-        // Pour simplifier, on considère que si la séquence planifiée est bonne, c'est gagné.
+        // Fin de puzzle
       } else {
         updateEngineText("Séquence correcte mais incomplète.");
         isPuzzleActive = true;
@@ -404,7 +412,7 @@ function validatePlanning() {
       step++;
 
       if (moveIndex >= currentPuzzle.movesList.length) {
-        // VICTOIRE
+        // --- VICTOIRE ---
         currentStreak++;
         const streakEl = document.getElementById("streak-display");
         if (streakEl) streakEl.innerText = currentStreak;
@@ -412,9 +420,14 @@ function validatePlanning() {
         updateStats(true);
         updateEngineText("");
 
-        // Affichage UI via la nouvelle sidebar
         playSound("notify");
         showSidebarResult("success");
+
+        // UI SUCCÈS : On montre "Suivant" à la place de Valider
+        const btnVal = document.getElementById("btn-validate-plan");
+        if (btnVal) btnVal.style.display = "none";
+        const btnNext = document.getElementById("btn-next-puzzle");
+        if (btnNext) btnNext.style.display = "block";
 
         planningMoves = [];
         updatePlanningUI();
@@ -433,14 +446,27 @@ function handleFailureBatch() {
   currentStreak = 0;
   const streakEl = document.getElementById("streak-display");
   if (streakEl) streakEl.innerText = 0;
-  updateStats(false);
 
-  // Affichage UI via la nouvelle sidebar
+  updateStats(false);
   showSidebarResult("failure");
 
   isWaitingForRetry = true;
   document.getElementById("btn-hint").style.display = "none";
-  updateEngineText("Analysez la séquence...");
+
+  // --- MODIFICATION UI ÉCHEC ---
+  // 1. Cacher "Valider"
+  const btnVal = document.getElementById("btn-validate-plan");
+  if (btnVal) btnVal.style.display = "none";
+
+  // 2. Afficher "Suivant" (prend la place de Valider)
+  const btnNext = document.getElementById("btn-next-puzzle");
+  if (btnNext) btnNext.style.display = "block";
+
+  // Note : Le bouton "Réessayer" a été supprimé du bas
+  // L'utilisateur doit utiliser celui dans la boîte rouge.
+
+  updateEngineText("🔍 Recherche de la réfutation...");
+  startEvaluation(game.fen());
 }
 
 // --- LOGIQUE UNIFIÉE (MOVE & BATCH) ---
@@ -448,13 +474,11 @@ function handleUserMove(source, target, promotionChoice = null) {
   const piece = game.get(source);
   if (!piece) return "snapback";
 
-  // 1. Détection de la Promotion via les coups légaux
   const legalMoves = game.moves({ square: source, verbose: true });
   const isValidPromotion = legalMoves.find(
     (m) => m.to === target && m.flags.includes("p"),
   );
 
-  // Si c'est une promotion LÉGALE et qu'on n'a pas encore choisi
   if (isValidPromotion && !promotionChoice) {
     pendingMove = { source, target };
     showPromotionModal(piece.color);
@@ -463,7 +487,6 @@ function handleUserMove(source, target, promotionChoice = null) {
 
   const finalPromotion = promotionChoice || "q";
 
-  // 2. Mode Batch : On joue le coup "virtuellement"
   const move = game.move({
     from: source,
     to: target,
@@ -475,7 +498,6 @@ function handleUserMove(source, target, promotionChoice = null) {
   board.move(source + "-" + target);
   if (isValidPromotion || move.promotion) board.position(game.fen());
 
-  // Spécifique à ce fichier : Ajout à la liste de planification
   planningMoves.push(move);
   updatePlanningUI();
 
@@ -492,7 +514,6 @@ function onDragStart(source, piece, position, orientation) {
   if (isWaitingForRetry) return false;
   if (game.game_over()) return false;
 
-  // En mode planning, on peut jouer les deux couleurs
   if (game.turn() === "w" && piece.search(/^b/) !== -1) return false;
   if (game.turn() === "b" && piece.search(/^w/) !== -1) return false;
 }
@@ -530,11 +551,19 @@ function retryPuzzle() {
   isWaitingForRetry = false;
   isPuzzleActive = true;
 
-  // Réinitialiser la sidebar résultat
   const box = document.getElementById("sidebar-puzzle-result");
   if (box) box.style.display = "none";
 
   document.getElementById("btn-hint").style.display = "block";
+
+  // --- RETOUR À LA NORMALE UI ---
+  // On réaffiche "Valider", on cache "Suivant"
+  const btnVal = document.getElementById("btn-validate-plan");
+  if (btnVal) btnVal.style.display = "block";
+  const btnNext = document.getElementById("btn-next-puzzle");
+  if (btnNext) btnNext.style.display = "none";
+  // -----------------------------
+
   updateEngineText("");
 }
 
@@ -545,9 +574,18 @@ async function loadRandomPuzzle() {
   const modal = document.getElementById("promotion-overlay");
   if (modal) modal.style.display = "none";
 
-  // Cacher la sidebar résultat
   const box = document.getElementById("sidebar-puzzle-result");
   if (box) box.style.display = "none";
+
+  // --- RESET UI BOUTONS ---
+  const btnVal = document.getElementById("btn-validate-plan");
+  if (btnVal) btnVal.style.display = "block";
+  const btnNext = document.getElementById("btn-next-puzzle");
+  if (btnNext) btnNext.style.display = "none";
+  // ------------------------
+
+  const ratingEl = document.getElementById("puzzle-rating");
+  if (ratingEl) ratingEl.innerText = "Puzzle: ...";
 
   document.getElementById("btn-hint").style.display = "block";
   updateEngineText("");
@@ -599,9 +637,10 @@ function setupPuzzle(data) {
       .join(", ");
   }
 
+  // --- Mise à jour du Elo (Difficulté) ---
   const elo = data.rating ? data.rating : 1200;
   const ratingEl = document.getElementById("puzzle-rating");
-  if (ratingEl) ratingEl.innerText = `Puzzle: ${elo}`;
+  if (ratingEl) ratingEl.innerText = `Difficulté: ${elo}`;
 
   const badgeEl = document.getElementById("difficulty-badge");
   if (badgeEl) {
@@ -828,6 +867,7 @@ function drawArrow(svg, start, end) {
   svg.appendChild(line);
 }
 
+// --- INIT BOARD ---
 function initBoard(fen, orientation) {
   if (board) board.destroy();
   boardOrientation = orientation;
@@ -874,6 +914,12 @@ onAuthStateChanged(auth, async (user) => {
             `https://api.dicebear.com/9.x/adventurer/svg?seed=${data.pseudo || "User"}`;
           avatarEl.style.backgroundImage = `url('${photoURL}')`;
         }
+
+        // On charge les stats (Visu)
+        bestVisuElo = data.bestVisuElo || 0;
+        visuSolved = data.visuSolved || 0;
+        visuStreak = data.visuStreak || 0;
+
         const ratingEl = document.getElementById("user-rating");
         if (ratingEl)
           ratingEl.innerText = `Joueur: ${data.currentPuzzleElo || 1200}`;
@@ -891,39 +937,124 @@ onAuthStateChanged(auth, async (user) => {
 
 async function updateStats(isWin) {
   const user = auth.currentUser;
+
+  // 1. Mise à jour des variables locales pour la session
+  if (isWin) {
+    visuSolved++; // Incrémenter le total
+    if (currentStreak > visuStreak) {
+      visuStreak = currentStreak;
+    }
+    const pRating = currentPuzzle.rating || 0;
+    if (pRating > bestVisuElo) {
+      bestVisuElo = pRating;
+    }
+  }
+
   if (!user) return;
   const userRef = doc(db, "users", user.uid);
   try {
-    const updates = isWin
-      ? { puzzlesSolved: increment(1), puzzleStreak: increment(1) }
-      : { puzzleStreak: 0 };
+    let updates = {};
+    if (isWin) {
+      updates = {
+        puzzlesSolved: increment(1),
+        puzzleStreak: increment(1),
+        visuSolved: increment(1),
+        visuStreak: visuStreak,
+        bestVisuElo: bestVisuElo,
+      };
+    } else {
+      updates = { puzzleStreak: 0 };
+    }
     await setDoc(userRef, updates, { merge: true });
-  } catch (error) {}
+    console.log("Stats sauvegardées.", updates);
+  } catch (error) {
+    console.error("Erreur save stats", error);
+  }
 }
 
+// ===============================================
+//   STOCKFISH ENGINE INTEGRATION (LOCAL)
+// ===============================================
+
 function initStockfish() {
-  const stockfishUrl =
-    "https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.0/stockfish.js";
-  fetch(stockfishUrl)
-    .then((r) => r.text())
-    .then((c) => {
-      const b = new Blob([c], { type: "application/javascript" });
-      stockfish = new Worker(URL.createObjectURL(b));
-      stockfish.postMessage("uci");
-      stockfish.onmessage = (e) => {
-        if (
-          e.data.startsWith("info") &&
-          e.data.includes("score") &&
-          e.data.includes("pv")
-        )
-          parseAnalysis(e.data);
-      };
-    })
-    .catch(console.error);
+  // On pointe vers le fichier local
+  stockfish = new Worker("../../js/stockfish.js");
+
+  stockfish.postMessage("uci");
+
+  stockfish.onmessage = (e) => {
+    // On écoute la réponse
+    if (
+      e.data.startsWith("info") &&
+      e.data.includes("score") &&
+      e.data.includes("pv")
+    ) {
+      parseAnalysis(e.data);
+    }
+  };
 }
+
+function startEvaluation(fen) {
+  if (!stockfish) return;
+  stockfish.postMessage("stop");
+  stockfish.postMessage(`position fen ${fen}`);
+  stockfish.postMessage("go depth 15");
+}
+
 function parseAnalysis(line) {
-  // Vide intentionnellement (mode planning), à compléter si besoin
+  // On met à jour l'affichage seulement si nécessaire (Mode attente après échec)
+  if (!isWaitingForRetry) return;
+
+  const parts = line.split(" ");
+
+  // Score
+  let scoreIndex = parts.indexOf("score");
+  if (scoreIndex === -1) return;
+
+  let type = parts[scoreIndex + 1]; // cp ou mate
+  let value = parseInt(parts[scoreIndex + 2]);
+
+  // Meilleur coup (pv)
+  let pvIndex = parts.indexOf("pv");
+  let bestMoveUCI = pvIndex !== -1 ? parts[pvIndex + 1] : null;
+
+  // Conversion UCI -> SAN pour l'affichage (ex: e2e4 -> e4)
+  let bestMoveSAN = bestMoveUCI;
+  if (bestMoveUCI) {
+    try {
+      const tempGame = new Chess(game.fen());
+      const m = tempGame.move({
+        from: bestMoveUCI.substring(0, 2),
+        to: bestMoveUCI.substring(2, 4),
+        promotion: bestMoveUCI.length > 4 ? bestMoveUCI[4] : "q",
+      });
+      if (m) bestMoveSAN = m.san;
+    } catch (e) {}
+  }
+
+  const textEl = document.getElementById("engine-text");
+  if (!textEl) return;
+
+  // LOGIQUE D'EXPLICATION CLAIRE
+  // Stockfish évalue la position pour l'adversaire (qui doit répondre à votre erreur).
+  // Un score positif signifie que l'adversaire est avantagé.
+
+  let message = "";
+
+  if (type === "mate") {
+    message = `❌ <strong>Gaffe !</strong> L'adversaire a un mat en ${Math.abs(value)} via <span style="color:#e74c3c; font-weight:bold;">${bestMoveSAN}</span>.`;
+  } else if (value > 200) {
+    message = `❌ <strong>Ça ne marche pas.</strong> L'adversaire répond <span style="color:#e74c3c; font-weight:bold;">${bestMoveSAN}</span> et gagne du matériel.`;
+  } else if (value > 50) {
+    message = `❌ <strong>Imprécis.</strong> L'adversaire prend l'avantage avec <span style="color:#e74c3c; font-weight:bold;">${bestMoveSAN}</span>.`;
+  } else {
+    // Cas où l'avantage n'est pas énorme mais le coup reste faux pour le puzzle
+    message = `❌ Mauvais coup. L'adversaire répondrait <span style="color:#e74c3c; font-weight:bold;">${bestMoveSAN}</span>.`;
+  }
+
+  textEl.innerHTML = message;
 }
+
 function updateEngineText(msg) {
   const el = document.getElementById("engine-text");
   if (el) el.innerHTML = msg;

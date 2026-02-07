@@ -123,7 +123,30 @@
                 type="email"
                 id="reg-email"
                 placeholder="Pour la récupération du compte"
+                required
               />
+            </div>
+
+            <div class="input-group">
+              <label for="reg-avatar">Avatar (Optionnel)</label>
+              <input type="file" id="reg-avatar" accept="image/*" />
+              <div
+                id="avatar-preview-container"
+                style="display: none; margin-top: 10px; justify-content: center"
+              >
+                <img
+                  id="avatar-preview"
+                  src=""
+                  alt="Prévisualisation"
+                  style="
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: 2px solid var(--accent-gold);
+                  "
+                />
+              </div>
             </div>
 
             <div class="input-group">
@@ -191,20 +214,77 @@
     </footer>
 
     <script type="module">
-      // 1. IMPORT DU CERVEAU (Ajuste si ton fichier est bien dans /js/auth.js à la racine)
       import { auth, db } from "../js/auth.js";
-
-      // 2. IMPORT DES OUTILS FIREBASE
       import {
         createUserWithEmailAndPassword,
         signInWithEmailAndPassword,
         sendPasswordResetEmail,
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
       import {
         doc,
         setDoc,
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+      // --- VARIABLE GLOBALE POUR L'IMAGE COMPRESSÉE ---
+      let selectedAvatarBase64 = null;
+
+      // --- LOGIQUE DE COMPRESSION D'IMAGE (Identique au profil) ---
+      const regAvatarInput = document.getElementById("reg-avatar");
+      const avatarPreview = document.getElementById("avatar-preview");
+      const avatarPreviewContainer = document.getElementById(
+        "avatar-preview-container",
+      );
+
+      if (regAvatarInput) {
+        regAvatarInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          // Lecture et compression
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+
+          reader.onload = function (event) {
+            const img = new Image();
+            img.src = event.target.result;
+
+            img.onload = function () {
+              // Création Canvas
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+
+              // Redimensionnement (Max 300px)
+              const MAX_WIDTH = 300;
+              const MAX_HEIGHT = 300;
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height) {
+                if (width > MAX_WIDTH) {
+                  height *= MAX_WIDTH / width;
+                  width = MAX_WIDTH;
+                }
+              } else {
+                if (height > MAX_HEIGHT) {
+                  width *= MAX_HEIGHT / height;
+                  height = MAX_HEIGHT;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0, width, height);
+
+              // Conversion Base64 (Qualité 0.7)
+              selectedAvatarBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
+              // Affichage Prévisualisation
+              avatarPreview.src = selectedAvatarBase64;
+              avatarPreviewContainer.style.display = "flex";
+            };
+          };
+        });
+      }
 
       // --- LOGIQUE D'INSCRIPTION ---
       const registerForm = document.querySelector("#register-box form");
@@ -224,14 +304,23 @@
           createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
               const user = userCredential.user;
-              return setDoc(doc(db, "users", user.uid), {
+
+              // Préparation des données utilisateur
+              const userData = {
                 pseudo: pseudo,
                 email: email,
                 progress: { opening: 0, puzzles: 0 },
-                currentPuzzleElo: 1200, // Initialisation Stats
+                currentPuzzleElo: 1200,
                 puzzlesSolved: 0,
                 currentVisuElo: 1000,
-              });
+              };
+
+              // Si une image a été choisie, on l'ajoute
+              if (selectedAvatarBase64) {
+                userData.photoURL = selectedAvatarBase64;
+              }
+
+              return setDoc(doc(db, "users", user.uid), userData);
             })
             .then(() => {
               alert("Bienvenue, " + pseudo + ". Votre compte est prêt.");
@@ -291,7 +380,7 @@
         });
       }
 
-      // --- FONCTIONS UI (Menu & Switch Form) ---
+      // --- FONCTIONS UI ---
       window.toggleMenu = function () {
         document.getElementById("mobileMenu").classList.toggle("active");
         document.querySelector(".hamburger").classList.toggle("active");
@@ -301,10 +390,9 @@
         const loginBox = document.getElementById("login-box");
         const registerBox = document.getElementById("register-box");
 
-        // Reset des animations pour qu'elles se rejouent
         loginBox.classList.remove("fade-in");
         registerBox.classList.remove("fade-in");
-        void loginBox.offsetWidth; // Trigger reflow
+        void loginBox.offsetWidth;
 
         if (target === "register") {
           loginBox.classList.add("hidden");
