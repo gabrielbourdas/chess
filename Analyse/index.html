@@ -98,35 +98,6 @@
         pointer-events: none;
         z-index: 100;
       }
-      #promotion-overlay {
-        display: none !important;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 2000;
-        justify-content: center;
-        align-items: center;
-      }
-      .promotion-modal {
-        background: #2c2a28;
-        padding: 15px;
-        border-radius: 8px;
-        text-align: center;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-      }
-      .promotion-pieces img {
-        width: 50px;
-        cursor: pointer;
-        margin: 5px;
-        transition: transform 0.2s;
-      }
-      .promotion-pieces img:hover {
-        transform: scale(1.1);
-      }
 
       /* --- 3. SIDEBAR --- */
       .game-sidebar {
@@ -162,57 +133,12 @@
         display: flex;
         flex-direction: column;
         gap: 5px;
-        transition: border-color 0.3s;
       }
       .analysis-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 5px;
-      }
-      .eval-score-big {
-        font-weight: 800;
-        font-size: 1.2rem;
-        color: #fff;
-      }
-      .best-move-line {
-        font-family: monospace;
-        color: #aaa;
-        font-size: 0.9rem;
-        margin-top: 5px;
-      }
-      .best-move-highlight {
-        color: #2ecc71;
-        font-weight: bold;
-      }
-
-      /* HISTORIQUE */
-      .history-container {
-        flex-grow: 1;
-        min-height: 150px;
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 6px;
-        padding: 10px;
-        overflow-y: auto;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .history-row {
-        display: flex;
-        padding: 4px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .move-num {
-        width: 30px;
-        color: #888;
-      }
-      .move-val {
-        flex: 1;
-        color: #ccc;
-        cursor: pointer;
-      }
-      .move-val:hover {
-        color: #d4af37;
-        font-weight: bold;
       }
 
       /* NAVIGATION */
@@ -264,7 +190,7 @@
         background: rgba(231, 76, 60, 0.4);
       }
 
-      /* INPUT ZONE (Modifié pour Historique) */
+      /* INPUT ZONE (PGN) */
       .pgn-section label {
         display: block;
         color: #888;
@@ -280,8 +206,9 @@
         color: white;
         padding: 10px;
         border-radius: 4px;
-        min-height: 60px;
+        min-height: 100px; /* Un peu plus grand puisqu'il est seul */
         font-family: monospace;
+        resize: vertical;
       }
 
       /* BADGES */
@@ -311,6 +238,20 @@
         color: white;
       }
 
+      /* Spinner pour le mode coach */
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .spinner {
+        display: inline-block;
+        animation: spin 2s linear infinite;
+      }
+
       @media (max-width: 900px) {
         .game-area {
           flex-direction: column;
@@ -319,7 +260,6 @@
         .analysis-board-wrapper {
           flex-direction: column;
           width: 100%;
-          min-width: 100%;
         }
         .board-container {
           min-height: 350px;
@@ -373,12 +313,6 @@
           <div class="board-container">
             <div id="board"></div>
             <div id="arrow-overlay" class="arrow-overlay"></div>
-            <div id="promotion-overlay">
-              <div class="promotion-modal">
-                <p class="promotion-title">Promotion</p>
-                <div class="promotion-pieces" id="promo-pieces-container"></div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -395,9 +329,9 @@
                   border-radius: 4px;
                   font-size: 0.8rem;
                 "
-                id="engine-status"
-                >Stockfish Prêt</span
               >
+                Stockfish Prêt
+              </span>
             </div>
           </div>
 
@@ -440,18 +374,13 @@
             </button>
           </div>
 
-          <div class="history-container">
-            <div class="history-header">Partie</div>
-            <div id="move-history" class="move-history-content"></div>
-          </div>
-
           <div class="pgn-section">
-            <label for="pgn-input">Coller l'historique des coups</label>
+            <label for="pgn-input">Historique de la partie</label>
             <div class="input-group">
               <textarea
                 id="pgn-input"
                 class="pgn-textarea"
-                placeholder="Ex: 1. e4 e5 2. Nf3 Nc6 3. Bb5 ..."
+                placeholder="Jouez des coups ou collez un PGN ici..."
               ></textarea>
               <button
                 id="btn-load-pgn"

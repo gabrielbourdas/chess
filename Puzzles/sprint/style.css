@@ -1,0 +1,650 @@
+/* =========================================
+   STYLE : PUZZLES TACTIQUES (FINAL)
+   ========================================= */
+
+/* --- 1. LAYOUT PRINCIPAL --- */
+.game-main {
+  min-height: 100vh;
+  padding: 120px 2rem 4rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: transparent;
+}
+
+.game-area {
+  display: flex;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1100px;
+  position: relative;
+}
+
+/* =========================================
+   2. LE PLATEAU (BOARD)
+   ========================================= */
+.board-wrapper {
+  flex: 1.5;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.board-container {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: var(--bg-secondary);
+  border: 3px solid var(--border-subtle);
+  border-radius: 4px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  cursor: pointer;
+  position: relative; /* IMPORTANT pour le positionnement des flèches SVG */
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: var(--bg-tertiary);
+  border-radius: 50%;
+  border: 1px solid var(--accent-gold);
+}
+
+.details .name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  display: block;
+  color: var(--text-primary);
+}
+
+.details .rating {
+  font-family: var(--font-heading);
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--accent-gold);
+  background: rgba(212, 175, 55, 0.1);
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-top: 4px;
+  display: inline-block;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* =========================================
+   3. SIDEBAR & CONTROLES
+   ========================================= */
+.game-sidebar {
+  flex: 1;
+  background: var(--bg-secondary);
+  padding: 2rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: 120px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.theme-container {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.theme-label {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--accent-gold);
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.theme-display {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+  flex: 1;
+  font-style: italic;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.streak-container {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.puzzle-meta-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.puzzle-rating-tag {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  color: #a0a0a0;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.difficulty-badge {
+  padding: 6px 12px;
+  border-radius: 2px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  font-family: var(--font-body);
+}
+
+.difficulty-badge.easy {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.difficulty-badge.medium {
+  background: rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.difficulty-badge.hard {
+  background: rgba(230, 126, 34, 0.15);
+  color: #e67e22;
+  border: 1px solid rgba(230, 126, 34, 0.3);
+}
+
+.difficulty-badge.expert {
+  background: rgba(155, 89, 182, 0.15);
+  color: #9b59b6;
+  border: 1px solid rgba(155, 89, 182, 0.3);
+  box-shadow: 0 0 10px rgba(155, 89, 182, 0.2);
+}
+
+.turn-indicator {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-tertiary);
+  padding: 10px 15px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+.turn-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  transition: 0.3s ease;
+}
+
+.turn-indicator.white-turn .turn-icon {
+  background-color: #eee;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+.turn-indicator.black-turn .turn-icon {
+  background-color: #111;
+  border: 2px solid #555;
+}
+
+#status-text {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+/* =========================================
+   4. ANALYSE (ENGINE)
+   ========================================= */
+.engine-feedback-box {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent-gold);
+  border-radius: 2px;
+  padding: 15px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  min-height: 70px;
+}
+
+.engine-icon {
+  font-size: 1.4rem;
+  opacity: 0.8;
+}
+
+#engine-text {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.analysis-blunder {
+  color: #e74c3c !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.analysis-best {
+  color: #2ecc71 !important;
+  font-weight: 600;
+}
+
+.refutation-move {
+  background: rgba(212, 175, 55, 0.1);
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-family: "Courier New", monospace;
+  color: var(--accent-gold);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* =========================================
+   5. RESULTAT SIDEBAR (ANIMÉ)
+   ========================================= */
+.sidebar-result-box {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 1rem;
+  display: none; /* Caché par défaut */
+  align-items: center;
+  gap: 15px;
+  animation: slideInSidebar 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sidebar-result-box.success {
+  border-left: 4px solid #2ecc71;
+  background: linear-gradient(
+    90deg,
+    rgba(46, 204, 113, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+.sidebar-result-box.failure {
+  border-left: 4px solid #e74c3c;
+  background: linear-gradient(
+    90deg,
+    rgba(231, 76, 60, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+.result-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.result-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.result-title {
+  font-family: var(--font-heading);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.sidebar-result-box.success .result-title {
+  color: #2ecc71;
+}
+.sidebar-result-box.failure .result-title {
+  color: #e74c3c;
+}
+
+/* Animation Sidebar */
+@keyframes slideInSidebar {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* =========================================
+   6. HISTORIQUE
+   ========================================= */
+.history-container {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  padding: 10px 15px;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.history-header {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+.move-history-content {
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  max-height: 80px;
+  overflow-y: auto;
+  word-spacing: 5px;
+}
+
+.move-history-content span {
+  display: inline-block;
+}
+
+.move-history-content::-webkit-scrollbar {
+  width: 4px;
+}
+.move-history-content::-webkit-scrollbar-thumb {
+  background: var(--accent-gold);
+  border-radius: 2px;
+}
+
+/* =========================================
+   7. BOUTONS
+   ========================================= */
+.controls {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-game {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 2px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-body);
+}
+
+/* Petit bouton (pour la notif sidebar) */
+.btn-game.small {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  width: auto;
+  align-self: flex-start;
+  margin-top: 5px;
+  letter-spacing: 1px;
+}
+
+.btn-game.primary {
+  background: var(--accent-gold);
+  color: #000;
+  border: 1px solid var(--accent-gold);
+}
+
+.btn-game.primary:hover {
+  background: transparent;
+  color: var(--accent-gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.btn-game.secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-game.secondary:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.btn-game.danger {
+  background: rgba(231, 76, 60, 0.1);
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  transition: all 0.2s ease;
+}
+
+.btn-game.danger:hover {
+  background: #554a4a;
+  color: #fff;
+  border-color: #ffffff;
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   8. INDICATEURS & FLÈCHES
+   ========================================= */
+
+.selected-square {
+  box-shadow: inset 0 0 0 4px #ffd700 !important;
+}
+
+.hint-square {
+  box-shadow: inset 0 0 0 4px #ffd700 !important;
+}
+
+/* --- POINTS DE DEPLACEMENT --- */
+.move-hint {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.2) 19%, transparent 20%);
+}
+
+.capture-hint {
+  background-image: radial-gradient(
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.2) 41%,
+    rgba(0, 0, 0, 0.2) 55%,
+    transparent 56%
+  );
+}
+
+/* --- CANVAS DES FLÈCHES (SVG) --- */
+.arrow-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.8;
+}
+
+/* --- CLICK-THROUGH --- */
+.board-glow-effect,
+.highlight1-32417,
+.highlight2-9c5d2 {
+  pointer-events: none !important;
+}
+
+/* Fix responsive */
+@media (max-width: 900px) {
+  .game-area {
+    flex-direction: column;
+    align-items: center;
+  }
+  .board-wrapper,
+  .game-sidebar {
+    width: 100%;
+    max-width: 500px;
+    flex: none;
+  }
+  .game-sidebar {
+    position: static;
+  }
+}
+
+.chessboard-moving-piece {
+  z-index: 9999 !important;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+.square-55d63 img {
+  opacity: 1 !important;
+  transition: none !important;
+}
+.board-container {
+  cursor: pointer;
+}
+
+/* =========================================
+   9. INTERFACE DE PROMOTION (MODALE)
+   ========================================= */
+#promotion-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.promotion-modal {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  animation: popIn 0.2s ease-out;
+}
+
+.promotion-title {
+  margin: 0 0 10px 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.promotion-pieces {
+  display: flex;
+  gap: 10px;
+}
+
+.promo-piece {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    transform 0.1s,
+    background 0.1s;
+  background-color: #f0f0f0;
+}
+
+.promo-piece:hover {
+  transform: scale(1.1);
+  background-color: #e0e0e0;
+}
+/* DANS style.css (à ajouter à la fin) */
+
+/* --- TIMER SPRINT --- */
+.timer-box {
+  background: var(--bg-tertiary);
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Quand il reste moins de 10 secondes */
+.timer-box.urgent {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: #e74c3c;
+  color: #e74c3c;
+  animation: pulseTimer 1s infinite;
+}
+
+@keyframes pulseTimer {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -405,7 +405,24 @@ footer {
   font-size: 0.85rem;
   color: #555;
 }
+/* --- AJOUTS POUR LE MODE RUSH --- */
 
+/* Couleur de l'icône (Rouge vif) */
+.icon-circle.red {
+  color: #e74c3c;
+}
+
+/* Couleur de la flèche au survol */
+.rush .link-arrow {
+  color: #e74c3c;
+}
+
+/* On s'assure que la carte réagit comme les autres au survol */
+.feature-card.rush {
+  cursor: pointer;
+  opacity: 1;
+  border-style: solid;
+}
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .hero-section h1 {
